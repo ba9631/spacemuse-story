@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceMuse - Unfold the Cosmos</title>
+    <!-- Chosen Palette: Cosmic Dark -->
+    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, following the user flow from the source report. It uses semantic <section> tags for each major interactive area (Home, Story, Quiz, Birthday Event, Chatbot), allowing users to scroll sequentially or use the fixed header for navigation. This linear, story-driven architecture was chosen to mirror the process of discovery: landing, reading a story, engaging with a quiz, and then exploring freely with the chatbot, creating a logical and intuitive user experience. -->
+    <!-- Visualization & Content Choices: 
+        - Hero: Goal: Captivate. Method: HTML/CSS with a multi-layered, animated starfield background using CSS keyframes for an immersive, non-blocking visual. Interaction: CTA button for navigation. Justification: Creates an immediate sense of theme and wonder.
+        - Story Reader: Goal: Inform/Narrate. Method: Formatted HTML text block with a "Read Aloud" button. Interaction: Button click triggers the Web Speech API for TTS. Justification: Provides content in both readable and audible formats for accessibility and user preference.
+        - Quiz: Goal: Engage/Reinforce. Method: HTML form elements managed by Vanilla JS. Interaction: Users select options and submit answers, receiving immediate visual feedback. State changes are handled by adding/removing Tailwind classes. Justification: A simple, effective way to make learning interactive and test knowledge.
+        - Birthday Event Finder: Goal: Personalize. Method: HTML form with text and voice input options. Interaction: User input (text/speech) is processed by JS to search a data object and display a matching event. Justification: Creates a personal connection for the user to space history.
+        - Chatbot: Goal: Explore/Answer. Method: HTML chat interface. Interaction: User input (text/speech) is sent to the Gemini API via a JS fetch call. The response is displayed and can be read aloud via TTS. Justification: Offers boundless exploration beyond the curated content.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a1a;
+            color: #e5e7eb;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space+Grotesk', sans-serif;
+        }
+        .starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes move-up {
+            to { transform: translateY(-1000px); }
+        }
+        .stars1 { height: 1px; width: 1px; background: transparent; box-shadow: var(--shadows-sm); animation: animStar 50s linear infinite; }
+        .stars2 { height: 2px; width: 2px; background: transparent; box-shadow: var(--shadows-md); animation: animStar 100s linear infinite; }
+        .stars3 { height: 3px; width: 3px; background: transparent; box-shadow: var(--shadows-lg); animation: animStar 150s linear infinite; }
+        @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
+    </style>
+</head>
+<body class="bg-[#0a0a1a]">
+
+    <!-- Header -->
+    <header class="bg-black/30 backdrop-blur-sm fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-white">SpaceMuse</a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#story" class="hover:text-blue-400 transition-colors">Today’s Story</a>
+                <a href="#quiz" class="hover:text-blue-400 transition-colors">Quiz</a>
+                <a href="#birthday-event" class="hover:text-blue-400 transition-colors">Cosmic Date</a>
+                <a href="#chatbot" class="hover:text-blue-400 transition-colors">Ask SpaceMuse</a>
+            </div>
+            <a href="#chatbot" class="md:hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-sm">Ask</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Section 1: Hero -->
+        <section id="home" class="h-screen min-h-[700px] flex items-center justify-center text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 bottom-0 z-0">
+                <div class="stars1"></div>
+                <div class="stars2"></div>
+                <div class="stars3"></div>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a1a] via-[#0a0a1a]/50 to-transparent z-10"></div>
+            <div class="relative z-20 p-6">
+                <h1 class="text-4xl md:text-7xl font-extrabold mb-4 text-white leading-tight">
+                    Unfold the Cosmos,
+                </h1>
+                <p class="text-4xl md:text-7xl font-extrabold mb-8 text-blue-400">
+                    One Story at a Time.
+                </p>
+                <p class="max-w-2xl mx-auto mb-10 text-lg text-gray-300">
+                    Welcome, traveler. SpaceMuse transforms pivotal moments in space history into poetic narratives. Discover, listen, and engage with the universe's grand tale.
+                </p>
+                <a href="#story" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-300 inline-block">
+                    Read Today’s Story
+                </a>
+            </div>
+        </section>
+
+        <!-- Section 2: Story Card -->
+        <section id="story" class="py-20 md:py-32">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white">Today's Cosmic Narrative</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        This section holds the day's featured story—a curated piece of space history, retold. You can read the narrative or use the "Read Aloud" button to have SpaceMuse narrate it for you, providing an accessible and immersive audio experience.
+                    </p>
+                </div>
+                <div id="story-card" class="bg-[#111122]/80 backdrop-blur-md rounded-xl shadow-2xl max-w-4xl mx-auto my-8 p-6 md:p-10 border border-gray-700">
+                    <h3 id="story-title" class="text-3xl md:text-4xl font-bold text-blue-300 mb-6 text-center leading-tight"></h3>
+                    <img id="story-image" src="" alt="Story image" class="mb-6 rounded-lg w-full h-auto object-cover max-h-96 border border-gray-700" onError="this.onerror=null;this.src='https://placehold.co/800x450/111122/3b82f6?text=Image+Not+Found';">
+                    <div id="story-content" class="text-lg text-gray-300 leading-relaxed space-y-4"></div>
+                    <div class="mt-8 pt-6 border-t border-gray-700 text-center">
+                        <button id="tts-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center mx-auto">
+                            <span class="mr-2 text-xl play-icon">▶</span>
+                            <span class="mr-2 text-xl stop-icon hidden">■</span>
+                            <span class="button-text">Read Aloud</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Quiz -->
+        <section id="quiz" class="py-20 md:py-32 bg-[#111122]">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white">Test Your Cosmic Knowledge</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Directly following the story, this interactive quiz challenges your understanding of space history. It’s a fun way to reinforce key facts and deepen your engagement. See how you score!
+                    </p>
+                </div>
+                <div id="quiz-container" class="bg-gray-800/50 rounded-xl shadow-2xl max-w-2xl mx-auto p-6 md:p-8 border border-gray-700">
+                    <div id="quiz-question-area">
+                        <p class="text-lg text-gray-200 mb-6" id="quiz-progress"></p>
+                        <h4 class="text-xl font-semibold mb-8 text-yellow-300" id="quiz-question"></h4>
+                        <div id="quiz-options" class="flex flex-col space-y-4 mb-8"></div>
+                        <p id="quiz-feedback" class="mb-6 text-md font-bold"></p>
+                        <button id="quiz-submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Submit Answer
+                        </button>
+                    </div>
+                    <div id="quiz-result-area" class="hidden text-center">
+                        <h3 class="text-3xl font-bold text-blue-300 mb-4">Quiz Complete!</h3>
+                        <p id="quiz-score" class="text-xl text-gray-200 mb-4"></p>
+                        <p id="quiz-final-feedback" class="text-2xl font-bold text-yellow-300 mb-8"></p>
+                        <button id="quiz-restart" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300">
+                            Restart Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Birthday Space Event Finder -->
+        <section id="birthday-event" class="py-20 md:py-32">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white">Your Birthday in Space History</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Ever wondered what significant cosmic event occurred on your birthday? Enter your special date (or speak it!) and SpaceMuse will reveal a fascinating moment from space history tied to your day.
+                    </p>
+                </div>
+                <div class="bg-gray-800/50 rounded-xl shadow-2xl max-w-xl mx-auto p-6 md:p-8 border border-gray-700 text-center">
+                    <h3 class="text-3xl font-bold text-blue-300 mb-6">Find Your Cosmic Coincidence</h3>
+                    <form id="birthday-form" class="space-y-4 mb-6">
+                        <input type="text" id="birthday-month" placeholder="Month (e.g., July)" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="number" id="birthday-day" placeholder="Day (e.g., 20)" min="1" max="31" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md">Find Event</button>
+                            <button type="button" id="birthday-voice-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-md flex items-center disabled:opacity-50">
+                                <span class="mic-icon">🎤</span>
+                                <span class="listening-text hidden ml-2">Listening...</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="birthday-result-container" class="mt-6">
+                        <p id="birthday-feedback" class="text-gray-400 italic mb-4"></p>
+                        <div id="birthday-event-display" class="hidden p-4 bg-gray-700 rounded-lg shadow-inner border border-gray-600 text-left">
+                            <h4 id="birthday-event-title" class="text-xl font-bold text-yellow-300 mb-2"></h4>
+                            <p id="birthday-event-text" class="text-gray-200"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Chatbot -->
+        <section id="chatbot" class="py-20 md:py-32 bg-[#111122]">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white">Ask SpaceMuse</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Your curiosity doesn't have to end with the story. In this section, you can directly ask SpaceMuse any question about space history. Use your voice or keyboard to inquire about missions, astronauts, or any cosmic query.
+                    </p>
+                </div>
+                <div class="max-w-3xl mx-auto bg-gray-800/50 rounded-xl shadow-2xl border border-gray-700 flex flex-col h-[60vh]">
+                    <div id="chat-history" class="flex-grow p-6 overflow-y-auto space-y-4">
+                        <!-- Chat messages will be appended here -->
+                    </div>
+                    <div class="p-4 border-t border-gray-700 bg-gray-900/50 rounded-b-xl">
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="chat-input" placeholder="Type your question..." class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="chat-voice-btn" class="p-3 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shrink-0 disabled:opacity-50">
+                                <span class="text-xl chat-mic-icon">🎤</span>
+                            </button>
+                            <button id="chat-submit-btn" class="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors shrink-0">
+                                <span class="text-xl">➤</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black py-8 text-center border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <p class="text-gray-400">&copy; 2025 SpaceMuse. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const storyData = {
+                title: "The Golden Record: A Cosmic Message in a Bottle",
+                image: "https://placehold.co/800x450/0a0a1a/8b5cf6?text=Voyager+Golden+Record",
+                content: `In the vast, silent expanse of space, two emissaries from Earth, Voyager 1 and 2, journey onward. Affixed to each is a golden phonograph record, a cosmic message in a bottle intended for any intelligent extraterrestrial life that might find them.\n\nLaunched in 1977, these records are time capsules of our world. Curated by a committee led by the great astronomer Carl Sagan, they contain sounds and images selected to portray the diversity of life and culture on Earth. They hold greetings in 55 languages, the sounds of whales, a baby crying, waves breaking on a shore, and a collection of music ranging from Bach and Beethoven to Chuck Berry's "Johnny B. Goode".\n\nThe cover of the record is an instruction manual in itself, etched with diagrams explaining the origin of the spacecraft and how to play the record. It includes a pulsar map to locate our solar system and a diagram of the hydrogen atom, a fundamental constant of the universe. It's a message of hope, a testament to a species that looked up at the stars and dared to reach out.`
+            };
+
+            const quizQuestions = [
+                { question: "Which spacecraft carry the Golden Records?", options: ["Pioneer 10 & 11", "Viking 1 & 2", "Voyager 1 & 2", "Apollo 11 & 12"], answer: "Voyager 1 & 2" },
+                { question: "Who led the committee that created the Golden Record?", options: ["Neil deGrasse Tyson", "Carl Sagan", "Stephen Hawking", "Albert Einstein"], answer: "Carl Sagan" },
+                { question: "In which decade were the Voyager spacecraft launched?", options: ["1960s", "1970s", "1980s", "1990s"], answer: "1970s" }
+            ];
+            
+            const spaceEventsByDate = [
+                { month: "January", day: 28, event: "1986: The Space Shuttle Challenger disintegrated 73 seconds after launch." },
+                { month: "February", day: 20, event: "1962: John Glenn became the first American to orbit Earth." },
+                { month: "April", day: 12, event: "1961: Yuri Gagarin became the first human in space." },
+                { month: "July", day: 20, event: "1969: Apollo 11's lunar module landed on the Moon." },
+                { month: "October", day: 4, event: "1957: Sputnik 1, the first artificial satellite, was launched." },
+            ];
+
+            // --- DOM Elements ---
+            const storyTitle = document.getElementById('story-title');
+            const storyImage = document.getElementById('story-image');
+            const storyContent = document.getElementById('story-content');
+            const ttsButton = document.getElementById('tts-button');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizQuestionArea = document.getElementById('quiz-question-area');
+            const quizResultArea = document.getElementById('quiz-result-area');
+            const quizQuestionEl = document.getElementById('quiz-question');
+            const quizOptionsEl = document.getElementById('quiz-options');
+            const quizProgressEl = document.getElementById('quiz-progress');
+            const quizFeedbackEl = document.getElementById('quiz-feedback');
+            const quizSubmitBtn = document.getElementById('quiz-submit');
+            const quizScoreEl = document.getElementById('quiz-score');
+            const quizFinalFeedbackEl = document.getElementById('quiz-final-feedback');
+            const quizRestartBtn = document.getElementById('quiz-restart');
+            const birthdayForm = document.getElementById('birthday-form');
+            const birthdayMonthInput = document.getElementById('birthday-month');
+            const birthdayDayInput = document.getElementById('birthday-day');
+            const birthdayVoiceBtn = document.getElementById('birthday-voice-btn');
+            const birthdayResultContainer = document.getElementById('birthday-result-container');
+            const birthdayFeedbackEl = document.getElementById('birthday-feedback');
+            const birthdayEventDisplay = document.getElementById('birthday-event-display');
+            const birthdayEventTitle = document.getElementById('birthday-event-title');
+            const birthdayEventText = document.getElementById('birthday-event-text');
+            const chatHistoryEl = document.getElementById('chat-history');
+            const chatInputEl = document.getElementById('chat-input');
+            const chatSubmitBtn = document.getElementById('chat-submit-btn');
+            const chatVoiceBtn = document.getElementById('chat-voice-btn');
+
+            // --- State Variables ---
+            let currentSpeech = null;
+            let quizCurrentIndex = 0;
+            let quizScore = 0;
+            let selectedQuizOption = null;
+
+            // --- Animated Starfield ---
+            function createStars(selector, count) {
+                const container = document.querySelector(selector);
+                if (!container) return;
+                let boxShadow = '';
+                for (let i = 0; i < count; i++) {
+                    boxShadow += `${Math.random() * 2000}px ${Math.random() * 2000}px #FFF, `;
+                }
+                container.style.setProperty('--shadows-sm', boxShadow.slice(0, -2));
+            }
+            createStars('.stars1', 700);
+            createStars('.stars2', 200);
+            createStars('.stars3', 100);
+
+            // --- Story Initialization ---
+            function loadStory() {
+                storyTitle.textContent = storyData.title;
+                storyImage.src = storyData.image;
+                storyImage.alt = storyData.title;
+                storyContent.innerHTML = storyData.content.replace(/\n/g, '<br>');
+            }
+
+            // --- Text-to-Speech (TTS) ---
+            const synth = window.speechSynthesis;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition;
+
+            function speak(text) {
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+                currentSpeech = new SpeechSynthesisUtterance(text);
+                currentSpeech.onstart = () => updateTTSButton(true);
+                currentSpeech.onend = () => updateTTSButton(false);
+                synth.speak(currentSpeech);
+            }
+
+            function stopSpeaking() {
+                synth.cancel();
+                updateTTSButton(false);
+            }
+
+            function updateTTSButton(isSpeaking) {
+                const playIcon = ttsButton.querySelector('.play-icon');
+                const stopIcon = ttsButton.querySelector('.stop-icon');
+                const buttonText = ttsButton.querySelector('.button-text');
+                if (isSpeaking) {
+                    playIcon.classList.add('hidden');
+                    stopIcon.classList.remove('hidden');
+                    buttonText.textContent = 'Stop Reading';
+                } else {
+                    playIcon.classList.remove('hidden');
+                    stopIcon.classList.add('hidden');
+                    buttonText.textContent = 'Read Aloud';
+                }
+            }
+
+            ttsButton.addEventListener('click', () => {
+                if (synth.speaking) {
+                    stopSpeaking();
+                } else {
+                    speak(storyData.content);
+                }
+            });
+
+            // --- Quiz Logic ---
+            function displayQuizQuestion() {
+                quizQuestionArea.classList.remove('hidden');
+                quizResultArea.classList.add('hidden');
+                selectedQuizOption = null;
+                quizSubmitBtn.disabled = true;
+                quizFeedbackEl.textContent = '';
+                
+                const question = quizQuestions[quizCurrentIndex];
+                quizQuestionEl.textContent = question.question;
+                quizProgressEl.textContent = `Question ${quizCurrentIndex + 1} of ${quizQuestions.length}`;
+                quizOptionsEl.innerHTML = '';
+                
+                question.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200';
+                    button.addEventListener('click', () => {
+                        selectedQuizOption = option;
+                        // Reset styles
+                        quizOptionsEl.querySelectorAll('button').forEach(btn => {
+                            btn.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200';
+                        });
+                        // Highlight selected
+                        button.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-blue-600 text-white shadow-md';
+                        quizSubmitBtn.disabled = false;
+                    });
+                    quizOptionsEl.appendChild(button);
+                });
+            }
+
+            quizSubmitBtn.addEventListener('click', () => {
+                const question = quizQuestions[quizCurrentIndex];
+                if (selectedQuizOption === question.answer) {
+                    quizScore++;
+                    quizFeedbackEl.textContent = 'Correct!';
+                    quizFeedbackEl.className = 'mb-6 text-md font-bold text-green-400';
+                } else {
+                    quizFeedbackEl.textContent = `Incorrect. The correct answer was: ${question.answer}`;
+                    quizFeedbackEl.className = 'mb-6 text-md font-bold text-red-400';
+                }
+
+                setTimeout(() => {
+                    quizCurrentIndex++;
+                    if (quizCurrentIndex < quizQuestions.length) {
+                        displayQuizQuestion();
+                    } else {
+                        showQuizResults();
+                    }
+                }, 1500);
+            });
+
+            function showQuizResults() {
+                quizQuestionArea.classList.add('hidden');
+                quizResultArea.classList.remove('hidden');
+                quizScoreEl.textContent = `You scored ${quizScore} out of ${quizQuestions.length}.`;
+                const percentage = (quizScore / quizQuestions.length) * 100;
+                if (percentage === 100) quizFinalFeedbackEl.textContent = "Cosmic Genius!";
+                else if (percentage >= 60) quizFinalFeedbackEl.textContent = "Well done, space enthusiast!";
+                else quizFinalFeedbackEl.textContent = "Keep learning, cosmic apprentice!";
+            }
+
+            quizRestartBtn.addEventListener('click', () => {
+                quizCurrentIndex = 0;
+                quizScore = 0;
+                displayQuizQuestion();
+            });
+            
+            // --- Birthday Event Finder ---
+            function findSpaceEvent(month, day) {
+                const normalizedMonth = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
+                const event = spaceEventsByDate.find(e => e.month === normalizedMonth && e.day == day);
+                birthdayEventDisplay.classList.add('hidden');
+                if (event) {
+                    birthdayFeedbackEl.textContent = `Found an event for ${normalizedMonth} ${day}!`;
+                    birthdayEventTitle.textContent = `A Cosmic Coincidence on ${event.month} ${event.day}:`;
+                    birthdayEventText.textContent = event.event;
+                    birthdayEventDisplay.classList.remove('hidden');
+                } else {
+                    birthdayFeedbackEl.textContent = `No event found for ${normalizedMonth} ${day}. Try another date!`;
+                }
+            }
+
+            birthdayForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const month = birthdayMonthInput.value;
+                const day = birthdayDayInput.value;
+                if(month && day) findSpaceEvent(month, day);
+            });
+
+            // --- Chatbot ---
+            function addChatMessage(message, sender) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `p-4 rounded-lg max-w-md break-words ${sender === 'user' ? 'bg-gray-700 ml-auto' : 'bg-blue-900/50 mr-auto'}`;
+                
+                if (sender.startsWith('SpaceMuse')) {
+                    const senderP = document.createElement('p');
+                    senderP.className = 'font-bold text-blue-300';
+                    senderP.textContent = 'SpaceMuse';
+                    msgDiv.appendChild(senderP);
+                }
+                
+                const messageP = document.createElement('p');
+                messageP.textContent = message;
+                msgDiv.appendChild(messageP);
+
+                if (sender === 'SpaceMuse-loading') {
+                    msgDiv.id = 'loading-message';
+                }
+                
+                chatHistoryEl.appendChild(msgDiv);
+                chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+            }
+            
+            addChatMessage("Greetings! Ask me a question about space history.", "SpaceMuse");
+
+            async function handleChatSubmit() {
+                const question = chatInputEl.value.trim();
+                if (!question) return;
+                
+                addChatMessage(question, 'user');
+                chatInputEl.value = '';
+                addChatMessage("Thinking...", "SpaceMuse-loading");
+
+                const apiKey = ""; // Canvas provides this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const prompt = `You are SpaceMuse, a poetic and knowledgeable space historian. Answer questions in an engaging, narrative tone. User's question: "${question}"`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
+                    });
+                    
+                    if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+                    
+                    const result = await response.json();
+                    const aiResponse = result.candidates[0].content.parts[0].text;
+
+                    const loadingMsg = document.getElementById('loading-message');
+                    if (loadingMsg) loadingMsg.remove();
+                    
+                    addChatMessage(aiResponse, 'SpaceMuse');
+                } catch (error) {
+                    console.error("Chatbot API error:", error);
+                    const loadingMsg = document.getElementById('loading-message');
+                    if (loadingMsg) loadingMsg.remove();
+                    addChatMessage("Apologies, my connection to the cosmos seems disrupted. Please try again.", 'SpaceMuse');
+                }
+            }
+
+            chatSubmitBtn.addEventListener('click', handleChatSubmit);
+            chatInputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleChatSubmit();
+            });
+
+            // --- Voice Recognition Setup ---
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    if(document.activeElement.id.startsWith('birthday')){
+                        // Handle birthday voice
+                        const monthDayRegex = /(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})/i;
+                        const match = transcript.match(monthDayRegex);
+                        if (match && match[1] && match[2]) {
+                            birthdayMonthInput.value = match[1];
+                            birthdayDayInput.value = match[2];
+                            findSpaceEvent(match[1], match[2]);
+                        } else {
+                            birthdayFeedbackEl.textContent = "Could not understand date. Please say a month and day.";
+                        }
+                    } else {
+                        // Handle chat voice
+                         chatInputEl.value = transcript;
+                         handleChatSubmit();
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                };
+                
+                const setupVoiceButton = (button, type) => {
+                    const icon = button.querySelector('.mic-icon, .chat-mic-icon');
+                    const text = button.querySelector('.listening-text');
+
+                    recognition.onstart = () => {
+                        if (document.activeElement === button) {
+                            if (text) text.classList.remove('hidden');
+                             icon.textContent = '...';
+                        }
+                    };
+                    recognition.onend = () => {
+                         if (text) text.classList.add('hidden');
+                         icon.textContent = '🎤';
+                    };
+                    button.addEventListener('click', () => {
+                        document.activeElement = button;
+                        recognition.start();
+                    });
+                }
+                
+                setupVoiceButton(birthdayVoiceBtn, 'birthday');
+                setupVoiceButton(chatVoiceBtn, 'chat');
+
+            } else {
+                birthdayVoiceBtn.disabled = true;
+                chatVoiceBtn.disabled = true;
+                birthdayFeedbackEl.textContent = 'Voice recognition not supported in this browser.';
+            }
+
+            // --- Initial Load ---
+            loadStory();
+            displayQuizQuestion();
+        });
+    </script>
+</body>
+</html>
