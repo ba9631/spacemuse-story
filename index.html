@@ -1,117 +1,536 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth theme-night"> <!-- Always theme-night now -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpaceMuse - Unfold the Cosmos</title>
-    <!-- Chosen Palette: Cosmic Dark -->
-    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, following the user flow from the source report. It uses semantic <section> tags for each major interactive area (Home, Story, Quiz, Birthday Event, Chatbot), allowing users to scroll sequentially or use the fixed header for navigation. This linear, story-driven architecture was chosen to mirror the process of discovery: landing, reading a story, engaging with a quiz, and then exploring freely with the chatbot, creating a logical and intuitive user experience. -->
-    <!-- Visualization & Content Choices: 
-        - Hero: Goal: Captivate. Method: HTML/CSS with a multi-layered, animated starfield background using CSS keyframes for an immersive, non-blocking visual. Interaction: CTA button for navigation. Justification: Creates an immediate sense of theme and wonder.
-        - Story Reader: Goal: Inform/Narrate. Method: Formatted HTML text block with a "Read Aloud" button. Interaction: Button click triggers the Web Speech API for TTS. Justification: Provides content in both readable and audible formats for accessibility and user preference.
-        - Quiz: Goal: Engage/Reinforce. Method: HTML form elements managed by Vanilla JS. Interaction: Users select options and submit answers, receiving immediate visual feedback. State changes are handled by adding/removing Tailwind classes. Justification: A simple, effective way to make learning interactive and test knowledge.
-        - Birthday Event Finder: Goal: Personalize. Method: HTML form with text and voice input options. Interaction: User input (text/speech) is processed by JS to search a data object and display a matching event. Justification: Creates a personal connection for the user to space history.
-        - Chatbot: Goal: Explore/Answer. Method: HTML chat interface. Interaction: User input (text/speech) is sent to the Gemini API via a JS fetch call. The response is displayed and can be read aloud via TTS. Justification: Offers boundless exploration beyond the curated content.
-    -->
+    <title>SpaceMuse - Cosmic Journeys</title>
+    <!-- Chosen Palette: Twilight Nebula - Adjusted for consistent dark theme -->
+    <!-- Application Structure Plan: The application maintains a sequential, narrative-driven structure to guide the user through content, transitioning from passive consumption to active interaction. This flow is chosen for its intuitive progression: a captivating hero introduction, an interactive solar system explorer, a featured space history narrative, an interactive knowledge quiz, a personalized cosmic event finder, and a dynamic AI chatbot. Each section is a distinct semantic HTML element (e.g., <section>), allowing for clear navigation via the sticky header. This architecture prioritizes user understanding by breaking down complex information into digestible, interactive modules within a single-page experience. -->
+    <!-- Visualization & Content Choices:
+        - Hero Section: Goal: Captivate & Introduce. Method: Layered CSS-animated starfield with animated text. Interaction: Scroll-down CTA. Justification: Creates an immediate, immersive and visually rich entry point without relying on heavy external libraries.
+        - Solar System Explorer (Updated to 3D): Goal: Explore & Inform. Method: 3D Three.js scene with planets orbiting a sun. Planet details are shown in a vanilla JS modal on click. Camera control with mouse drag. Justification: Provides a highly visually engaging and interactive 3D experience within the HTML/JS constraints.
+        - Featured Story: Goal: Inform & Engage. Method: Responsive text block with dynamic image and a text-to-speech (TTS) reader. Interaction: Button to toggle narration. Justification: Offers accessibility and a richer storytelling experience by combining visual, textual, and auditory elements.
+        - Cosmic Overview: Goal: Summarize & Illustrate. Method: Chart.js bar chart displaying key numerical data. Interaction: Static display with tooltips on hover. Justification: Provides quick, understandable insights into quantitative data, adhering to Canvas-only rendering.
+        - Interactive Quiz: Goal: Assess & Reinforce. Method: HTML form elements dynamically updated by JavaScript for questions and options, providing immediate feedback. Interaction: Option selection, answer submission, quiz restart. Justification: Promotes active learning through direct engagement and self-assessment.
+        - Cosmic Calendar Event Finder: Goal: Personalize & Discover. Method: HTML form with text inputs and Web Speech API for voice input. Interaction: Input date, submit, voice command. Justification: Connects personal dates to historical space events, enhancing user relevance.
+        - AI Chatbot: Goal: Explore & Answer. Method: Dynamic chat interface with input field and send/voice buttons. Interaction: Text input, voice input, AI response display. Justification: Offers open-ended exploration of space topics using the Gemini API, providing a highly interactive Q&A experience.
+        - Constellations (New 3D): Goal: Visualize & Inform. Method: 3D Three.js scene for constellations. Interaction: Mouse drag for camera control, click for details. Justification: Adds another dynamic 3D element for visual learning.
+        - Day/Night Toggle (New): Goal: Enhance immersion and provide aesthetic choice. Method: Toggle CSS classes on body, affecting background visuals.
+     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js library for 3D solar system and constellations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0a0a1a;
-            color: #e5e7eb;
+            background-color: #0A0A1A; /* Deep Space - Solid */
+            color: #E5E7EB; /* Light Gray */
         }
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space+Grotesk', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #E5E7EB;
         }
+
+        /* Unified background for all main content sections */
+        .app-section-bg {
+            background-color: #0A0A1A; /* Solid deep space black */
+        }
+
+        /* Header - Solid dark background, no blur */
+        .header-bg {
+            background-color: #1A202C; /* Darker blue-gray */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+            /* backdrop-filter removed */
+        }
+
+        /* Footer - Solid dark background */
+        .footer-bg {
+            background-color: #1A202C; /* Darker blue-gray */
+            border-top: 1px solid #2D3748; /* Darker border */
+        }
+
         .starfield {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
+            z-index: -1;
+            /* transition removed */
         }
-        .star {
+        .stars-layer {
             position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle 5s infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-repeat: repeat;
         }
+        .stars-layer.layer-1 {
+            background-image: radial-gradient(circle, #FFF 1px, transparent 1px);
+            background-size: 150px 150px;
+            animation: twinkle 8s infinite alternate, star-scroll-slow 150s linear infinite;
+        }
+        .stars-layer.layer-2 {
+            background-image: radial-gradient(circle, #AAA 0.8px, transparent 0.8px);
+            background-size: 200px 200px;
+            animation: twinkle 12s infinite reverse, star-scroll-medium 100s linear infinite;
+            opacity: 0.7;
+        }
+        .stars-layer.layer-3 {
+            background-image: radial-gradient(circle, #777 0.5px, transparent 0.5px);
+            background-size: 300px 300px;
+            animation: twinkle 10s infinite, star-scroll-fast 80s linear infinite;
+            opacity: 0.5;
+        }
+        .stars-layer.layer-4 {
+            background-image: radial-gradient(circle, #555 0.3px, transparent 0.3px);
+            background-size: 400px 400px;
+            animation: twinkle 15s infinite, star-scroll-very-slow 200s linear infinite;
+            opacity: 0.3;
+        }
+
+        /* Nebula/Milky Way effect layers removed as they use transparent gradients */
+        /* .nebula-layer { ... } */
+
         @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
+            0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
-        @keyframes move-up {
-            to { transform: translateY(-1000px); }
+        @keyframes star-scroll-slow {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
         }
-        .stars1 { height: 1px; width: 1px; background: transparent; box-shadow: var(--shadows-sm); animation: animStar 50s linear infinite; }
-        .stars2 { height: 2px; width: 2px; background: transparent; box-shadow: var(--shadows-md); animation: animStar 100s linear infinite; }
-        .stars3 { height: 3px; width: 3px; background: transparent; box-shadow: var(--shadows-lg); animation: animStar 150s linear infinite; }
-        @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
+        @keyframes star-scroll-medium {
+            from { transform: translateY(0); }
+            to { transform: translateY(-120%); } /* Slightly faster */
+        }
+        @keyframes star-scroll-fast {
+            from { transform: translateY(0); }
+            to { transform: translateY(-150%); } /* Even faster */
+        }
+        @keyframes star-scroll-very-slow {
+            from { transform: translateY(0); }
+            to { transform: translateY(-80%); } /* Very slow */
+        }
+        /* @keyframes nebula-drift removed */
+
+
+        /* Day/Night Toggle Button Styling - Adjusted to always show sun (night mode default) and remove moon icon */
+        #day-night-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #FBBF24; /* Yellow for sun icon in night mode */
+            margin-left: 1rem;
+        }
+        #day-night-toggle-btn .dark-mode-icon { display: none; } /* Always hide moon icon */
+
+
+        /* Glowing Border effect */
+        .glowing-border {
+            position: relative;
+        }
+        .glowing-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 0.8rem; /* Tailwind rounded-xl equivalent */
+            padding: 2px;
+            background: linear-gradient(45deg, #3B82F6, #8B5CF6, #EC4899); /* Blue, Purple, Pink */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .glowing-border:hover::before {
+            opacity: 1;
+        }
+        /* Pulse light animation for main story card */
+        @keyframes pulse-light {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.005); opacity: 1; }
+        }
+        .animate-pulse-light {
+          animation: pulse-light 4s infinite alternate;
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Max width to prevent excessive chart size */
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh; /* Responsive height */
+            max-height: 400px; /* Maximum height to constrain on larger screens */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background-color: #1F2937; /* Solid Darker gray for chart background */
+        }
+
+
+        /* Solar System and Constellations Canvas Styles */
+        #solar-system-canvas, #constellation-canvas {
+            display: block;
+            background-color: transparent; /* Three.js handles background via scene.background */
+            border-radius: 50%; /* Make it circular */
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); /* Softer shadow */
+            cursor: grab; /* Indicate draggable */
+            transition: cursor 0.1s ease-in-out;
+        }
+        #solar-system-canvas.dragging, #constellation-canvas.dragging {
+            cursor: grabbing;
+        }
+
+        /* All Modal Overlays - SOLID black */
+        .planet-modal, #event-details-modal, #constellation-details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Solid black for full opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .planet-modal.active, #event-details-modal.active, #constellation-details-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* Planet/Event/Constellation Modals - Solid dark gray */
+        .planet-modal-content, .modal-content {
+            background-color: #374151; /* gray-700 */
+            border: 1px solid #4B5563; /* Gray-600 */
+        }
+
+        .planet-modal.active .planet-modal-content, #event-details-modal.active .modal-content, #constellation-details-modal.active .planet-modal-content {
+            transform: translateY(0);
+        }
+        .planet-modal-close, .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #9CA3AF; /* Gray-400 */
+            transition: color 0.2s ease-in-out;
+        }
+
+        .planet-modal-close:hover, .modal-close:hover {
+            color: #E5E7EB;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1F2937; } /* Darker gray for track */
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4B5563; } /* Gray-600 for thumb */
+
+
+        /* Animations for hero section text */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+            opacity: 0; /* Hidden by default */
+        }
+        .animate-fade-in-up.delay-200 { animation-delay: 0.2s; }
+        .animate-fade-in-up.delay-400 { animation-delay: 0.4s; }
+        .animate-fade-in-up.delay-600 { animation-delay: 0.6s; }
+
+        /* Tooltip Styles (not used in 3D, but kept) */
+        #planet-tooltip {
+            position: absolute;
+            background-color: #1F2937; /* Solid gray-800 */
+            color: #E5E7EB; /* Light gray */
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-size: 0.875rem; /* text-sm */
+            white-space: nowrap;
+            z-index: 100; /* Above other elements but below modals */
+            pointer-events: none; /* Allows clicks to pass through to elements below */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out;
+            transform: translate(-50%, -110%); /* Position above the cursor/element */
+        }
+        #planet-tooltip.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Calendar Styles - All solid dark colors */
+        #calendar-container {
+            max-width: 650px; /* Slightly wider */
+            margin: 0 auto;
+            border-radius: 1.5rem; /* More rounded */
+            padding: 3rem; /* More padding */
+            background-color: #111122; /* Solid dark color */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 30px rgba(139, 92, 246, 0.3); /* Stronger shadow with purple glow */
+            border: 1px solid #4B5563; /* Gray-600 */
+        }
+
+        #calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem; /* More margin */
+        }
+        #calendar-header button {
+            color: white;
+            padding: 0.75rem 1.5rem; /* Larger buttons */
+            border-radius: 9999px; /* Pill shape */
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #3B82F6, #8B5CF6); /* Gradient button */
+        }
+        #calendar-header button:hover { background: linear-gradient(45deg, #2563EB, #7C3AED); } /* Darker gradient on hover */
+
+        #current-month-year {
+            font-size: 2.2rem; /* Larger font */
+            font-weight: 700; /* Bold */
+            letter-spacing: 0.05em; /* Slightly spaced out */
+            color: #E5E7EB; text-shadow: 0 0 10px rgba(255,255,255,0.2); /* Subtle glow */
+        }
+
+        #weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem; /* More gap */
+            margin-bottom: 1.5rem; /* More margin */
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem; /* Slightly larger */
+            text-transform: uppercase; /* Uppercase */
+            color: #9CA3AF; /* Gray-400 */
+        }
+
+        #calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem; /* More gap */
+            text-align: center;
+        }
+        .calendar-day {
+            padding: 1rem; /* More padding */
+            border-radius: 0.75rem; /* More rounded */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 1.1rem; /* Slightly larger date numbers */
+            position: relative;
+            background-color: #374151; color: #E5E7EB; border: 1px solid rgba(75, 85, 99, 0.3); /* Subtle border */
+        }
+
+        .calendar-day:hover:not(.empty):not(.event-day) {
+            transform: translateY(-3px) scale(1.02); /* More pronounced hover */
+            background-color: #4B5563; box-shadow: 0 6px 12px rgba(0,0,0,0.4); /* Gray-600 on hover */
+        }
+        .calendar-day.empty {
+            background-color: transparent;
+            cursor: default;
+            border: none; /* No border for empty days */
+        }
+        .calendar-day.today {
+            border: 3px solid #EC4899; /* Pink-500, thicker border */
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5); /* Glowing effect */
+            background-color: #4A0E2A; /* Darker pinkish background */
+        }
+        .calendar-day.today:hover { background-color: #6A1A3F; } /* Even darker pinkish background on hover */
+
+
+        /* Animation for event star */
+        @keyframes star-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .calendar-day.event-day {
+            color: white;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #EC4899; /* Pink border */
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.7); /* Stronger glow */
+            background: linear-gradient(135deg, #8B5CF6, #3B82F6); /* Purple to Blue gradient */
+        }
+
+        .calendar-day.event-day::before {
+            content: '🌟'; /* More prominent star */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0); /* Start hidden */
+            font-size: 2.5rem; /* Larger star */
+            opacity: 0;
+            z-index: 0; /* Behind the number */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .calendar-day.event-day:hover::before {
+            transform: translate(-50%, -50%) scale(1); /* Reveal on hover */
+            opacity: 0.6;
+            animation: star-pulse 1s infinite alternate; /* Pulse on hover */
+        }
+        .calendar-day.event-day span {
+            position: relative; /* Keep number above star */
+            z-index: 1;
+        }
+        .calendar-day.event-day:hover {
+            transform: translateY(-3px) scale(1.05); /* Slightly bigger pop */
+            background: linear-gradient(135deg, #7C3AED, #2563EB); /* Darker gradient on hover */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 25px rgba(236, 72, 153, 0.8); /* Even stronger glow */
+        }
+        /* Story card background - solid dark */
+        #story-card {
+            background-color: #1A202C; /* Solid dark blue-gray */
+        }
+        /* Quiz/Birthday/Chatbot inner containers - solid dark */
+        .content-card-bg {
+            background-color: #374151; /* Solid dark gray */
+            border: 1px solid #4B5563; /* Gray-600 */
+        }
+        /* Chat input area background - solid dark */
+        .chat-input-bg {
+            background-color: #1A202C; /* Solid dark blue-gray */
+        }
+        /* Input fields - solid dark */
+        .input-field-bg {
+            background-color: #1F2937; /* Darker gray */
+            color: #E5E7EB; /* Light text */
+            border-color: #4B5563; /* Darker border */
+        }
+        /* Chat message colors - solid dark */
+        .bg-gray-700 { background-color: #374151; } /* User message */
+        .bg-blue-900\/50 { background-color: #1A202C; } /* SpaceMuse message */
+
     </style>
 </head>
-<body class="bg-[#0a0a1a]">
+<body>
 
     <!-- Header -->
-    <header class="bg-black/30 backdrop-blur-sm fixed top-0 left-0 right-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#home" class="text-2xl font-bold text-white">SpaceMuse</a>
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="#story" class="hover:text-blue-400 transition-colors">Today’s Story</a>
-                <a href="#quiz" class="hover:text-blue-400 transition-colors">Quiz</a>
-                <a href="#birthday-event" class="hover:text-blue-400 transition-colors">Cosmic Date</a>
-                <a href="#chatbot" class="hover:text-blue-400 transition-colors">Ask SpaceMuse</a>
+    <header class="header-bg fixed top-0 left-0 right-0 z-50 shadow-lg">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#home" class="text-3xl font-bold text-white hover:text-purple-400 transition-colors">SpaceMuse</a>
+            <div class="hidden md:flex space-x-8 items-center text-lg">
+                <a href="#solar-system" class="text-gray-300 hover:text-blue-400 transition-colors">Solar System</a>
+                <a href="#story" class="text-gray-300 hover:text-blue-400 transition-colors">Today's Story</a>
+                <a href="#overview" class="text-gray-300 hover:text-blue-400 transition-colors">Cosmic Overview</a>
+                <a href="#quiz" class="text-gray-300 hover:text-blue-400 transition-colors">Quiz</a>
+                <a href="#birthday-event" class="text-gray-300 hover:text-blue-400 transition-colors">Cosmic Date</a>
+                <a href="#calendar" class="text-gray-300 hover:text-blue-400 transition-colors">Cosmic Calendar</a>
+                <a href="#constellations" class="text-gray-300 hover:text-blue-400 transition-colors">Constellations</a> <!-- New Link -->
+                <a href="#chatbot" class="text-gray-300 hover:text-blue-400 transition-colors">Ask SpaceMuse</a>
             </div>
-            <a href="#chatbot" class="md:hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-sm">Ask</a>
+            <button id="day-night-toggle-btn" aria-label="Toggle Day or Night View">
+                <span class="light-mode-icon">☀️</span>
+                <span class="dark-mode-icon hidden">🌙</span> <!-- Always hidden now -->
+            </button>
+            <a href="#chatbot" class="md:hidden bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 rounded-full text-md shadow-md transition-all duration-300">Ask AI</a>
         </nav>
     </header>
 
     <main>
+        <!-- The persistent starfield background -->
+        <div class="starfield">
+            <div class="stars-layer layer-1"></div>
+            <div class="stars-layer layer-2"></div>
+            <div class="stars-layer layer-3"></div>
+            <div class="stars-layer layer-4"></div>
+            <!-- Nebula layers removed -->
+        </div>
         <!-- Section 1: Hero -->
-        <section id="home" class="h-screen min-h-[700px] flex items-center justify-center text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 bottom-0 z-0">
-                <div class="stars1"></div>
-                <div class="stars2"></div>
-                <div class="stars3"></div>
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a1a] via-[#0a0a1a]/50 to-transparent z-10"></div>
-            <div class="relative z-20 p-6">
-                <h1 class="text-4xl md:text-7xl font-extrabold mb-4 text-white leading-tight">
+        <section id="home" class="h-screen min-h-[650px] flex items-center justify-center text-center relative overflow-hidden">
+            <!-- Hero overlay to ensure solid background -->
+            <div class="absolute inset-0 bg-[#0A0A1A] z-10"></div>
+            <div class="relative z-20 p-6 max-w-5xl mx-auto">
+                <h1 class="text-5xl md:text-8xl font-extrabold mb-5 text-white leading-tight drop-shadow-lg animate-fade-in-up">
                     Unfold the Cosmos,
                 </h1>
-                <p class="text-4xl md:text-7xl font-extrabold mb-8 text-blue-400">
+                <p class="text-5xl md:text-8xl font-extrabold mb-10 text-purple-400 leading-tight drop-shadow-lg animate-fade-in-up delay-200">
                     One Story at a Time.
                 </p>
-                <p class="max-w-2xl mx-auto mb-10 text-lg text-gray-300">
+                <p class="max-w-3xl mx-auto mb-14 text-xl text-gray-300 animate-fade-in-up delay-400">
                     Welcome, traveler. SpaceMuse transforms pivotal moments in space history into poetic narratives. Discover, listen, and engage with the universe's grand tale.
                 </p>
-                <a href="#story" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-300 inline-block">
-                    Read Today’s Story
+                <a href="#solar-system" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-12 rounded-full text-xl shadow-xl transform hover:scale-105 transition-all duration-300 inline-block animate-fade-in-up delay-600">
+                    Explore Our Solar System
                 </a>
             </div>
         </section>
 
-        <!-- Section 2: Story Card -->
-        <section id="story" class="py-20 md:py-32">
+        <!-- Section 2: Solar System Explorer (New Section) -->
+        <section id="solar-system" class="py-24 md:py-36 app-section-bg relative z-10">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto mb-12">
-                    <h2 class="text-3xl md:text-5xl font-bold text-white">Today's Cosmic Narrative</h2>
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Journey Through Our Solar System in 3D</h2>
                     <p class="mt-4 text-lg text-gray-400">
-                        This section holds the day's featured story—a curated piece of space history, retold. You can read the narrative or use the "Read Aloud" button to have SpaceMuse narrate it for you, providing an accessible and immersive audio experience.
+                        Drag your mouse to orbit around the solar system. Click on each planet to discover fascinating facts!
                     </p>
                 </div>
-                <div id="story-card" class="bg-[#111122]/80 backdrop-blur-md rounded-xl shadow-2xl max-w-4xl mx-auto my-8 p-6 md:p-10 border border-gray-700">
-                    <h3 id="story-title" class="text-3xl md:text-4xl font-bold text-blue-300 mb-6 text-center leading-tight"></h3>
-                    <img id="story-image" src="" alt="Story image" class="mb-6 rounded-lg w-full h-auto object-cover max-h-96 border border-gray-700" onError="this.onerror=null;this.src='https://placehold.co/800x450/111122/3b82f6?text=Image+Not+Found';">
-                    <div id="story-content" class="text-lg text-gray-300 leading-relaxed space-y-4"></div>
-                    <div class="mt-8 pt-6 border-t border-gray-700 text-center">
-                        <button id="tts-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center mx-auto">
-                            <span class="mr-2 text-xl play-icon">▶</span>
-                            <span class="mr-2 text-xl stop-icon hidden">■</span>
+                <!-- The container for the Three.js canvas. The canvas itself will have a solid background in Three.js. -->
+                <div id="solar-system-container" class="relative mx-auto my-12 w-full max-w-[800px] h-[500px] md:h-[600px] lg:h-[700px] flex justify-center items-center bg-transparent">
+                    <canvas id="solar-system-canvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Planet Details Modal (New Element) -->
+        <div id="planet-details-modal" class="planet-modal">
+            <div class="planet-modal-content">
+                <button class="planet-modal-close">✖</button>
+                <h3 id="modal-planet-name" class="text-3xl font-bold text-blue-300 mb-4"></h3>
+                <p id="modal-planet-description" class="text-lg text-gray-300 leading-relaxed"></p>
+                <div class="mt-6 pt-4 border-t border-gray-700 text-center">
+                    <button id="more-facts-button" class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center mx-auto text-lg">
+                        <span class="mr-2">✨</span> More Facts
+                    </button>
+                    <div id="generated-facts-container" class="mt-4 text-left text-gray-300 text-sm space-y-2">
+                        <!-- Generated facts will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planet Tooltip (Not used in 3D, kept for consistency but will be inactive) -->
+        <div id="planet-tooltip" class="rounded-md shadow-lg"></div>
+
+        <!-- Section 3: Featured Story (Previous Section 2) -->
+        <section id="story" class="py-24 md:py-36 app-section-bg relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Today's Cosmic Narrative</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Immerse yourself in a pivotal moment from space history. This curated narrative is designed to be both informative and inspiring, offering a glimpse into humanity's journey among the stars.
+                    </p>
+                </div>
+                <!-- Story card background - Solid dark -->
+                <div id="story-card" class="glowing-border rounded-xl shadow-2xl max-w-5xl mx-auto p-8 md:p-12 relative animate-pulse-light">
+                    <h3 id="story-title" class="text-3xl md:text-5xl font-bold text-blue-300 mb-6 text-center leading-tight"></h3>
+                    <img id="story-image" src="https://placehold.co/1000x560/0a0a1a/8b5cf6?text=Voyager+Golden+Record" alt="Story image" class="mb-8 rounded-lg w-full h-auto object-cover max-h-[500px] border border-gray-700 shadow-lg">
+                    <div id="story-content" class="text-lg md:text-xl text-gray-300 leading-relaxed space-y-5 text-justify"></div>
+                    <div class="mt-10 pt-8 border-t border-gray-700 text-center">
+                        <button id="tts-button" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-10 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center mx-auto text-xl">
+                            <span class="mr-3 text-2xl play-icon">▶</span>
+                            <span class="mr-3 text-2xl stop-icon hidden">■</span>
                             <span class="button-text">Read Aloud</span>
                         </button>
                     </div>
@@ -119,30 +538,47 @@
             </div>
         </section>
 
-        <!-- Section 3: Quiz -->
-        <section id="quiz" class="py-20 md:py-32 bg-[#111122]">
+        <!-- Section 4: Cosmic Overview (Previous Section 3) -->
+        <section id="overview" class="py-24 md:py-36 app-section-bg relative z-10">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto mb-12">
-                    <h2 class="text-3xl md:text-5xl font-bold text-white">Test Your Cosmic Knowledge</h2>
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Cosmic Milestones: A Quick Look</h2>
                     <p class="mt-4 text-lg text-gray-400">
-                        Directly following the story, this interactive quiz challenges your understanding of space history. It’s a fun way to reinforce key facts and deepen your engagement. See how you score!
+                        Explore key periods in space exploration through this interactive chart. Discover the decades that launched humanity further into the cosmos.
                     </p>
                 </div>
-                <div id="quiz-container" class="bg-gray-800/50 rounded-xl shadow-2xl max-w-2xl mx-auto p-6 md:p-8 border border-gray-700">
+                <div class="chart-container">
+                    <canvas id="mission-chart"></canvas>
+                </div>
+                <p class="text-center text-gray-500 text-sm mt-8">Data represents hypothetical space mission launches by decade.</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Interactive Quiz (Previous Section 4) -->
+        <section id="quiz" class="py-24 md:py-36 app-section-bg relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Test Your Cosmic Knowledge</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Challenge yourself with our interactive quiz based on the stories you've explored. How well do you know the cosmos?
+                    </p>
+                </div>
+                <!-- Quiz container background - Solid dark -->
+                <div id="quiz-container" class="content-card-bg rounded-xl shadow-2xl max-w-3xl mx-auto p-8 md:p-12 border border-gray-700">
                     <div id="quiz-question-area">
-                        <p class="text-lg text-gray-200 mb-6" id="quiz-progress"></p>
-                        <h4 class="text-xl font-semibold mb-8 text-yellow-300" id="quiz-question"></h4>
-                        <div id="quiz-options" class="flex flex-col space-y-4 mb-8"></div>
-                        <p id="quiz-feedback" class="mb-6 text-md font-bold"></p>
-                        <button id="quiz-submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <p class="text-lg text-gray-300 mb-6" id="quiz-progress"></p>
+                        <h4 class="text-2xl md:text-3xl font-semibold mb-10 text-yellow-300" id="quiz-question"></h4>
+                        <div id="quiz-options" class="flex flex-col space-y-5 mb-10"></div>
+                        <p id="quiz-feedback" class="mb-8 text-xl font-bold text-center"></p>
+                        <button id="quiz-submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-xl">
                             Submit Answer
                         </button>
                     </div>
                     <div id="quiz-result-area" class="hidden text-center">
-                        <h3 class="text-3xl font-bold text-blue-300 mb-4">Quiz Complete!</h3>
-                        <p id="quiz-score" class="text-xl text-gray-200 mb-4"></p>
-                        <p id="quiz-final-feedback" class="text-2xl font-bold text-yellow-300 mb-8"></p>
-                        <button id="quiz-restart" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300">
+                        <h3 class="text-4xl font-bold text-blue-300 mb-6">Quiz Complete!</h3>
+                        <p id="quiz-score" class="text-2xl text-gray-200 mb-4"></p>
+                        <p id="quiz-final-feedback" class="text-3xl font-bold text-yellow-300 mb-10"></p>
+                        <button id="quiz-restart" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 text-xl">
                             Restart Quiz
                         </button>
                     </div>
@@ -150,60 +586,132 @@
             </div>
         </section>
 
-        <!-- Section 4: Birthday Space Event Finder -->
-        <section id="birthday-event" class="py-20 md:py-32">
+        <!-- Section 6: Birthday Space Event Finder (Previous Section 5) -->
+        <section id="birthday-event" class="py-24 md:py-36 app-section-bg relative z-10">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto mb-12">
-                    <h2 class="text-3xl md:text-5xl font-bold text-white">Your Birthday in Space History</h2>
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Your Birthday in Space History</h2>
                     <p class="mt-4 text-lg text-gray-400">
-                        Ever wondered what significant cosmic event occurred on your birthday? Enter your special date (or speak it!) and SpaceMuse will reveal a fascinating moment from space history tied to your day.
+                        Discover fascinating cosmic events that happened on your special day! Enter your birthday to find a unique connection to the universe.
                     </p>
                 </div>
-                <div class="bg-gray-800/50 rounded-xl shadow-2xl max-w-xl mx-auto p-6 md:p-8 border border-gray-700 text-center">
-                    <h3 class="text-3xl font-bold text-blue-300 mb-6">Find Your Cosmic Coincidence</h3>
-                    <form id="birthday-form" class="space-y-4 mb-6">
-                        <input type="text" id="birthday-month" placeholder="Month (e.g., July)" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <input type="number" id="birthday-day" placeholder="Day (e.g., 20)" min="1" max="31" class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <div class="flex justify-center space-x-4">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md">Find Event</button>
-                            <button type="button" id="birthday-voice-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-md flex items-center disabled:opacity-50">
-                                <span class="mic-icon">🎤</span>
-                                <span class="listening-text hidden ml-2">Listening...</span>
+                <!-- Birthday container background - Solid dark -->
+                <div class="content-card-bg rounded-xl shadow-2xl max-w-2xl mx-auto p-8 md:p-12 border border-gray-700 text-center">
+                    <h3 class="text-3xl md:text-4xl font-bold text-blue-300 mb-8">Find Your Cosmic Coincidence</h3>
+                    <form id="birthday-form" class="space-y-6 mb-8">
+                        <input type="text" id="birthday-month" placeholder="Month (e.g., July)" class="w-full p-4 border border-gray-600 rounded-lg input-field-bg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                        <input type="number" id="birthday-day" placeholder="Day (e.g., 20)" min="1" max="31" class="w-full p-4 border border-gray-600 rounded-lg input-field-bg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                        <input type="number" id="birthday-year" placeholder="Year (e.g., 1990)" min="1900" max="2025" class="w-full p-4 border border-gray-600 rounded-lg input-field-bg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button type="submit" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 text-lg">Find Event</button>
+                            <button type="button" id="birthday-voice-btn" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-md transform hover:scale-105 transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-lg">
+                                <span class="mic-icon mr-2">🎤</span>
+                                <span class="listening-text hidden">Listening...</span>
                             </button>
                         </div>
                     </form>
-                    <div id="birthday-result-container" class="mt-6">
-                        <p id="birthday-feedback" class="text-gray-400 italic mb-4"></p>
-                        <div id="birthday-event-display" class="hidden p-4 bg-gray-700 rounded-lg shadow-inner border border-gray-600 text-left">
-                            <h4 id="birthday-event-title" class="text-xl font-bold text-yellow-300 mb-2"></h4>
-                            <p id="birthday-event-text" class="text-gray-200"></p>
+                    <div id="birthday-result-container" class="mt-10">
+                        <p id="birthday-feedback" class="text-gray-400 italic mb-6 text-lg"></p>
+                        <div id="birthday-event-display" class="hidden p-6 bg-gray-700 rounded-lg shadow-inner border border-gray-600 text-left space-y-3">
+                            <p id="birthday-age-display" class="text-gray-200 text-lg font-bold"></p>
+                            <p id="birthday-zodiac-display" class="text-gray-200 text-lg font-bold"></p>
+                            <h4 id="birthday-event-title" class="text-2xl font-bold text-yellow-300 mb-3"></h4>
+                            <p id="birthday-event-text" class="text-gray-200 text-lg"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 5: Chatbot -->
-        <section id="chatbot" class="py-20 md:py-32 bg-[#111122]">
+        <!-- Section 7: Cosmic Calendar -->
+        <section id="calendar" class="py-24 md:py-36 app-section-bg relative z-10">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto mb-12">
-                    <h2 class="text-3xl md:text-5xl font-bold text-white">Ask SpaceMuse</h2>
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Cosmic Event Calendar</h2>
                     <p class="mt-4 text-lg text-gray-400">
-                        Your curiosity doesn't have to end with the story. In this section, you can directly ask SpaceMuse any question about space history. Use your voice or keyboard to inquire about missions, astronauts, or any cosmic query.
+                        Explore notable cosmic events throughout the year. Click on a highlighted date to reveal its story!
                     </p>
                 </div>
-                <div class="max-w-3xl mx-auto bg-gray-800/50 rounded-xl shadow-2xl border border-gray-700 flex flex-col h-[60vh]">
-                    <div id="chat-history" class="flex-grow p-6 overflow-y-auto space-y-4">
+                <!-- Calendar container background - Solid dark -->
+                <div id="calendar-container" class="content-card-bg">
+                    <div id="calendar-header">
+                        <button id="prev-month">← Previous</button>
+                        <span id="current-month-year"></span>
+                        <button id="next-month">Next →</button>
+                    </div>
+                    <div id="weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    <div id="calendar-grid">
+                        <!-- Calendar days will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details Modal (New Element) -->
+        <div id="event-details-modal" class="planet-modal">
+            <div class="modal-content">
+                <button class="modal-close">✖</button>
+                <h3 id="modal-event-title" class="text-3xl font-bold text-blue-300 mb-4"></h3>
+                <p id="modal-event-description" class="text-lg text-gray-300 leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- Section 8: Cosmic Constellations (New Section with 3D Canvas) -->
+        <section id="constellations" class="py-24 md:py-36 app-section-bg relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Celestial Art: Popular Constellations in 3D</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Explore some of the most famous star patterns in a dynamic 3D environment. Drag your mouse to rotate the view and click on a constellation to learn more!
+                    </p>
+                </div>
+                <!-- The container for the Three.js canvas. The canvas itself will have a solid background in Three.js. -->
+                <div id="constellation-container" class="relative mx-auto my-12 w-full max-w-[800px] h-[500px] md:h-[600px] lg:h-[700px] flex justify-center items-center bg-transparent">
+                    <canvas id="constellation-canvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Constellation Details Modal (Reuses planet-details-modal structure but for constellations) -->
+        <div id="constellation-details-modal" class="planet-modal">
+            <div class="planet-modal-content">
+                <button class="planet-modal-close" id="constellation-modal-close">✖</button>
+                <h3 id="modal-constellation-name" class="text-3xl font-bold text-blue-300 mb-4"></h3>
+                <p id="modal-constellation-description" class="text-lg text-gray-300 leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- Section 9: AI Chatbot (Previous Section 6) -->
+        <section id="chatbot" class="py-24 md:py-36 app-section-bg relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-4xl mx-auto mb-16">
+                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4">Ask SpaceMuse Anything</h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Your personal cosmic historian is here! Ask any question about space, its history, or future, and get insightful answers powered by AI.
+                    </p>
+                </div>
+                <!-- Chatbot container background - Solid dark -->
+                <div class="max-w-4xl mx-auto content-card-bg rounded-xl shadow-2xl border border-gray-700 flex flex-col h-[70vh] min-h-[500px]">
+                    <div id="chat-history" class="flex-grow p-6 md:p-8 overflow-y-auto space-y-5 custom-scrollbar">
                         <!-- Chat messages will be appended here -->
                     </div>
-                    <div class="p-4 border-t border-gray-700 bg-gray-900/50 rounded-b-xl">
-                        <div class="flex items-center space-x-2">
-                            <input type="text" id="chat-input" placeholder="Type your question..." class="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button id="chat-voice-btn" class="p-3 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shrink-0 disabled:opacity-50">
-                                <span class="text-xl chat-mic-icon">🎤</span>
+                    <!-- Chat input bar background - Solid dark -->
+                    <div class="p-4 md:p-6 border-t border-gray-700 chat-input-bg rounded-b-xl">
+                        <div class="flex items-center space-x-3">
+                            <input type="text" id="chat-input" placeholder="Type your question about space..." class="flex-grow p-4 border border-gray-600 rounded-lg input-field-bg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                            <button id="chat-voice-btn" class="p-4 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shadow-md shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="text-2xl chat-mic-icon">🎤</span>
                             </button>
-                            <button id="chat-submit-btn" class="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors shrink-0">
-                                <span class="text-xl">➤</span>
+                            <button id="chat-submit-btn" class="p-4 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors shadow-md shrink-0">
+                                <span class="text-2xl">➤</span>
                             </button>
                         </div>
                     </div>
@@ -213,42 +721,74 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black py-8 text-center border-t border-gray-800">
+    <footer class="footer-bg py-10 text-center border-t border-gray-800 relative z-10">
         <div class="container mx-auto px-6">
-            <p class="text-gray-400">&copy; 2025 SpaceMuse. All cosmic rights reserved.</p>
+            <p class="text-gray-400 text-lg">&copy; 2025 SpaceMuse. All cosmic rights reserved.</p>
         </div>
     </footer>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DATA ---
             const storyData = {
                 title: "The Golden Record: A Cosmic Message in a Bottle",
-                image: "https://placehold.co/800x450/0a0a1a/8b5cf6?text=Voyager+Golden+Record",
-                content: `In the vast, silent expanse of space, two emissaries from Earth, Voyager 1 and 2, journey onward. Affixed to each is a golden phonograph record, a cosmic message in a bottle intended for any intelligent extraterrestrial life that might find them.\n\nLaunched in 1977, these records are time capsules of our world. Curated by a committee led by the great astronomer Carl Sagan, they contain sounds and images selected to portray the diversity of life and culture on Earth. They hold greetings in 55 languages, the sounds of whales, a baby crying, waves breaking on a shore, and a collection of music ranging from Bach and Beethoven to Chuck Berry's "Johnny B. Goode".\n\nThe cover of the record is an instruction manual in itself, etched with diagrams explaining the origin of the spacecraft and how to play the record. It includes a pulsar map to locate our solar system and a diagram of the hydrogen atom, a fundamental constant of the universe. It's a message of hope, a testament to a species that looked up at the stars and dared to reach out.`
+                image: "https://placehold.co/1000x560/0a0a1a/8b5cf6?text=Voyager+Golden+Record",
+                content: `In the vast, silent expanse of space, two emissaries from Earth, Voyager 1 and 2, journey onward. Affixed to each is a golden phonograph record, a cosmic message in a bottle intended for any intelligent extraterrestrial life that might find them.\n\nLaunched in 1977, these records are time capsules of our world. Curated by a committee led by the great astronomer Carl Sagan, they contain sounds and images selected to portray the diversity of life and and culture on Earth. They hold greetings in 55 languages, the sounds of whales, a baby crying, waves breaking on a shore, and a collection of music ranging from Bach and Beethoven to Chuck Berry's "Johnny B. Goode".\n\nThe cover of the record is an instruction manual in itself, etched with diagrams explaining the origin of the spacecraft and how to play the record. It includes a pulsar map to locate our solar system and a diagram of the hydrogen atom, a fundamental constant of the universe. It's a message of hope, a testament to a species that looked up at the stars and dared to reach out.`
             };
 
             const quizQuestions = [
                 { question: "Which spacecraft carry the Golden Records?", options: ["Pioneer 10 & 11", "Viking 1 & 2", "Voyager 1 & 2", "Apollo 11 & 12"], answer: "Voyager 1 & 2" },
                 { question: "Who led the committee that created the Golden Record?", options: ["Neil deGrasse Tyson", "Carl Sagan", "Stephen Hawking", "Albert Einstein"], answer: "Carl Sagan" },
-                { question: "In which decade were the Voyager spacecraft launched?", options: ["1960s", "1970s", "1980s", "1990s"], answer: "1970s" }
-            ];
-            
-            const spaceEventsByDate = [
-                { month: "January", day: 28, event: "1986: The Space Shuttle Challenger disintegrated 73 seconds after launch." },
-                { month: "February", day: 20, event: "1962: John Glenn became the first American to orbit Earth." },
-                { month: "April", day: 12, event: "1961: Yuri Gagarin became the first human in space." },
-                { month: "July", day: 20, event: "1969: Apollo 11's lunar module landed on the Moon." },
-                { month: "October", day: 4, event: "1957: Sputnik 1, the first artificial satellite, was launched." },
+                { question: "In which decade were the Voyager spacecraft launched?", options: ["1960s", "1970s", "1980s", "1990s"], answer: "1970s" },
+                { question: "What is the largest planet in our solar system?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: "Jupiter" },
+                { question: "Which galaxy is our solar system a part of?", options: ["Andromeda", "Triangulum", "Messier 81", "Milky Way"], answer: "Milky Way" }
             ];
 
+            const spaceEventsByDate = [
+                { month: "January", day: 28, event: "1986: The Space Shuttle Challenger disintegrated 73 seconds after launch, killing all seven crew members. A tragic day in space history." },
+                { month: "February", day: 20, event: "1962: John Glenn became the first American to orbit Earth aboard Friendship 7, completing three orbits in just under five hours." },
+                { month: "April", day: 12, event: "1961: Yuri Gagarin became the first human in space, orbiting Earth aboard Vostok 1 for 108 minutes. This day is now celebrated as 'Cosmonautics Day'." },
+                { month: "July", day: 20, event: "1969: Apollo 11's lunar module, Eagle, landed on the Moon, and Neil Armstrong became the first human to walk on its surface." },
+                { month: "October", day: 4, event: "1957: Sputnik 1, the first artificial satellite, was launched by the Soviet Union, marking the beginning of the Space Age." },
+                { month: "August", day: 25, event: "2012: Voyager 1 officially entered interstellar space, becoming the first human-made object to cross this boundary." },
+                { month: "December", day: 25, event: "2021: The James Webb Space Telescope was launched, destined to be the premier observatory of the next decade." }
+            ];
+
+            const missionData = {
+                labels: ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'],
+                datasets: [{
+                    label: 'Number of Major Space Missions',
+                    data: [5, 25, 40, 30, 45, 55, 60, 70], // Hypothetical data
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)', // Tailwind blue-500
+                        'rgba(139, 92, 246, 0.8)', // Tailwind purple-500
+                        'rgba(236, 72, 153, 0.8)', // Tailwind pink-500
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(139, 92, 246, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
             // --- DOM Elements ---
-            const storyTitle = document.getElementById('story-title');
-            const storyImage = document.getElementById('story-image');
-            const storyContent = document.getElementById('story-content');
+            const storyTitleEl = document.getElementById('story-title');
+            const storyImageEl = document.getElementById('story-image');
+            const storyContentEl = document.getElementById('story-content');
             const ttsButton = document.getElementById('tts-button');
-            const quizContainer = document.getElementById('quiz-container');
+
             const quizQuestionArea = document.getElementById('quiz-question-area');
             const quizResultArea = document.getElementById('quiz-result-area');
             const quizQuestionEl = document.getElementById('quiz-question');
@@ -259,53 +799,670 @@
             const quizScoreEl = document.getElementById('quiz-score');
             const quizFinalFeedbackEl = document.getElementById('quiz-final-feedback');
             const quizRestartBtn = document.getElementById('quiz-restart');
+
             const birthdayForm = document.getElementById('birthday-form');
             const birthdayMonthInput = document.getElementById('birthday-month');
             const birthdayDayInput = document.getElementById('birthday-day');
+            const birthdayYearInput = document.getElementById('birthday-year'); // New: Year input
             const birthdayVoiceBtn = document.getElementById('birthday-voice-btn');
-            const birthdayResultContainer = document.getElementById('birthday-result-container');
             const birthdayFeedbackEl = document.getElementById('birthday-feedback');
             const birthdayEventDisplay = document.getElementById('birthday-event-display');
+            const birthdayAgeDisplay = document.getElementById('birthday-age-display'); // New: Age display
+            const birthdayZodiacDisplay = document.getElementById('birthday-zodiac-display'); // New: Zodiac display
             const birthdayEventTitle = document.getElementById('birthday-event-title');
             const birthdayEventText = document.getElementById('birthday-event-text');
+
             const chatHistoryEl = document.getElementById('chat-history');
             const chatInputEl = document.getElementById('chat-input');
             const chatSubmitBtn = document.getElementById('chat-submit-btn');
             const chatVoiceBtn = document.getElementById('chat-voice-btn');
+
+            const solarSystemContainer = document.getElementById('solar-system-container');
+            const planetModal = document.getElementById('planet-details-modal');
+            const modalPlanetName = document.getElementById('modal-planet-name');
+            const modalPlanetDescription = document.getElementById('modal-planet-description');
+            const planetModalCloseBtn = document.querySelector('#planet-details-modal .planet-modal-close');
+            // const planetTooltip = document.getElementById('planet-tooltip'); // Not used in 3D
+            const moreFactsButton = document.getElementById('more-facts-button'); // New
+            const generatedFactsContainer = document.getElementById('generated-facts-container'); // New
+
+
+            // Calendar DOM Elements
+            const calendarContainer = document.getElementById('calendar-container');
+            const currentMonthYearEl = document.getElementById('current-month-year');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+            const calendarGrid = document.getElementById('calendar-grid');
+            const eventDetailsModal = document.getElementById('event-details-modal');
+            const modalEventTitle = document.getElementById('modal-event-title');
+            const modalEventDescription = document.getElementById('modal-event-description');
+            const eventModalCloseBtn = eventDetailsModal.querySelector('.modal-close');
+
+            // Constellation DOM Elements
+            const constellationContainer = document.getElementById('constellation-container');
+            const constellationDetailsModal = document.getElementById('constellation-details-modal');
+            const modalConstellationName = document.getElementById('modal-constellation-name');
+            const modalConstellationDescription = document.getElementById('modal-constellation-description');
+            const constellationModalCloseBtn = document.getElementById('constellation-modal-close');
+
+            // Day/Night Toggle DOM Elements - Now effectively removed
+            const dayNightToggleButton = document.getElementById('day-night-toggle-btn');
+
 
             // --- State Variables ---
             let currentSpeech = null;
             let quizCurrentIndex = 0;
             let quizScore = 0;
             let selectedQuizOption = null;
+            let currentCalendarDate = new Date(); // For calendar functionality
+            // let currentPlanetElementInModal = null; // No longer needed for 3D zoom
 
-            // --- Animated Starfield ---
-            function createStars(selector, count) {
-                const container = document.querySelector(selector);
-                if (!container) return;
-                let boxShadow = '';
-                for (let i = 0; i < count; i++) {
-                    boxShadow += `${Math.random() * 2000}px ${Math.random() * 2000}px #FFF, `;
+            // --- Solar System Data (adjusted for Three.js colors and relative sizes/distances) ---
+            const planetsData = [
+                { id: 'sun', name: 'Sun', description: 'The incandescent heart of our solar system, a colossal star of hot plasma. Its powerful gravitational pull orchestrates the dance of all planets around it, while its fusion reactions unleash the light and heat essential for life on Earth.', radius: 10, color: 0xFFD700, emissive: 0xFFA500 }, // Sun color and glow
+                { id: 'mercury', name: 'Mercury', description: 'A small, rocky world scarred by craters, Mercury is the closest planet to the Sun. Its days are scorching hot and its nights are frigidly cold, making it a world of extremes with virtually no atmosphere, offering a harsh yet captivating landscape.', radius: 0.8, color: 0x8A8A8A, distance: 20, orbitalSpeed: 0.05 }, // Adjusted radius and distance
+                { id: 'venus', name: 'Venus', description: 'Often called Earth\'s "twin" due to its similar size, Venus is shrouded in a thick, toxic atmosphere that traps heat, making it the hottest planet in our solar system. Its dense clouds cause a crushing surface pressure and perpetual sulfuric rain, creating an infernal landscape.', radius: 1.5, color: 0xCC7F00, distance: 30, orbitalSpeed: 0.035 },
+                { id: 'earth', name: 'Earth', description: 'Our unique and vibrant home, abundant with liquid water and a diverse biosphere. Its protective atmosphere, active geology, and perfect distance from the Sun make it the only known planet capable of sustaining life as we know it, a true oasis in the cosmos.', radius: 1.6, color: 0x0077BE, distance: 40, orbitalSpeed: 0.028 },
+                { id: 'mars', name: 'Mars', description: 'The captivating Red Planet, a dusty, cold, desert world with a thin atmosphere. Evidence suggests it once had liquid water, and it continues to be a primary target in the search for extraterrestrial life, with ambitious missions constantly exploring its mysteries.', radius: 1.2, color: 0xC1440E, distance: 55, orbitalSpeed: 0.023 },
+                { id: 'jupiter', name: 'Jupiter', description: 'The colossal king of planets, Jupiter is a swirling gas giant composed primarily of hydrogen and helium. Its most iconic feature is the Great Red Spot, an enormous storm that has raged for centuries, visible even from Earth as a crimson eye.', radius: 5, color: 0xE0BB8B, distance: 90, orbitalSpeed: 0.015 },
+                { id: 'saturn', name: 'Saturn', description: 'Renowned for its breathtaking and intricate system of rings, composed of countless ice particles and rocky debris spanning thousands of kilometers. This magnificent gas giant is a true marvel of our solar system, with a swirling, turbulent atmosphere and numerous moons.', radius: 4, color: 0xDAB25F, distance: 120, orbitalSpeed: 0.012, hasRings: true },
+                { id: 'uranus', name: 'Uranus', description: 'An enigmatic ice giant that uniquely rotates on its side, making it appear to roll through space. Its atmosphere, rich in methane, gives it a stunning blue-green hue, and it is surrounded by a faint system of rings and numerous moons, a serene giant of the outer solar system.', radius: 2.8, color: 0xAADDFF, distance: 150, orbitalSpeed: 0.009 },
+                { id: 'neptune', name: 'Neptune', description: 'The mysterious outermost planet in our solar system, a frigid, dark, and windswept ice giant. It boasts powerful supersonic winds and features a Great Dark Spot, reminiscent of Jupiter\'s storm, though transient, constantly changing as it churns through its icy depths.', radius: 2.7, color: 0x3667E3, distance: 180, orbitalSpeed: 0.007 },
+                { id: 'pluto', name: 'Pluto', description: 'Once considered the ninth planet, Pluto is now classified as a dwarf planet located in the Kuiper Belt. It is a complex world of mountains, valleys, plains, and glaciers, and has five known moons, with Charon being the largest.', radius: 0.5, color: 0x996633, distance: 200, orbitalSpeed: 0.005 },
+            ];
+
+            // --- Three.js Variables for Solar System ---
+            let sceneSolarSystem, cameraSolarSystem, rendererSolarSystem;
+            let solarSystemGroup; // To hold all planets and sun for global rotation
+            let solarSystemObjects = []; // Store references to solar system meshes for interaction (planets and sun)
+            let raycasterSolarSystem = new THREE.Raycaster();
+            let mouseSolarSystem = new THREE.Vector2();
+
+            let isDraggingSolarSystem = false;
+            let previousMousePositionSolarSystem = { x: 0, y: 0 };
+            let orbitSpeedSolarSystem = 0.002; // Speed of camera orbit when dragging
+
+            // --- Constellation Data (simplified coordinates for 3D representation) ---
+            const constellationsData = [
+                {
+                    id: 'orion',
+                    name: 'Orion the Hunter',
+                    description: 'One of the most recognizable constellations, prominent in the winter sky, featuring bright stars like Betelgeuse and Rigel. Its belt of three stars is particularly famous.',
+                    starPoints: [
+                        // Simplified 3D coordinates for stars
+                        new THREE.Vector3(0, 5, 0),     // Betelgeuse-like
+                        new THREE.Vector3(1, -5, 0),    // Rigel-like
+                        new THREE.Vector3(5, 0, 0),     // Bellatrix-like
+                        new THREE.Vector3(-4, -1, 0),   // Saiph-like
+                        new THREE.Vector3(2, 2, 0),     // Alnilam (belt)
+                        new THREE.Vector3(0, 2.5, 0),   // Alnitak (belt)
+                        new THREE.Vector3(-2, 3, 0)     // Mintaka (belt)
+                    ],
+                    lines: [
+                        [0, 2], [2, 4], [4, 5], [5, 6], [6, 3], [3, 1], // Simplified Orion shape
+                        [0, 6] // Extra connection for the 'arm'
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
+                },
+                {
+                    id: 'ursamajor',
+                    name: 'Ursa Major (The Great Bear)',
+                    description: 'Known for its easily identifiable asterism, the Big Dipper, it\'s a key guide to locating the North Star, Polaris. Often used by stargazers in the Northern Hemisphere.',
+                    starPoints: [
+                        new THREE.Vector3(-7, 3, 0), // Dubhe
+                        new THREE.Vector3(-5, 5, 0), // Merak
+                        new THREE.Vector3(-2, 4, 0), // Phecda
+                        new THREE.Vector3(0, 1, 0),  // Megrez
+                        new THREE.Vector3(3, 2, 0),  // Alioth
+                        new THREE.Vector3(5, 4, 0),  // Mizar
+                        new THREE.Vector3(6, 3, 0)   // Alkaid
+                    ],
+                    lines: [
+                        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], // Dipper bowl and handle
+                        [0,6] // Tail curve
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
+                },
+                {
+                    id: 'leo',
+                    name: 'Leo the Lion',
+                    description: 'A majestic spring constellation with a distinctive sickle shape forming the lion\'s head, home to the bright star Regulus. Represents the Nemean Lion from Greek mythology.',
+                    starPoints: [
+                        new THREE.Vector3(0, 0, 0),    // Regulus
+                        new THREE.Vector3(2, 2, 0),    // Denebola
+                        new THREE.Vector3(-2, 3, 0),   // Algieba
+                        new THREE.Vector3(-4, 2, 0),   // Zosma
+                        new THREE.Vector3(-3, -1, 0),  // Chertan
+                        new THREE.Vector3(-1, -3, 0)   // Rasalas
+                    ],
+                    lines: [
+                        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0] // Lion body and head
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
+                },
+                {
+                    id: 'scorpius',
+                    name: 'Scorpius the Scorpion',
+                    description: 'A prominent southern constellation, visible in summer, characterized by its curving tail and the bright red supergiant Antares. Mythologically, it represents the scorpion that stung Orion.',
+                    starPoints: [
+                        new THREE.Vector3(0, 0, 0), // Antares
+                        new THREE.Vector3(2, 1, 0),
+                        new THREE.Vector3(4, 0, 0),
+                        new THREE.Vector3(5, -2, 0),
+                        new THREE.Vector3(4, -4, 0),
+                        new THREE.Vector3(2, -5, 0),
+                        new THREE.Vector3(0, -4, 0),
+                        new THREE.Vector3(-2, -3, 0)
+                    ],
+                    lines: [
+                        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0] // Scorpion shape
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
+                },
+                {
+                    id: 'cassiopeia',
+                    name: 'Cassiopeia the Queen',
+                    description: 'Recognizable by its distinct W or M shape, this northern constellation is visible year-round for many observers. It portrays the vain queen Cassiopeia of ancient Greek myth.',
+                    starPoints: [
+                        new THREE.Vector3(-4, 0, 0),
+                        new THREE.Vector3(-2, 3, 0),
+                        new THREE.Vector3(0, 0, 0),
+                        new THREE.Vector3(2, 3, 0),
+                        new THREE.Vector3(4, 0, 0)
+                    ],
+                    lines: [
+                        [0, 1], [1, 2], [2, 3], [3, 4] // W shape
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
+                },
+                {
+                    id: 'cygnus',
+                    name: 'Cygnus the Swan',
+                    description: 'Also known as the Northern Cross, this constellation flies through the summer Milky Way, featuring the bright star Deneb at its head. It represents a swan in flight.',
+                    starPoints: [
+                        new THREE.Vector3(0, 5, 0), // Deneb
+                        new THREE.Vector3(0, 2, 0), // Sadr
+                        new THREE.Vector3(-3, 0, 0), // Gienah
+                        new THREE.Vector3(3, 0, 0),  // Albireo
+                        new THREE.Vector3(0, -3, 0), // Fawaris
+                        new THREE.Vector3(0, -5, 0) // Tail star
+                    ],
+                    lines: [
+                        [0, 1], [1, 2], [1, 3], [1, 4], [4, 5] // Cross/Swan shape
+                    ],
+                    starColor: 0xFFFFFF,
+                    lineColor: 0x888888
                 }
-                container.style.setProperty('--shadows-sm', boxShadow.slice(0, -2));
+            ];
+
+            // --- Three.js Variables for Constellations ---
+            let sceneConstellations, cameraConstellations, rendererConstellations;
+            let constellationGroup; // To hold all constellations for global rotation
+            let constellationObjects = []; // Store references to constellation meshes (stars for raycasting)
+
+            let isDraggingConstellations = false;
+            let previousMousePositionConstellations = { x: 0, y: 0 };
+            let orbitSpeedConstellations = 0.002; // Speed of camera orbit when dragging
+
+
+            // --- Helper to add background stars to a 3D scene ---
+            function addBackgroundStars(scene, count, areaSize = 300, starSize = 0.5) {
+                const positions = new Float32Array(count * 3);
+                const colors = new Float32Array(count * 3);
+                const color = new THREE.Color();
+
+                for (let i = 0; i < count; i++) {
+                    // Position stars randomly within a cube area
+                    positions[i * 3] = (Math.random() * areaSize - areaSize / 2);
+                    positions[i * 3 + 1] = (Math.random() * areaSize - areaSize / 2);
+                    positions[i * 3 + 2] = (Math.random() * areaSize - areaSize / 2);
+
+                    // Randomize star color slightly (e.g., from white to faint yellow/blue)
+                    color.setHSL(Math.random() * 0.2 + 0.5, 0.5, Math.random() * 0.5 + 0.5); // Hue, Saturation, Lightness
+                    colors[i * 3] = color.r;
+                    colors[i * 3 + 1] = color.g;
+                    colors[i * 3 + 2] = color.b;
+                }
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const material = new THREE.PointsMaterial({
+                    size: starSize,
+                    vertexColors: true, // Use colors from geometry attribute
+                    transparent: true,
+                    opacity: 0.8,
+                    blending: THREE.AdditiveBlending // Makes stars brighter where they overlap
+                });
+
+                const starField = new THREE.Points(geometry, material);
+                scene.add(starField);
             }
-            createStars('.stars1', 700);
-            createStars('.stars2', 200);
-            createStars('.stars3', 100);
+
+            // --- Solar System Initialization (Three.js) ---
+            function initSolarSystemThreeJS() {
+                // Get canvas element
+                const canvas = document.getElementById('solar-system-canvas');
+                const container = document.getElementById('solar-system-container');
+
+                // Scene
+                sceneSolarSystem = new THREE.Scene();
+                // Set solid background for the Three.js scene
+                sceneSolarSystem.background = new THREE.Color(0x0A0A1A);
+
+                // Camera
+                cameraSolarSystem = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+                cameraSolarSystem.position.set(0, 50, 250); // Adjusted position for better initial view
+                cameraSolarSystem.lookAt(0, 0, 0);
+
+                // Renderer
+                rendererSolarSystem = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false }); // Set alpha to false for non-transparent canvas
+                rendererSolarSystem.setSize(container.clientWidth, container.clientHeight);
+                rendererSolarSystem.setPixelRatio(window.devicePixelRatio);
+
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0x333333); // Soft ambient light
+                sceneSolarSystem.add(ambientLight);
+
+                const sunLight = new THREE.PointLight(0xffffff, 1.5, 500); // Brighter light from the sun
+                sunLight.position.set(0, 0, 0);
+                sceneSolarSystem.add(sunLight);
+
+                // Add background stars to the solar system scene
+                addBackgroundStars(sceneSolarSystem, 1500, 500, 0.5); // 1500 stars, spread over 500 units, size 0.5
+
+                // Create Solar System Group (for rotating the entire system view)
+                solarSystemGroup = new THREE.Group();
+                sceneSolarSystem.add(solarSystemGroup);
+
+                // Create Sun
+                const sunData = planetsData[0];
+                const sunGeometry = new THREE.SphereGeometry(sunData.radius, 32, 32);
+                const sunMaterial = new THREE.MeshBasicMaterial({ color: sunData.color, emissive: sunData.emissive });
+                const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+                sun.name = sunData.name; // For raycasting
+                sun.userData = { description: sunData.description, type: 'planet' }; // Store data for modal
+                solarSystemGroup.add(sun);
+                solarSystemObjects.push(sun); // Add sun to objects array for interaction
+
+                // Create Planets and Orbits
+                planetsData.slice(1).forEach(p => { // Skip the Sun
+                    // Planet
+                    const planetGeometry = new THREE.SphereGeometry(p.radius, 32, 32);
+                    const planetMaterial = new THREE.MeshLambertMaterial({ color: p.color });
+                    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+
+                    // Create an empty object (pivot) for the planet to orbit around the sun
+                    const planetOrbitPivot = new THREE.Object3D();
+                    solarSystemGroup.add(planetOrbitPivot); // Add pivot to main solar system group
+
+                    // Set the planet's initial position relative to its pivot
+                    planet.position.x = p.distance;
+                    planetOrbitPivot.add(planet);
+
+                    // Store original data on the mesh for easy access later (e.g., for modal)
+                    planet.name = p.name; // For raycasting
+                    planet.userData = { description: p.description, orbitalSpeed: p.orbitalSpeed, type: 'planet' };
+                    solarSystemObjects.push(planet); // Add to array for raycasting
+
+                    // Orbit Path (RingGeometry for a circular line)
+                    const orbitGeometry = new THREE.RingGeometry(p.distance - 0.5, p.distance + 0.5, 64);
+                    const orbitMaterial = new THREE.MeshBasicMaterial({
+                        color: 0x969696, // Light gray for orbit path
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.2 // More visible dashed look
+                    });
+                    const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                    orbit.rotation.x = Math.PI / 2; // Rotate to lie flat on XY plane
+                    solarSystemGroup.add(orbit); // Add orbit to main solar system group
+
+                    // If Saturn, add rings
+                    if (p.hasRings) {
+                        const ringGeometry = new THREE.RingGeometry(p.radius * 1.5, p.radius * 2.5, 64);
+                        const ringMaterial = new THREE.MeshBasicMaterial({
+                            color: 0xAAAAAA,
+                            side: THREE.DoubleSide,
+                            transparent: true,
+                            opacity: 0.6
+                        });
+                        const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+                        rings.rotation.x = Math.PI / 2.5; // Slight tilt
+                        planet.add(rings); // Rings orbit with Saturn
+                    }
+                });
+
+                // Set up event listeners for camera control
+                canvas.addEventListener('mousedown', onMouseDownSolarSystem);
+                canvas.addEventListener('mouseup', onMouseUpSolarSystem);
+                canvas.addEventListener('mousemove', onMouseMoveSolarSystem);
+                canvas.addEventListener('click', onCanvasClickSolarSystem); // For raycasting planet clicks
+            }
+
+            // --- Constellation Initialization (Three.js) ---
+            function initConstellationsThreeJS() {
+                const canvas = document.getElementById('constellation-canvas');
+                const container = document.getElementById('constellation-container');
+
+                sceneConstellations = new THREE.Scene();
+                // Set solid background for the Three.js scene
+                sceneConstellations.background = new THREE.Color(0x0A0A1A);
+
+
+                cameraConstellations = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 500);
+                cameraConstellations.position.set(0, 0, 50); // Position camera to view constellations
+                cameraConstellations.lookAt(0, 0, 0);
+
+                rendererConstellations = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false }); // Set alpha to false for non-transparent canvas
+                rendererConstellations.setSize(container.clientWidth, container.clientHeight);
+                rendererConstellations.setPixelRatio(window.devicePixelRatio);
+
+                const ambientLight = new THREE.AmbientLight(0x444444);
+                sceneConstellations.add(ambientLight);
+                const pointLight = new THREE.PointLight(0xFFFFFF, 1);
+                pointLight.position.set(0, 0, 100);
+                sceneConstellations.add(pointLight);
+
+                // Add background stars to the constellation scene
+                addBackgroundStars(sceneConstellations, 800, 150, 0.3); // 800 stars, spread over 150 units, size 0.3
+
+                constellationGroup = new THREE.Group();
+                sceneConstellations.add(constellationGroup);
+
+                // Create each constellation
+                constellationsData.forEach(cData => {
+                    const constellation = new THREE.Group();
+                    constellation.name = cData.name; // Name for raycasting
+                    constellation.userData = { description: cData.description, type: 'constellation' }; // Store data for modal
+
+                    // Create stars
+                    const starMaterial = new THREE.MeshBasicMaterial({ color: cData.starColor });
+                    cData.starPoints.forEach((point, index) => {
+                        const starGeometry = new THREE.SphereGeometry(0.5, 16, 16); // Small stars
+                        const star = new THREE.Mesh(starGeometry, starMaterial);
+                        star.position.copy(point);
+                        star.name = `${cData.name}_Star_${index}`; // Unique name for raycasting individual stars
+                        constellation.add(star);
+                        constellationObjects.push(star); // Add stars for raycasting
+                    });
+
+                    // Create lines (connections between stars)
+                    const lineMaterial = new THREE.LineBasicMaterial({ color: cData.lineColor, transparent: true, opacity: 0.6 });
+                    cData.lines.forEach(pair => {
+                        const startPoint = cData.starPoints[pair[0]];
+                        const endPoint = cData.starPoints[pair[1]];
+                        if (startPoint && endPoint) {
+                            const geometry = new THREE.BufferGeometry().setFromPoints([startPoint, endPoint]);
+                            const line = new THREE.Line(geometry, lineMaterial);
+                            constellation.add(line);
+                        }
+                    });
+
+                    // Position constellations randomly in the scene to avoid overlap and create a 'field'
+                    constellation.position.set(
+                        (Math.random() - 0.5) * 50,
+                        (Math.random() - 0.5) * 40,
+                        (Math.random() - 0.5) * 30
+                    );
+                    constellationGroup.add(constellation);
+                });
+
+                // Set up event listeners for camera control for constellations
+                canvas.addEventListener('mousedown', onMouseDownConstellations);
+                canvas.addEventListener('mouseup', onMouseUpConstellations);
+                canvas.addEventListener('mousemove', onMouseMoveConstellations);
+                canvas.addEventListener('click', onCanvasClickConstellations); // For raycasting
+            }
+
+            // --- Animation Loop ---
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Solar System animation
+                solarSystemGroup.children.forEach(object => {
+                    if (object instanceof THREE.Object3D && object.children.length > 0 && object.children[0].userData.orbitalSpeed) {
+                        const planet = object.children[0];
+                        const orbitalSpeed = planet.userData.orbitalSpeed;
+                        object.rotation.y += orbitalSpeed;
+                        planet.rotation.y += 0.01;
+                    } else if (object.name === 'Sun') {
+                        object.rotation.y += 0.005;
+                    }
+                });
+                rendererSolarSystem.render(sceneSolarSystem, cameraSolarSystem);
+
+                // Constellations animation (slight self-rotation)
+                constellationGroup.rotation.y += 0.001; // Slow rotation of the whole constellation field
+                constellationGroup.rotation.x += 0.0005; // Gentle tilt
+                rendererConstellations.render(sceneConstellations, cameraConstellations);
+            }
+
+            // --- Camera Controls (Solar System) ---
+            function onMouseDownSolarSystem(event) {
+                isDraggingSolarSystem = true;
+                previousMousePositionSolarSystem.x = event.clientX;
+                previousMousePositionSolarSystem.y = event.clientY;
+                solarSystemContainer.classList.add('dragging');
+            }
+
+            function onMouseUpSolarSystem(event) {
+                isDraggingSolarSystem = false;
+                solarSystemContainer.classList.remove('dragging');
+            }
+
+            function onMouseMoveSolarSystem(event) {
+                if (!isDraggingSolarSystem) return;
+
+                const deltaX = event.clientX - previousMousePositionSolarSystem.x;
+                const deltaY = event.clientY - previousMousePositionSolarSystem.y;
+
+                solarSystemGroup.rotation.y += deltaX * orbitSpeedSolarSystem;
+                solarSystemGroup.rotation.x += deltaY * orbitSpeedSolarSystem;
+
+                const maxRotationX = Math.PI / 2;
+                const minRotationX = -Math.PI / 2;
+                solarSystemGroup.rotation.x = Math.max(minRotationX, Math.min(maxRotationX, solarSystemGroup.rotation.x));
+
+                previousMousePositionSolarSystem.x = event.clientX;
+                previousMousePositionSolarSystem.y = event.clientY;
+            }
+
+            // --- Camera Controls (Constellations) ---
+            function onMouseDownConstellations(event) {
+                isDraggingConstellations = true;
+                previousMousePositionConstellations.x = event.clientX;
+                previousMousePositionConstellations.y = event.clientY;
+                constellationContainer.classList.add('dragging');
+            }
+
+            function onMouseUpConstellations(event) {
+                isDraggingConstellations = false;
+                constellationContainer.classList.remove('dragging');
+            }
+
+            function onMouseMoveConstellations(event) {
+                if (!isDraggingConstellations) return;
+
+                const deltaX = event.clientX - previousMousePositionConstellations.x;
+                const deltaY = event.clientY - previousMousePositionConstellations.y;
+
+                constellationGroup.rotation.y += deltaX * orbitSpeedConstellations;
+                constellationGroup.rotation.x += deltaY * orbitSpeedConstellations;
+
+                const maxRotationX = Math.PI / 2;
+                const minRotationX = -Math.PI / 2;
+                constellationGroup.rotation.x = Math.max(minRotationX, Math.min(maxRotationX, constellationGroup.rotation.x));
+
+                previousMousePositionConstellations.x = event.clientX;
+                previousMousePositionConstellations.y = event.clientY;
+            }
+
+            // --- Raycasting for Planet Clicks ---
+            let currentPlanetDataInModal = null; // Store the original data for the clicked planet/sun
+
+            function onCanvasClickSolarSystem(event) {
+                const canvasRect = rendererSolarSystem.domElement.getBoundingClientRect();
+                mouseSolarSystem.x = ((event.clientX - canvasRect.left) / canvasRect.width) * 2 - 1;
+                mouseSolarSystem.y = -((event.clientY - canvasRect.top) / canvasRect.height) * 2 + 1;
+
+                raycasterSolarSystem.setFromCamera(mouseSolarSystem, cameraSolarSystem);
+
+                const intersects = raycasterSolarSystem.intersectObjects(solarSystemObjects, true);
+
+                if (intersects.length > 0) {
+                    const intersectedObject = intersects[0].object;
+                    let clickedObject = intersectedObject;
+                    while (clickedObject && !clickedObject.userData.type && clickedObject.parent) {
+                        clickedObject = clickedObject.parent;
+                    }
+
+                    if (clickedObject && clickedObject.userData.type === 'planet') {
+                        const planetData = planetsData.find(p => p.name === clickedObject.name);
+                        if (planetData) {
+                            currentPlanetDataInModal = planetData;
+                            modalPlanetName.textContent = planetData.name;
+                            modalPlanetDescription.textContent = planetData.description;
+                            generatedFactsContainer.innerHTML = ''; // Clear previous facts
+                            moreFactsButton.style.display = 'flex'; // Show the button
+                            moreFactsButton.disabled = false; // Enable the button
+                            planetModal.classList.add('active');
+                        }
+                    }
+                }
+            }
+
+            planetModalCloseBtn.addEventListener('click', () => {
+                planetModal.classList.remove('active');
+                generatedFactsContainer.innerHTML = '';
+                currentPlanetDataInModal = null;
+            });
+
+            planetModal.addEventListener('click', (e) => {
+                // Only close if the click is on the overlay itself, not the content
+                if (e.target === planetModal) {
+                    planetModal.classList.remove('active');
+                    generatedFactsContainer.innerHTML = '';
+                    currentPlanetDataInModal = null;
+                }
+            });
+
+            // --- Raycasting for Constellation Clicks ---
+            function onCanvasClickConstellations(event) {
+                const canvasRect = rendererConstellations.domElement.getBoundingClientRect();
+                const mouseX = ((event.clientX - canvasRect.left) / canvasRect.width) * 2 - 1;
+                const mouseY = -((event.clientY - canvasRect.top) / canvasRect.height) * 2 + 1;
+
+                const mouseConstellations = new THREE.Vector2(mouseX, mouseY);
+                const raycasterConstellations = new THREE.Raycaster();
+                raycasterConstellations.setFromCamera(mouseConstellations, cameraConstellations);
+
+                const intersects = raycasterConstellations.intersectObjects(constellationObjects, true); // Check only the stars
+
+                if (intersects.length > 0) {
+                    const intersectedObject = intersects[0].object;
+                    // Find the parent constellation group which holds the data
+                    let clickedConstellationGroup = intersectedObject.parent;
+                    // Ensure we get the actual constellation group, not a nested mesh
+                    while (clickedConstellationGroup && !clickedConstellationGroup.userData.type && clickedConstellationGroup.parent) {
+                        clickedConstellationGroup = clickedConstellationGroup.parent;
+                    }
+
+                    if (clickedConstellationGroup && clickedConstellationGroup.userData.type === 'constellation') {
+                        modalConstellationName.textContent = clickedConstellationGroup.name;
+                        modalConstellationDescription.textContent = clickedConstellationGroup.userData.description;
+                        constellationDetailsModal.classList.add('active');
+                    }
+                }
+            }
+
+            constellationModalCloseBtn.addEventListener('click', () => {
+                constellationDetailsModal.classList.remove('active');
+            });
+
+            constellationDetailsModal.addEventListener('click', (e) => {
+                // Only close if the click is on the overlay itself, not the content
+                if (e.target === constellationDetailsModal) {
+                    constellationDetailsModal.classList.remove('active');
+                }
+            });
+
+
+            // --- Window Resize Handler ---
+            function onWindowResize() {
+                // Solar System Canvas
+                const solarSystemContainer = document.getElementById('solar-system-container');
+                cameraSolarSystem.aspect = solarSystemContainer.clientWidth / solarSystemContainer.clientHeight;
+                cameraSolarSystem.updateProjectionMatrix();
+                rendererSolarSystem.setSize(solarSystemContainer.clientWidth, solarSystemContainer.clientHeight);
+
+                // Constellation Canvas
+                const constellationContainer = document.getElementById('constellation-container');
+                cameraConstellations.aspect = constellationContainer.clientWidth / constellationContainer.clientHeight;
+                cameraConstellations.updateProjectionMatrix();
+                rendererConstellations.setSize(constellationContainer.clientWidth, constellationContainer.clientHeight);
+            }
+
+
+            // --- New LLM Integration for Planet Facts ---
+            moreFactsButton.addEventListener('click', async () => {
+                if (!currentPlanetDataInModal) return;
+
+                moreFactsButton.disabled = true;
+                moreFactsButton.textContent = 'Generating...'; // Loading state
+                generatedFactsContainer.innerHTML = '<p class="text-center text-gray-400">Loading cosmic facts...</p>';
+
+                const apiKey = ""; // Canvas provides this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const prompt = `Provide 3 short, fascinating, and lesser-known facts about the planet ${currentPlanetDataInModal.name}. Each fact should be a concise sentence or two, without any introductory or concluding remarks. Just the facts. Format them as a numbered list.`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
+                    });
+
+                    if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+
+                    const result = await response.json();
+                    const aiResponse = result.candidates[0].content.parts[0].text;
+
+                    generatedFactsContainer.innerHTML = aiResponse.split('\n').map(fact => `<p>${fact}</p>`).join('');
+                } catch (error) {
+                    console.error("Gemini API error for planet facts:", error);
+                    generatedFactsContainer.innerHTML = '<p class="text-red-400">Failed to load more cosmic facts. Please try again.</p>';
+                } finally {
+                    moreFactsButton.textContent = '✨ More Facts';
+                    moreFactsButton.disabled = false;
+                }
+            });
+
+
+            // --- Starfield Initialization for Hero ---
+            function initializeStarfield() {
+                const heroSection = document.getElementById('home');
+                heroSection.querySelectorAll('.animate-fade-in-up').forEach(el => {
+                    el.classList.add('fade-in-up-triggered'); // Trigger animation
+                });
+            }
+
 
             // --- Story Initialization ---
             function loadStory() {
-                storyTitle.textContent = storyData.title;
-                storyImage.src = storyData.image;
-                storyImage.alt = storyData.title;
-                storyContent.innerHTML = storyData.content.replace(/\n/g, '<br>');
+                storyTitleEl.textContent = storyData.title;
+                storyImageEl.src = storyData.image;
+                storyImageEl.alt = storyData.title;
+                storyContentEl.innerHTML = storyData.content.replace(/\n/g, '<p class="mb-4 text-gray-300">') + '</p>';
             }
 
             // --- Text-to-Speech (TTS) ---
             const synth = window.speechSynthesis;
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognition;
-
             function speak(text) {
                 if (synth.speaking) {
                     synth.cancel();
@@ -344,6 +1501,68 @@
                 }
             });
 
+            // --- Chart.js Initialization ---
+            function initializeChart() {
+                const ctx = document.getElementById('mission-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: missionData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Important for responsiveness
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Major Space Missions by Decade',
+                                color: getComputedStyle(document.body).getPropertyValue('color'), // Dynamic color
+                                font: { size: 18, family: 'Space Grotesk' }
+                            },
+                            legend: {
+                                display: false // No legend needed for single dataset
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(context) {
+                                        const label = context[0].label;
+                                        // Wrap long labels, e.g., after 16 chars (not strictly needed for decades but good practice)
+                                        return label.length > 16 ? label.match(/.{1,16}/g).join('\n') : label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Decade',
+                                    color: getComputedStyle(document.body).getPropertyValue('color') // Dynamic color
+                                },
+                                ticks: {
+                                    color: getComputedStyle(document.body).getPropertyValue('color'), // Dynamic color
+                                    font: { family: 'Inter' }
+                                },
+                                grid: { color: 'rgba(75, 85, 99, 0.2)' } // Medium Gray grid lines
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Number of Missions',
+                                    color: getComputedStyle(document.body).getPropertyValue('color'), // Dynamic color
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    color: getComputedStyle(document.body).getPropertyValue('color'), // Dynamic color
+                                    font: { family: 'Inter' },
+                                    stepSize: 10
+                                },
+                                grid: { color: 'rgba(75, 85, 99, 0.2)' } // Medium Gray grid lines
+                            }
+                        }
+                    }
+                });
+            }
+
+
             // --- Quiz Logic ---
             function displayQuizQuestion() {
                 quizQuestionArea.classList.remove('hidden');
@@ -351,24 +1570,25 @@
                 selectedQuizOption = null;
                 quizSubmitBtn.disabled = true;
                 quizFeedbackEl.textContent = '';
-                
+                quizFeedbackEl.className = 'mb-8 text-xl font-bold text-center';
+
                 const question = quizQuestions[quizCurrentIndex];
                 quizQuestionEl.textContent = question.question;
                 quizProgressEl.textContent = `Question ${quizCurrentIndex + 1} of ${quizQuestions.length}`;
                 quizOptionsEl.innerHTML = '';
-                
+
                 question.options.forEach(option => {
                     const button = document.createElement('button');
                     button.textContent = option;
-                    button.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200';
+                    // Always use dark button styles now
+                    button.className = `w-full text-left py-4 px-6 rounded-lg text-lg md:text-xl font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200`;
                     button.addEventListener('click', () => {
                         selectedQuizOption = option;
-                        // Reset styles
                         quizOptionsEl.querySelectorAll('button').forEach(btn => {
-                            btn.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200';
+                            btn.className = `w-full text-left py-4 px-6 rounded-lg text-lg md:text-xl font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200`;
                         });
-                        // Highlight selected
-                        button.className = 'w-full text-left py-3 px-6 rounded-lg text-lg font-medium transition-all duration-200 bg-blue-600 text-white shadow-md';
+                        button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                        button.classList.add('bg-blue-600', 'text-white', 'shadow-md');
                         quizSubmitBtn.disabled = false;
                     });
                     quizOptionsEl.appendChild(button);
@@ -379,11 +1599,13 @@
                 const question = quizQuestions[quizCurrentIndex];
                 if (selectedQuizOption === question.answer) {
                     quizScore++;
-                    quizFeedbackEl.textContent = 'Correct!';
-                    quizFeedbackEl.className = 'mb-6 text-md font-bold text-green-400';
+                    quizFeedbackEl.textContent = 'Correct! Excellent cosmic insight!';
+                    quizFeedbackEl.classList.remove('text-red-400');
+                    quizFeedbackEl.classList.add('text-green-400');
                 } else {
                     quizFeedbackEl.textContent = `Incorrect. The correct answer was: ${question.answer}`;
-                    quizFeedbackEl.className = 'mb-6 text-md font-bold text-red-400';
+                    quizFeedbackEl.classList.remove('text-green-400');
+                    quizFeedbackEl.classList.add('text-red-400');
                 }
 
                 setTimeout(() => {
@@ -399,11 +1621,11 @@
             function showQuizResults() {
                 quizQuestionArea.classList.add('hidden');
                 quizResultArea.classList.remove('hidden');
-                quizScoreEl.textContent = `You scored ${quizScore} out of ${quizQuestions.length}.`;
+                quizScoreEl.textContent = `You scored ${quizScore} out of ${quizQuestions.length} questions.`;
                 const percentage = (quizScore / quizQuestions.length) * 100;
-                if (percentage === 100) quizFinalFeedbackEl.textContent = "Cosmic Genius!";
-                else if (percentage >= 60) quizFinalFeedbackEl.textContent = "Well done, space enthusiast!";
-                else quizFinalFeedbackEl.textContent = "Keep learning, cosmic apprentice!";
+                if (percentage === 100) quizFinalFeedbackEl.textContent = "Cosmic Genius! You're a true space expert!";
+                else if (percentage >= 60) quizFinalFeedbackEl.textContent = "Well done, space enthusiast! Keep exploring the stars!";
+                else quizFinalFeedbackEl.textContent = "Keep learning, cosmic apprentice! The universe holds many more wonders.";
             }
 
             quizRestartBtn.addEventListener('click', () => {
@@ -411,62 +1633,173 @@
                 quizScore = 0;
                 displayQuizQuestion();
             });
-            
+
             // --- Birthday Event Finder ---
-            function findSpaceEvent(month, day) {
-                const normalizedMonth = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
-                const event = spaceEventsByDate.find(e => e.month === normalizedMonth && e.day == day);
+            function normalizeMonth(month) {
+                const monthMap = {
+                    "january": "January", "jan": "January",
+                    "february": "February", "feb": "February",
+                    "march": "March", "mar": "March",
+                    "april": "April", "apr": "April",
+                    "may": "May",
+                    "june": "June", "jun": "June",
+                    "july": "July", "jul": "July",
+                    "august": "August", "aug": "August",
+                    "september": "September", "sep": "September",
+                    "october": "October", "oct": "October",
+                    "november": "November", "nov": "November",
+                    "december": "December", "dec": "December"
+                };
+                return monthMap[month.toLowerCase()];
+            }
+
+            /**
+             * Calculates the age based on a birth date.
+             * @param {number} birthMonth - 1-indexed month (e.g., 7 for July)
+             * @param {number} birthDay - Day of the month
+             * @param {number} birthYear - Full year (e.g., 1990)
+             * @returns {number} The calculated age.
+             */
+            function calculateAge(birthMonth, birthDay, birthYear) {
+                const today = new Date();
+                const birthDate = new Date(birthYear, birthMonth - 1, birthDay); // Month is 0-indexed in Date constructor
+
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+
+            /**
+             * Determines the zodiac sign based on month and day.
+             * @param {string} monthName - Full month name (e.g., "July")
+             * @param {number} day - Day of the month
+             * @returns {string} The zodiac sign.
+             */
+            function getZodiacSign(monthName, day) {
+                const monthIndex = monthNames.indexOf(normalizeMonth(monthName)); // Get 0-indexed month
+
+                if (monthIndex === -1 || day < 1 || day > 31) {
+                    return "Invalid Date";
+                }
+
+                if ((monthIndex === 0 && day >= 20) || (monthIndex === 1 && day <= 18)) return "Aquarius";
+                if ((monthIndex === 1 && day >= 19) || (monthIndex === 2 && day <= 20)) return "Pisces";
+                if ((monthIndex === 2 && day >= 21) || (monthIndex === 3 && day <= 19)) return "Aries";
+                if ((monthIndex === 3 && day >= 20) || (monthIndex === 4 && day <= 20)) return "Taurus";
+                if ((monthIndex === 4 && day >= 21) || (monthIndex === 5 && day <= 20)) return "Gemini";
+                if ((monthIndex === 5 && day >= 21) || (monthIndex === 6 && day <= 22)) return "Cancer";
+                if ((monthIndex === 6 && day >= 23) || (monthIndex === 7 && day <= 22)) return "Leo";
+                if ((monthIndex === 7 && day >= 23) || (monthIndex === 8 && day <= 22)) return "Virgo";
+                if ((monthIndex === 8 && day >= 23) || (monthIndex === 9 && day <= 22)) return "Libra";
+                if ((monthIndex === 9 && day >= 23) || (monthIndex === 10 && day <= 21)) return "Scorpio";
+                if ((monthIndex === 10 && day >= 22) || (monthIndex === 11 && day <= 21)) return "Sagittarius";
+                if ((monthIndex === 11 && day >= 22) || (monthIndex === 0 && day <= 19)) return "Capricorn";
+
+                return "Unknown Zodiac"; // Should not reach here if logic is complete
+            }
+
+            function processBirthdayInput() {
+                const month = birthdayMonthInput.value.trim();
+                const day = parseInt(birthdayDayInput.value.trim(), 10);
+                const year = parseInt(birthdayYearInput.value.trim(), 10);
+
                 birthdayEventDisplay.classList.add('hidden');
+                birthdayAgeDisplay.textContent = '';
+                birthdayZodiacDisplay.textContent = '';
+
+                if (!month || isNaN(day) || !year) {
+                    birthdayFeedbackEl.textContent = "Please enter a valid month, day, and year.";
+                    return;
+                }
+
+                const normalizedMonth = normalizeMonth(month);
+                if (!normalizedMonth) {
+                    birthdayFeedbackEl.textContent = "Please enter a valid month name (e.g., 'July').";
+                    return;
+                }
+
+                const currentYear = new Date().getFullYear();
+                if (year < 1900 || year > currentYear) { // Basic validation for year
+                    birthdayFeedbackEl.textContent = `Please enter a year between 1900 and ${currentYear}.`;
+                    return;
+                }
+
+                const calculatedAge = calculateAge(monthNames.indexOf(normalizedMonth) + 1, day, year);
+                const zodiacSign = getZodiacSign(normalizedMonth, day);
+
+                birthdayAgeDisplay.textContent = `Your Age: ${calculatedAge} years old`;
+                birthdayZodiacDisplay.textContent = `Your Zodiac Sign: ${zodiacSign}`;
+
+                const event = spaceEventsByDate.find(e => e.month === normalizedMonth && e.day === day);
+
                 if (event) {
-                    birthdayFeedbackEl.textContent = `Found an event for ${normalizedMonth} ${day}!`;
+                    birthdayFeedbackEl.textContent = `Found a cosmic event for ${normalizedMonth} ${day}!`;
                     birthdayEventTitle.textContent = `A Cosmic Coincidence on ${event.month} ${event.day}:`;
                     birthdayEventText.textContent = event.event;
                     birthdayEventDisplay.classList.remove('hidden');
                 } else {
-                    birthdayFeedbackEl.textContent = `No event found for ${normalizedMonth} ${day}. Try another date!`;
+                    birthdayFeedbackEl.textContent = `No significant space event found for ${normalizedMonth} ${day}. The cosmos is vast, but some days are quieter!`;
+                    // Still show age and zodiac even if no event is found
+                    birthdayEventTitle.textContent = "No specific cosmic event found for this date.";
+                    birthdayEventText.textContent = "However, here's your cosmic profile!";
+                    birthdayEventDisplay.classList.remove('hidden');
                 }
             }
 
             birthdayForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const month = birthdayMonthInput.value;
-                const day = birthdayDayInput.value;
-                if(month && day) findSpaceEvent(month, day);
+                processBirthdayInput();
             });
 
             // --- Chatbot ---
             function addChatMessage(message, sender) {
                 const msgDiv = document.createElement('div');
-                msgDiv.className = `p-4 rounded-lg max-w-md break-words ${sender === 'user' ? 'bg-gray-700 ml-auto' : 'bg-blue-900/50 mr-auto'}`;
-                
+                // Ensure chat bubble backgrounds are solid dark now
+                let bgColorClass = '';
+                if (sender === 'user') {
+                    bgColorClass = 'bg-gray-700'; // Solid dark gray
+                } else { // SpaceMuse
+                    bgColorClass = 'bg-blue-900'; // Solid very dark blue
+                }
+
+                msgDiv.className = `p-4 rounded-lg max-w-md break-words ${sender === 'user' ? 'ml-auto' : 'mr-auto'} ${bgColorClass}`;
+
                 if (sender.startsWith('SpaceMuse')) {
                     const senderP = document.createElement('p');
-                    senderP.className = 'font-bold text-blue-300';
+                    senderP.className = 'font-bold text-blue-300 mb-1';
                     senderP.textContent = 'SpaceMuse';
                     msgDiv.appendChild(senderP);
                 }
-                
+
                 const messageP = document.createElement('p');
                 messageP.textContent = message;
                 msgDiv.appendChild(messageP);
 
                 if (sender === 'SpaceMuse-loading') {
                     msgDiv.id = 'loading-message';
+                    msgDiv.innerHTML = `<div class="flex items-center text-gray-400">
+                                            <svg class="animate-spin h-5 w-5 mr-2 text-blue-400" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            Thinking...
+                                        </div>`;
                 }
-                
+
                 chatHistoryEl.appendChild(msgDiv);
                 chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
             }
-            
-            addChatMessage("Greetings! Ask me a question about space history.", "SpaceMuse");
+
+            addChatMessage("Greetings! Ask me a question about space, or perhaps what happened on a specific date, like \"What happened on July 20, 1969?\".", "SpaceMuse");
 
             async function handleChatSubmit() {
                 const question = chatInputEl.value.trim();
                 if (!question) return;
-                
+
                 addChatMessage(question, 'user');
                 chatInputEl.value = '';
-                addChatMessage("Thinking...", "SpaceMuse-loading");
+                addChatMessage("", "SpaceMuse-loading"); // Show loading indicator
 
                 const apiKey = "AIzaSyAI2QHPwvtSWbJtvbsCe06PFUzMEP4qPX0"; // Canvas provides this
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -478,20 +1811,20 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
                     });
-                    
+
                     if (!response.ok) throw new Error(`API error: ${response.statusText}`);
-                    
+
                     const result = await response.json();
                     const aiResponse = result.candidates[0].content.parts[0].text;
 
                     const loadingMsg = document.getElementById('loading-message');
-                    if (loadingMsg) loadingMsg.remove();
-                    
+                    if (loadingMsg) loadingMsg.remove(); // Remove loading indicator
+
                     addChatMessage(aiResponse, 'SpaceMuse');
                 } catch (error) {
                     console.error("Chatbot API error:", error);
                     const loadingMsg = document.getElementById('loading-message');
-                    if (loadingMsg) loadingMsg.remove();
+                    if (loadingMsg) loadingMsg.remove(); // Remove loading indicator on error
                     addChatMessage("Apologies, my connection to the cosmos seems disrupted. Please try again.", 'SpaceMuse');
                 }
             }
@@ -502,67 +1835,187 @@
             });
 
             // --- Voice Recognition Setup ---
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition;
+
             if (SpeechRecognition) {
                 recognition = new SpeechRecognition();
                 recognition.continuous = false;
                 recognition.lang = 'en-US';
 
+                let currentVoiceInputTarget = null; // 'birthday' or 'chat'
+
+                recognition.onstart = () => {
+                    if (currentVoiceInputTarget === 'birthday') {
+                        birthdayFeedbackEl.textContent = 'Listening for your birthday (e.g., "August 15 1990")...'; // Updated prompt
+                        birthdayVoiceBtn.querySelector('.mic-icon').classList.add('hidden');
+                        birthdayVoiceBtn.querySelector('.listening-text').classList.remove('hidden');
+                    } else if (currentVoiceInputTarget === 'chat') {
+                        chatVoiceBtn.querySelector('.chat-mic-icon').classList.add('hidden');
+                        // Add a visual indicator in chat input if needed
+                    }
+                    console.log('Voice recognition started.');
+                };
+
                 recognition.onresult = (event) => {
                     const transcript = event.results[0][0].transcript;
-                    if(document.activeElement.id.startsWith('birthday')){
-                        // Handle birthday voice
-                        const monthDayRegex = /(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})/i;
-                        const match = transcript.match(monthDayRegex);
-                        if (match && match[1] && match[2]) {
-                            birthdayMonthInput.value = match[1];
-                            birthdayDayInput.value = match[2];
-                            findSpaceEvent(match[1], match[2]);
+                    console.log('Voice result:', transcript);
+
+                    if (currentVoiceInputTarget === 'birthday') {
+                        const monthDayYearRegex = /(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})(?:st|nd|rd|th)?\s+(\d{4})/i; // Updated regex
+                        const match = transcript.match(monthDayYearRegex);
+                        if (match && match[1] && match[2] && match[3]) {
+                            birthdayMonthInput.value = normalizeMonth(match[1]);
+                            birthdayDayInput.value = parseInt(match[2], 10);
+                            birthdayYearInput.value = parseInt(match[3], 10); // Set year input
+                            processBirthdayInput(); // Process all inputs
                         } else {
-                            birthdayFeedbackEl.textContent = "Could not understand date. Please say a month and day.";
+                            birthdayFeedbackEl.textContent = "Could not understand the date. Please say a month, day, and year (e.g., 'March 20 1985').";
                         }
-                    } else {
-                        // Handle chat voice
-                         chatInputEl.value = transcript;
-                         handleChatSubmit();
+                    } else if (currentVoiceInputTarget === 'chat') {
+                        chatInputEl.value = transcript;
+                        handleChatSubmit();
                     }
+                };
+
+                recognition.onend = () => {
+                    console.log('Voice recognition ended.');
+                    if (currentVoiceInputTarget === 'birthday') {
+                        birthdayVoiceBtn.querySelector('.mic-icon').classList.remove('hidden');
+                        birthdayVoiceBtn.querySelector('.listening-text').classList.add('hidden');
+                        if (!birthdayFeedbackEl.textContent.includes('Found') && !birthdayFeedbackEl.textContent.includes('understand')) {
+                             birthdayFeedbackEl.textContent = 'Voice input ended. Try typing or speaking again.';
+                        }
+                    } else if (currentVoiceInputTarget === 'chat') {
+                        chatVoiceBtn.querySelector('.chat-mic-icon').classList.remove('hidden');
+                    }
+                    currentVoiceInputTarget = null;
                 };
 
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error);
+                    if (currentVoiceInputTarget === 'birthday') {
+                        birthdayFeedbackEl.textContent = `Voice input error: ${event.error}. Please type or try again.`;
+                        birthdayVoiceBtn.querySelector('.mic-icon').classList.remove('hidden');
+                        birthdayVoiceBtn.querySelector('.listening-text').classList.add('hidden');
+                    }
+                    currentVoiceInputTarget = null;
                 };
-                
-                const setupVoiceButton = (button, type) => {
-                    const icon = button.querySelector('.mic-icon, .chat-mic-icon');
-                    const text = button.querySelector('.listening-text');
 
-                    recognition.onstart = () => {
-                        if (document.activeElement === button) {
-                            if (text) text.classList.remove('hidden');
-                             icon.textContent = '...';
-                        }
-                    };
-                    recognition.onend = () => {
-                         if (text) text.classList.add('hidden');
-                         icon.textContent = '🎤';
-                    };
-                    button.addEventListener('click', () => {
-                        document.activeElement = button;
-                        recognition.start();
-                    });
-                }
-                
-                setupVoiceButton(birthdayVoiceBtn, 'birthday');
-                setupVoiceButton(chatVoiceBtn, 'chat');
+                birthdayVoiceBtn.addEventListener('click', () => {
+                    currentVoiceInputTarget = 'birthday';
+                    recognition.start();
+                });
+
+                chatVoiceBtn.addEventListener('click', () => {
+                    currentVoiceInputTarget = 'chat';
+                    recognition.start();
+                });
 
             } else {
                 birthdayVoiceBtn.disabled = true;
                 chatVoiceBtn.disabled = true;
-                birthdayFeedbackEl.textContent = 'Voice recognition not supported in this browser.';
+                birthdayFeedbackEl.textContent = 'Speech Recognition not supported in your browser. Please use text input.';
             }
 
+            // --- Calendar Logic ---
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            function renderCalendar() {
+                calendarGrid.innerHTML = ''; // Clear previous days
+                currentMonthYearEl.textContent = `${monthNames[currentCalendarDate.getMonth()]} ${currentCalendarDate.getFullYear()}`;
+
+                const firstDayOfMonth = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1);
+                const daysInMonth = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0).getDate();
+                const startDayOfWeek = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
+
+                // Fill leading empty days
+                for (let i = 0; i < startDayOfWeek; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.classList.add('calendar-day', 'empty');
+                    calendarGrid.appendChild(emptyDay);
+                }
+
+                // Fill days of the month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayEl = document.createElement('div');
+                    // Wrap the day number in a span for layering with the star
+                    dayEl.innerHTML = `<span>${day}</span>`;
+                    dayEl.classList.add('calendar-day');
+                    dayEl.dataset.day = day;
+                    dayEl.dataset.month = currentCalendarDate.getMonth(); // 0-indexed
+                    dayEl.dataset.year = currentCalendarDate.getFullYear();
+
+                    // Check for today's date
+                    const today = new Date();
+                    if (day === today.getDate() && currentCalendarDate.getMonth() === today.getMonth() && currentCalendarDate.getFullYear() === today.getFullYear()) {
+                        dayEl.classList.add('today');
+                    }
+
+                    // Check for cosmic events
+                    const eventForDay = spaceEventsByDate.find(e =>
+                        e.day === day && monthNames.indexOf(e.month) === currentCalendarDate.getMonth()
+                    );
+                    if (eventForDay) {
+                        dayEl.classList.add('event-day');
+                        dayEl.addEventListener('click', () => showEventDetails(eventForDay));
+                    } else {
+                        dayEl.style.cursor = 'default'; // No event, no special cursor
+                        dayEl.classList.remove('event-day'); // Ensure no event class is left over
+                    }
+
+                    calendarGrid.appendChild(dayEl);
+                }
+            }
+
+            function showEventDetails(event) {
+                modalEventTitle.textContent = event.event.split(':')[0].trim(); // Extract title before colon
+                modalEventDescription.textContent = event.event; // Full event description
+                eventDetailsModal.classList.add('active');
+            }
+
+            eventModalCloseBtn.addEventListener('click', () => {
+                eventDetailsModal.classList.remove('active');
+            });
+
+            eventDetailsModal.addEventListener('click', (e) => {
+                // Only close if the click is on the overlay itself, not the content
+                if (e.target === eventDetailsModal) {
+                    eventDetailsModal.classList.remove('active');
+                }
+            });
+
+            prevMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            // --- Day/Night Toggle Logic - NOW DISABLED, ALWAYS NIGHT ---
+            dayNightToggleButton.addEventListener('click', () => {
+                // This button will no longer toggle. It will effectively do nothing
+                // other than maintaining its styling for the sun icon.
+                console.log("Day/Night toggle is disabled in this theme configuration.");
+            });
+
             // --- Initial Load ---
+            // Ensure Three.js initialization and animation loop start after the window is fully loaded
+            // to ensure the canvas element exists in the DOM.
+            window.onload = function() {
+                initSolarSystemThreeJS();
+                initConstellationsThreeJS(); // Initialize the constellations scene
+                animate(); // Start the animation loop
+                onWindowResize(); // Initial resize to fit containers
+            };
+
             loadStory();
+            initializeChart();
             displayQuizQuestion();
+            renderCalendar(); // Initialize the calendar
         });
     </script>
 </body>
