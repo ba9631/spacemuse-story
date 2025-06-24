@@ -231,19 +231,213 @@
             color: #a78bfa; /* violet-400 */
             line-height: 1.6;
         }
+
+        /* Timeline Specific Styles */
+        .timeline-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #60a5fa; /* Blue line */
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-event {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+
+        .timeline-event::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: #1f2937; /* Darker gray background for circle */
+            border: 4px solid #34d399; /* Green circle border */
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-event.left {
+            left: 0;
+        }
+
+        .timeline-event.right {
+            left: 50%;
+        }
+
+        .timeline-event.left::before {
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            top: 22px;
+            z-index: 1;
+            right: 30px;
+            border: medium solid white;
+            border-width: 10px 0 10px 10px;
+            border-color: transparent transparent transparent #1f2937;
+        }
+
+        .timeline-event.right::before {
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            top: 22px;
+            z-index: 1;
+            left: 30px;
+            border: medium solid white;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent #1f2937 transparent transparent;
+        }
+
+        .timeline-event.right::after {
+            left: -16px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: #1f2937; /* Darker gray background */
+            position: relative;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #67e8f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            font-size: 1rem;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        /* Media queries for responsiveness */
+        @media screen and (max-width: 768px) {
+            .timeline-container::after {
+                left: 31px;
+            }
+
+            .timeline-event {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-event.left::before,
+            .timeline-event.right::before {
+                border: medium solid white;
+                border-width: 10px 10px 10px 0;
+                border-color: transparent #1f2937 transparent transparent;
+                left: 60px;
+            }
+
+            .timeline-event.left::after,
+            .timeline-event.right::after {
+                left: 15px;
+            }
+
+            .timeline-event.right {
+                left: 0%;
+            }
+        }
+
+        /* Did You Know Pop-up */
+        .did-you-know-popup {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: rgba(22, 163, 74, 0.9); /* green-600 with transparency */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+            z-index: 100;
+        }
+        .did-you-know-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .did-you-know-popup h4 {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .did-you-know-popup button {
+            background-color: rgba(0,0,0,0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .did-you-know-popup button:hover {
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        /* Tooltip for header title */
+        .header-tooltip {
+            position: absolute;
+            background-color: rgba(59, 130, 246, 0.9); /* blue-500 with transparency */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s ease-out;
+            z-index: 101;
+            pointer-events: none; /* Allows clicks to pass through */
+            top: 100%; /* Position below the header title */
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            text-align: center;
+        }
+        .header-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
-
+<body>
     <!-- Header Section -->
     <header class="bg-gradient-to-r from-gray-900 to-slate-900 p-6 shadow-2xl rounded-b-xl mb-10 mx-auto w-full max-w-7xl">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-teal-400 mb-4 md:mb-0 drop-shadow-lg">
+            <h1 id="site-title" class="text-4xl md:text-5xl font-extrabold text-teal-400 mb-4 md:mb-0 drop-shadow-lg relative">
                 Space Muse
+                <!-- Tooltip for site title -->
+                <div id="headerTooltip" class="header-tooltip"></div>
             </h1>
             <!-- Search Bar -->
             <div class="flex items-center space-x-2 mb-4 md:mb-0 w-full md:w-auto">
-                <input type="text" placeholder="Search stories..." class="search-input p-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full md:w-64">
+                <input type="text" id="glossarySearchInput" placeholder="Search glossary..." class="search-input p-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full md:w-64">
                 <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                     Search
                 </button>
@@ -257,6 +451,8 @@
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="stories-section">Stories</a></li>
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="quiz-section">Quiz</a></li>
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="calendar-section">Space Calendar</a></li>
+                    <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="space-history-section">Space History</a></li> <!-- New Nav Link -->
+                    <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="interactive-concepts-section">Interactive Concepts</a></li> <!-- New Nav Link -->
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="glossary-section">Cosmic Glossary</a></li>
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="about-section">About</a></li>
                     <li><a href="#" class="nav-link text-gray-200 text-lg hover:text-teal-300 transition-colors duration-300 font-medium" data-target="contact-section">Contact</a></li>
@@ -274,6 +470,10 @@
             <p class="text-xl leading-relaxed text-gray-300 font-light">
                 Step into the boundless expanse of imagination, where stars whisper ancient tales and nebulae paint vibrant sagas across the cosmic loom. Space Muse is your sanctuary for interstellar narratives, a collection of stories born from the silence of vacuum and the roar of supernovas. Explore the mysteries, the wonders, and the profound beauty of the universe, one story at a time.
             </p>
+            <div id="did-you-know-intro" class="bg-gray-800 p-4 rounded-lg shadow-inner mt-8 text-center">
+                <h3 class="text-2xl font-bold text-blue-300 mb-2">Did You Know?</h3>
+                <p id="did-you-know-fact" class="text-lg text-gray-300"></p>
+            </div>
         </section>
 
         <!-- Interactive Solar System Section -->
@@ -284,7 +484,7 @@
             </p>
             
             <!-- Solar System Controls -->
-            <div class="flex flex-wrap gap-4 mb-6 justify-center">
+            <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
                 <label class="inline-flex items-center text-gray-300 cursor-pointer">
                     <input type="checkbox" id="toggleOrbits" class="form-checkbox h-5 w-5 text-blue-600 rounded" checked>
                     <span class="ml-2">Show Orbits</span>
@@ -293,9 +493,17 @@
                     <input type="checkbox" id="toggleMeteors" class="form-checkbox h-5 w-5 text-blue-600 rounded" checked>
                     <span class="ml-2">Show Meteors</span>
                 </label>
+                <label class="inline-flex items-center text-gray-300 cursor-pointer">
+                    <input type="checkbox" id="toggleAxialTilt" class="form-checkbox h-5 w-5 text-blue-600 rounded" checked>
+                    <span class="ml-2">Show Axial Tilt</span>
+                </label>
                  <div class="flex items-center">
                     <label for="zoomSensitivity" class="text-gray-300 mr-2">Zoom Sensitivity:</label>
                     <input type="range" id="zoomSensitivity" min="0.1" max="2.0" value="0.5" step="0.1" class="w-32">
+                </div>
+                 <div class="flex items-center">
+                    <label for="timeWarp" class="text-gray-300 mr-2">Time Warp:</label>
+                    <input type="range" id="timeWarp" min="0.1" max="5.0" value="1.0" step="0.1" class="w-32">
                 </div>
             </div>
 
@@ -308,7 +516,18 @@
                  <!-- Planet Info Pop-up (hidden by default) -->
                 <div id="planetInfoPopup" class="info-popup hidden">
                     <h4 id="popupPlanetName"></h4>
+                    <p class="category-title">Facts:</p>
                     <p id="popupPlanetFacts"></p>
+                    <p class="category-title">Detailed Info:</p>
+                    <ul class="text-sm text-gray-300 list-disc list-inside">
+                        <li>Mass: <span id="planetMass"></span></li>
+                        <li>Diameter: <span id="planetDiameter"></span></li>
+                        <li>Avg. Temp: <span id="planetAvgTemp"></span></li>
+                        <li>Orbital Period: <span id="planetOrbitalPeriod"></span></li>
+                        <li>Rotation Period: <span id="planetRotationPeriod"></span></li>
+                        <li>Moons: <span id="planetMoons"></span></li>
+                        <li>Atmosphere: <span id="planetAtmosphere"></span></li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -332,10 +551,14 @@
                  <!-- Constellation Info Pop-up (hidden by default) -->
                 <div id="constellationInfoPopup" class="info-popup hidden">
                     <h4 id="constellationPopupName"></h4>
-                    <div class="category-title">Folklore:</div>
+                    <p class="category-title">Folklore:</p>
                     <p id="constellationPopupFolklore"></p>
-                    <div class="category-title">Encyclopedic Info:</div>
+                    <p class="category-title">Encyclopedic Info:</p>
                     <p id="constellationPopupEncyclopedic"></p>
+                    <p class="category-title">Prominent Stars:</p>
+                    <ul id="constellationProminentStars" class="text-sm text-gray-300 list-disc list-inside"></ul>
+                    <p class="category-title">External Links:</p>
+                    <a id="constellationExternalLink" href="#" target="_blank" class="text-blue-400 hover:underline text-sm">Learn More &rarr;</a>
                 </div>
             </div>
         </section>
@@ -381,7 +604,8 @@
                 <div class="order-2 md:order-1">
                     <h3 class="text-3xl font-semibold text-fuchsia-300 mb-4">The Lost Starchild</h3>
                     <p class="text-lg leading-relaxed text-gray-300 mb-6 font-light">
-                        Legend speaks of a Starchild, born from cosmic dust and nebula gas, whose laughter could ignite dying stars. Prophecy foretold its return, but centuries passed with only silence. Now, a young space scavenger, scavenging through forgotten asteroid fields, stumbles upon an artifact that hums with an ancient energy, leading them on a perilous journey to find the lost Starchild and avert a galactic cataclysm.
+                        Legend speaks of a Starchild, born from cosmic dust and nebula gas, whose laughter could ignite dying stars. Prophecy foretold its return, but centuries passed with only silence. Now, a young space scavenger, scavenging through forgotten asteroid fields, stumbles upon an
+                        artifact that hums with an ancient energy, leading them on a perilous journey to find the lost Starchild and avert a galactic cataclysm.
                     </p>
                     <a href="#" class="inline-flex items-center text-fuchsia-400 hover:text-fuchsia-200 transition-colors duration-300 font-medium text-lg">Read More
                         <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -451,50 +675,70 @@
             </div>
         </section>
 
+        <!-- New Space History Timeline Section -->
+        <section id="space-history-section" class="content-section py-10">
+            <h2 class="text-4xl font-bold text-red-400 mb-8 drop-shadow">Historical Timeline of Space Exploration</h2>
+            <div id="timeline-container" class="timeline-container">
+                <!-- Timeline events will be dynamically loaded here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- New Interactive Concepts Section -->
+        <section id="interactive-concepts-section" class="content-section py-10">
+            <h2 class="text-4xl font-bold text-pink-400 mb-6 drop-shadow">Interactive Concepts</h2>
+            <p class="text-xl leading-relaxed text-gray-300 font-light mb-8">
+                Visually explore complex astronomical phenomena with interactive diagrams!
+            </p>
+
+            <!-- Moon Phases Diagram -->
+            <div class="bg-gray-900 p-8 rounded-xl shadow-xl mb-12">
+                <h3 class="text-3xl font-bold text-orange-300 mb-4 text-center">Moon Phases Explained</h3>
+                <p class="text-lg text-gray-300 mb-6 text-center">
+                    Use the slider to change the Moon's position and observe how its phase changes from Earth's perspective. The larger sphere represents the Earth, the smaller sphere is the Moon, and the light source to the right simulates the Sun.
+                </p>
+                <div class="flex flex-col items-center mb-6">
+                    <input type="range" id="moonPhaseSlider" min="0" max="360" value="0" class="w-full max-w-lg cursor-pointer">
+                    <p id="moonPhaseLabel" class="text-xl font-semibold text-white mt-4">New Moon</p>
+                </div>
+                <div id="moonPhasesCanvas-container" class="relative w-full">
+                    <canvas id="moonPhasesCanvas" class="threejs-canvas"></canvas>
+                    <div id="moonPhasesLoadingOverlay" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <span class="ml-4">Loading Moon Phases Diagram...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eclipses Diagram (NEW) -->
+            <div class="bg-gray-900 p-8 rounded-xl shadow-xl mb-12">
+                <h3 class="text-3xl font-bold text-emerald-300 mb-4 text-center">Eclipses: Solar & Lunar</h3>
+                <p class="text-lg text-gray-300 mb-6 text-center">
+                    Adjust the slider to simulate the Earth and Moon's orbital positions relative to the Sun. Observe when the Moon's shadow falls on Earth (Solar Eclipse) or when the Earth's shadow falls on the Moon (Lunar Eclipse).
+                </p>
+                <div class="flex flex-col items-center mb-6">
+                    <input type="range" id="eclipseSlider" min="0" max="360" value="0" class="w-full max-w-lg cursor-pointer">
+                    <p id="eclipseLabel" class="text-xl font-semibold text-white mt-4">No Eclipse</p>
+                </div>
+                <div id="eclipsesCanvas-container" class="relative w-full">
+                    <canvas id="eclipsesCanvas" class="threejs-canvas"></canvas>
+                    <div id="eclipsesLoadingOverlay" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <span class="ml-4">Loading Eclipses Diagram...</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
         <!-- New Cosmic Glossary Section -->
         <section id="glossary-section" class="content-section py-10">
             <h2 class="text-4xl font-bold text-cyan-400 mb-8 drop-shadow">Cosmic Glossary</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="glossary-term">
-                    <h3>Black Hole</h3>
-                    <p>A region of spacetime where gravity is so strong that nothing—no particles or even electromagnetic radiation such as light—can escape from it. The theory of general relativity predicts that a sufficiently compact mass can deform spacetime to form a black hole.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Galaxy</h3>
-                    <p>A gravitationally bound system of stars, stellar remnants, interstellar gas, dust, and dark matter. The word galaxy is derived from the Greek galaxias (γαλαξίας), literally "milky", in reference to the Milky Way galaxy.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Nebula</h3>
-                    <p>A giant cloud of dust and gas in space, sometimes referred to as a "stellar nursery" where stars are born. Nebulae can also be the remnants of dead stars, like supernova remnants or planetary nebulae.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Supernova</h3>
-                    <p>A powerful and luminous stellar explosion. It occurs during the last evolutionary stages of a massive star or when a white dwarf star undergoes runaway nuclear fusion.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Light-year</h3>
-                    <p>A unit of length used to express astronomical distances, equal to the distance that light travels in one Julian year (365.25 days). Due to the vast distances in space, light-years are commonly used instead of miles or kilometers.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Exoplanet</h3>
-                    <p>A planet located outside our Solar System, orbiting a star other than our Sun. Thousands of exoplanets have been discovered, ranging greatly in size, composition, and orbital characteristics.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Constellation</h3>
-                    <p>A group of stars that forms a recognizable pattern or outline, typically representing an animal, mythological person or creature, or inanimate object. Historically, constellations were used for navigation and storytelling.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Asteroid</h3>
-                    <p>A minor planet of the inner Solar System. Larger than meteoroids, asteroids are rocky, airless worlds that orbit our Sun, but are too small to be called planets.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Comet</h3>
-                    <p>An icy, small Solar System body that, when passing close to the Sun, warms and begins to outgas, displaying a visible atmosphere or coma, and sometimes also a tail.</p>
-                </div>
-                <div class="glossary-term">
-                    <h3>Dwarf Planet</h3>
-                    <p>A celestial body orbiting the Sun that is massive enough to be rounded by its own gravity but has not cleared its orbital neighborhood of other debris and is not a satellite.</p>
-                </div>
+            <div class="mb-6">
+                <input type="text" id="glossaryFilterInput" placeholder="Filter terms..." class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+            </div>
+            <div id="glossary-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Glossary terms will be dynamically loaded here -->
             </div>
         </section>
 
@@ -553,6 +797,17 @@
         </div>
     </div>
 
+    <!-- Did You Know? Popup (floating at bottom right) -->
+    <div id="didYouKnowPopup" class="did-you-know-popup">
+        <h4>Did You Know?</h4>
+        <p id="didYouKnowFactContent"></p>
+        <div class="text-right mt-2">
+            <button id="nextFactBtn" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-1 px-3 rounded-md transition-colors duration-200">Next Fact</button>
+            <button id="closeFactBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1 px-3 rounded-md transition-colors duration-200 ml-2">Close</button>
+        </div>
+    </div>
+
+
     <!-- Footer Section -->
     <footer class="bg-gray-950 p-8 mt-12 rounded-t-xl mx-auto w-full max-w-7xl">
         <div class="container mx-auto text-center text-gray-500 text-sm">
@@ -576,6 +831,8 @@
         let solarSystemLoadingOverlay;
         let solarSystemInitialized = false; // Flag to ensure Three.js initializes only once
         let solarSystemZoomSensitivity = 0.5; // Initial zoom sensitivity
+        let timeWarpFactor = 1.0; // New: For controlling simulation speed
+        let showAxialTilt = true; // New: Toggle for axial tilt
 
         // For planet info pop-up and highlighting (Solar System)
         const solarSystemRaycaster = new THREE.Raycaster();
@@ -584,7 +841,7 @@
         let planetInfoPopup = null;
         let popupPlanetName = null;
         let popupPlanetFacts = null;
-        const HIGHLIGHT_COLOR = 0x00FF00; // Green color for highlight
+        const HIGHLIGHT_COLOR = 0x000000; // Changed to black to effectively remove highlight
 
         // --- Three.js Variables (Constellations) ---
         let constellationsScene, constellationsCamera, constellationsRenderer;
@@ -596,6 +853,7 @@
         let constellationsPreviousMouseX = 0, constellationsPreviousMouseY = 0;
         let constellationsLoadingOverlay;
         let constellationsInitialized = false; // Flag for constellation Three.js initialization
+        const CONSTELLATION_HIGHLIGHT_COLOR = 0x000000; // Changed to black to effectively remove highlight
 
         // For constellation info pop-up and highlighting
         const constellationsRaycaster = new THREE.Raycaster();
@@ -605,24 +863,114 @@
         let constellationPopupName = null;
         let constellationPopupFolklore = null;
         let constellationPopupEncyclopedic = null;
+        let constellationProminentStars = null;
+        let constellationExternalLink = null;
+
+        // --- Three.js Variables (Moon Phases) ---
+        let moonPhaseScene, moonPhaseCamera, moonPhaseRenderer;
+        let moon, earthMoonPhase, sunLightMoonPhase;
+        let moonPhaseLoadingOverlay;
+        let moonPhaseInitialized = false;
+        let moonPhaseCurrentAngle = 0; // Track the Moon's angle around Earth
+        const moonPhaseNames = ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent", "New Moon"]; // Added "New Moon" twice for smooth loop
+        const moonPhaseAngles = [0, 45, 90, 135, 180, 225, 270, 315, 360]; // Corresponding angles in degrees
+
+        // --- Three.js Variables (Eclipses) ---
+        let eclipsesScene, eclipsesCamera, eclipsesRenderer;
+        let eclipseSun, eclipseEarth, eclipseMoon;
+        let umbraMesh, penumbraMesh; // For shadows
+        let eclipsesLoadingOverlay;
+        let eclipsesInitialized = false;
+        let eclipseCurrentAngle = 0; // Track Earth's angle around Sun for eclipse simulation
+        const eclipseLabels = {
+            solar: "Solar Eclipse",
+            lunar: "Lunar Eclipse",
+            none: "No Eclipse"
+        };
+
+
+        // Function to create a simple starfield texture (procedural)
+        function createStarfieldTexture(density = 1000) {
+            const size = 256; // Larger size for better quality
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const context = canvas.getContext('2d');
+            context.fillStyle = '#000000'; // Black background
+            context.fillRect(0, 0, size, size);
+
+            for (let i = 0; i < density; i++) { // More stars for texture
+                const x = Math.random() * size;
+                const y = Math.random() * size;
+                const radius = Math.random() * 0.7 + 0.2; // Larger stars with more variation
+                const opacity = Math.random() * 0.7 + 0.3; // Varying brightness
+                context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                context.beginPath();
+                context.arc(x, y, radius, 0, Math.PI * 2);
+                context.fill();
+            }
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // Create a procedural cloud texture for Earth
+        function createCloudTexture() {
+            const size = 128;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const context = canvas.getContext('2d');
+
+            context.fillStyle = 'rgba(0,0,0,0)'; // Transparent background
+            context.fillRect(0, 0, size, size);
+
+            // Draw some random white/grey circles to simulate clouds
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * size;
+                const y = Math.random() * size;
+                const radius = Math.random() * 15 + 10;
+                const opacity = Math.random() * 0.3 + 0.2;
+                const gray = Math.floor(Math.random() * 50) + 200; // Light gray
+                context.fillStyle = `rgba(${gray}, ${gray}, ${gray}, ${opacity})`;
+                context.beginPath();
+                context.arc(x, y, radius, 0, Math.PI * 2);
+                context.fill();
+            }
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const sharedStarfieldTexture = createStarfieldTexture(2000); // Higher density for background
+        const earthCloudTexture = createCloudTexture();
 
 
         // --- Solar System Data ---
+        // Enhanced PLANET_DATA with improved colors and orbital speeds for better realism
         const PLANET_DATA = [
             // Note: Radii and distances are highly scaled for visibility in a single view.
-            // Distances are relative to the sun. Orbital speed is adjusted for visual effect.
+            // Orbital speeds are proportionally more accurate but still accelerated for visualization.
             // axialTilt in radians (approximate for visual representation)
-            { name: 'Mercury', radius: 0.1, color: 0x71717A, distance: 2, orbitalSpeed: 0.03, axialTilt: 0.01, rotationSpeed: 0.005, originalEmissive: 0x000000, facts: "Closest and smallest planet. Has extreme temperature variations from scorching hot to freezing cold due to lack of atmosphere." },
-            { name: 'Venus', radius: 0.2, color: 0xCA8A04, distance: 3.5, orbitalSpeed: 0.02, axialTilt: 2.9, rotationSpeed: 0.002, originalEmissive: 0x000000, facts: "Earth's 'sister planet' with a thick, toxic atmosphere and extreme greenhouse effect, making it the hottest planet." },
-            { name: 'Earth', radius: 0.22, color: 0x10B981, distance: 5, orbitalSpeed: 0.015, axialTilt: 0.41, rotationSpeed: 0.01, originalEmissive: 0x000000, facts: "Our home planet, the only known celestial body to harbor life, with abundant liquid water and a protective atmosphere." },
-            { name: 'Mars', radius: 0.15, color: 0xDC2626, distance: 6.5, orbitalSpeed: 0.012, axialTilt: 0.43, rotationSpeed: 0.009, originalEmissive: 0x000000, facts: "The Red Planet, known for its rusty surface, polar ice caps, and thin atmosphere. A primary target for human exploration." },
-            { name: 'Jupiter', radius: 1.2, color: 0xFACC15, distance: 12, orbitalSpeed: 0.005, axialTilt: 0.05, rotationSpeed: 0.02, originalEmissive: 0x000000, facts: "Largest planet in our solar system, a gas giant with a Great Red Spot (a persistent colossal storm larger than Earth)." },
-            { name: 'Saturn', radius: 1.0, color: 0xFB923C, distance: 16, orbitalSpeed: 0.004, ring: true, axialTilt: 0.47, rotationSpeed: 0.018, originalEmissive: 0x000000, facts: "Famous for its magnificent system of icy rings composed of billions of small particles. A true jewel of the solar system." },
-            { name: 'Uranus', radius: 0.7, color: 0x0EA5E9, distance: 20, orbitalSpeed: 0.003, axialTilt: 1.7, rotationSpeed: 0.015, originalEmissive: 0x000000, facts: "An ice giant that rotates on its side (nearly 90-degree axial tilt), making it unique in the solar system." },
-            { name: 'Neptune', radius: 0.68, color: 0x2563EB, distance: 24, orbitalSpeed: 0.002, axialTilt: 0.5, rotationSpeed: 0.016, originalEmissive: 0x000000, facts: "Farthest planet from the Sun (after Pluto's reclassification), an ice giant with the strongest sustained winds in the solar system." },
-            { name: 'Pluto', radius: 0.05, color: 0xA3A3A3, distance: 28, orbitalSpeed: 0.001, axialTilt: 0.2, rotationSpeed: 0.003, originalEmissive: 0x000000, facts: "A dwarf planet located in the Kuiper Belt, an icy world with a complex surface, often covered in nitrogen ice." },
-            { name: 'Sun', radius: 1.5, color: 0xFDB813, originalEmissive: 0x000000, facts: "The star at the center of our solar system, a massive ball of hot plasma, powering all life on Earth through nuclear fusion.", identifiable: true }
+            { name: 'Mercury', radius: 0.1, color: 0x8A8A8A, distance: 2, orbitalSpeed: 0.04, rotationSpeed: 0.005, axialTilt: 0.001, emissiveColor: 0x000000, facts: "Closest and smallest planet. Very hot during the day, freezing at night.", mass: "0.330 x 10^24 kg", diameter: "4,879 km", avgTemp: "167 °C", orbitalPeriod: "88 Earth days", rotationPeriod: "58.6 Earth days", moons: "0", atmosphere: "Trace exosphere" },
+            { name: 'Venus', radius: 0.2, color: 0xDC7633, distance: 3.5, orbitalSpeed: 0.025, rotationSpeed: 0.002, axialTilt: 3.09, emissiveColor: 0x000000, facts: "Earth's 'sister planet' with extreme greenhouse effect. Hottest planet in our solar system.", mass: "4.87 x 10^24 kg", diameter: "12,104 km", avgTemp: "462 °C", orbitalPeriod: "225 Earth days", rotationPeriod: "-243 Earth days (retrograde)", moons: "0", atmosphere: "Dense CO2" },
+            { name: 'Earth', radius: 0.22, color: 0x0077BE, distance: 5, orbitalSpeed: 0.015, rotationSpeed: 0.01, axialTilt: 0.41, emissiveColor: 0x000000, facts: "Our home planet, vibrant with life and liquid water.", mass: "5.97 x 10^24 kg", diameter: "12,742 km", avgTemp: "15 °C", orbitalPeriod: "365.25 Earth days", rotationPeriod: "1 Earth day", moons: "1 (Moon)", atmosphere: "N2, O2" },
+            { name: 'Mars', radius: 0.15, color: 0xC34A2C, distance: 6.5, orbitalSpeed: 0.012, rotationSpeed: 0.009, axialTilt: 0.44, emissiveColor: 0x000000, facts: "The Red Planet, with polar ice caps and a thin atmosphere. Subject of intense exploration.", mass: "0.642 x 10^24 kg", diameter: "6,779 km", avgTemp: "-63 °C", orbitalPeriod: "687 Earth days", rotationPeriod: "1.03 Earth days", moons: "2 (Phobos, Deimos)", atmosphere: "Thin CO2" },
+            { name: 'Jupiter', radius: 1.2, color: 0xD4B25E, distance: 12, orbitalSpeed: 0.007, rotationSpeed: 0.02, axialTilt: 0.05, emissiveColor: 0x000000, facts: "Largest planet, a gas giant with a Great Red Spot. Has many moons.", mass: "1898 x 10^24 kg", diameter: "139,820 km", avgTemp: "-145 °C", orbitalPeriod: "11.86 Earth years", rotationPeriod: "0.41 Earth days", moons: "95+ (Galilean moons: Io, Europa, Ganymede, Callisto)", atmosphere: "H2, He" },
+            { name: 'Saturn', radius: 1.0, color: 0xE8C46C, distance: 16, orbitalSpeed: 0.005, ring: true, axialTilt: 0.47, rotationSpeed: 0.018, emissiveColor: 0x000000, facts: "Famous for its magnificent icy rings, composed of countless particles.", mass: "568 x 10^24 kg", diameter: "116,460 km", avgTemp: "-178 °C", orbitalPeriod: "29.45 Earth years", rotationPeriod: "0.44 Earth days", moons: "146+ (Largest: Titan)", atmosphere: "H2, He" },
+            { name: 'Uranus', radius: 0.7, color: 0x77C3EC, distance: 20, orbitalSpeed: 0.0035, rotationSpeed: 0.015, axialTilt: 1.7, emissiveColor: 0x000000, facts: "An ice giant that rotates on its side. Has faint rings.", mass: "86.8 x 10^24 kg", diameter: "50,724 km", avgTemp: "-216 °C", orbitalPeriod: "84 Earth years", rotationPeriod: "-0.72 Earth days (retrograde)", moons: "27+", atmosphere: "H2, He, CH4" },
+            { name: 'Neptune', radius: 0.68, color: 0x4A6BE8, distance: 24, orbitalSpeed: 0.0025, rotationSpeed: 0.016, axialTilt: 0.5, emissiveColor: 0x000000, facts: "Farthest planet, an ice giant with strong winds and a Great Dark Spot.", mass: "102 x 10^24 kg", diameter: "49,244 km", avgTemp: "-214 °C", orbitalPeriod: "164.79 Earth years", rotationPeriod: "0.67 Earth days", moons: "14+", atmosphere: "H2, He, CH4" },
+            { name: 'Pluto', radius: 0.05, color: 0xA3A3A3, distance: 28, orbitalSpeed: 0.0015, rotationSpeed: 0.003, axialTilt: 0.2, emissiveColor: 0x000000, facts: "A dwarf planet in the Kuiper Belt, icy and distant.", mass: "0.0130 x 10^24 kg", diameter: "2,376 km", avgTemp: "-229 °C", orbitalPeriod: "248 Earth years", rotationPeriod: "-6.39 Earth days (retrograde)", moons: "5 (Charon, etc.)", atmosphere: "N2, CH4, CO" },
+            { name: 'Sun', radius: 1.5, color: 0xFDB813, emissiveColor: 0xFDB813, emissiveIntensity: 1, facts: "The star at the center of our solar system, powering all life on Earth.", identifiable: true, mass: "1.989 x 10^30 kg", diameter: "1,392,000 km", avgTemp: "5,778 K (surface)", orbitalPeriod: "N/A", rotationPeriod: "27 Earth days (equator)", moons: "N/A", atmosphere: "Hydrogen, helium" }
         ];
+
+        // New MOON_DATA
+        const MOON_DATA = [
+            // Earth's Moon
+            { name: 'Moon', parent: 'Earth', radius: 0.08, color: 0xCCCCCC, distance: 1.2, orbitalSpeed: 0.08, rotationSpeed: 0.008, axialTilt: 0.11, facts: "Earth's only natural satellite, responsible for tides.", mass: "0.073 x 10^24 kg", diameter: "3,474 km", avgTemp: "-20 to 120 °C", orbitalPeriod: "27.3 Earth days", rotationPeriod: "27.3 Earth days (tidally locked)", atmosphere: "Trace exosphere" },
+            // Jupiter's Galilean Moons (scaled distances/radii for visibility)
+            { name: 'Io', parent: 'Jupiter', radius: 0.06, color: 0xE8B052, distance: 1.8, orbitalSpeed: 0.2, rotationSpeed: 0.02, axialTilt: 0, facts: "Most volcanically active body in the Solar System.", mass: "0.089 x 10^24 kg", diameter: "3,643 km", avgTemp: "-145 °C", orbitalPeriod: "1.77 Earth days", rotationPeriod: "1.77 Earth days", atmosphere: "Sulphur dioxide" },
+            { name: 'Europa', parent: 'Jupiter', radius: 0.05, color: 0x93B7CD, distance: 2.3, orbitalSpeed: 0.15, rotationSpeed: 0.015, axialTilt: 0, facts: "Believed to harbor a subsurface ocean, potential for life.", mass: "0.048 x 10^24 kg", diameter: "3,122 km", avgTemp: "-160 °C", orbitalPeriod: "3.55 Earth days", rotationPeriod: "3.55 Earth days", atmosphere: "Trace O2" },
+            { name: 'Ganymede', parent: 'Jupiter', radius: 0.09, color: 0xA0A0A0, distance: 3.0, orbitalSpeed: 0.1, rotationSpeed: 0.01, axialTilt: 0, facts: "Largest moon in the Solar System, larger than Mercury.", mass: "0.148 x 10^24 kg", diameter: "5,262 km", avgTemp: "-163 °C", orbitalPeriod: "7.15 Earth days", rotationPeriod: "7.15 Earth days", atmosphere: "Trace O2" },
+            { name: 'Callisto', parent: 'Jupiter', radius: 0.07, color: 0x777777, distance: 3.8, orbitalSpeed: 0.08, rotationSpeed: 0.008, axialTilt: 0, facts: "Heavily cratered, ancient surface, possibly a subsurface ocean.", mass: "0.108 x 10^24 kg", diameter: "4,821 km", avgTemp: "-139 °C", orbitalPeriod: "16.69 Earth days", rotationPeriod: "16.69 Earth days", atmosphere: "Trace CO2" }
+        ];
+
 
         // --- Constellation Data (Zodiac) ---
         const ZODIAC_CONSTELLATION_DATA = [
@@ -631,91 +979,117 @@
                 stars: [[0, 0, 0], [2, 1, 0], [1, 3, 0], [3, 2, 0]],
                 lines: [[0, 1], [1, 2], [2, 3]],
                 folklore: "In Greek mythology, Aries represents the Golden Fleece sought by Jason and the Argonauts. This ram was sent by Nephele to carry her children, Phrixus and Helle, to safety. Phrixus sacrificed the ram to Zeus, who placed it in the stars.",
-                encyclopedic: "Aries is a small to medium-sized constellation. It is one of the 12 constellations of the zodiac, meaning it lies on the ecliptic, the apparent path of the Sun across the celestial sphere. Its most prominent stars are Hamal (Alpha Arietis) and Sheratan (Beta Arietis)."
+                encyclopedic: "Aries is a small to medium-sized constellation. It is one of the 12 constellations of the zodiac, meaning it lies on the ecliptic, the apparent path of the Sun across the celestial sphere. Its most prominent stars are Hamal (Alpha Arietis) and Sheratan (Beta Arietis).",
+                prominentStars: [{ name: "Hamal (Alpha Arietis)", type: "Orange Giant" }, { name: "Sheratan (Beta Arietis)", type: "White Main-sequence" }],
+                externalLink: "https://en.wikipedia.org/wiki/Aries_(constellation)"
             },
             {
                 name: "Taurus", color: 0xFFA07A, angleOffset: 30, // 30 degrees
                 stars: [[0, 0, 0], [-2, 1, 0], [0, 3, 0], [3, 2, 0], [1, 5, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4]],
                 folklore: "Taurus is most famously identified with the white bull that Zeus transformed into to abduct Europa, a Phoenician princess. Another myth associates it with Io, a lover of Zeus, transformed into a heifer by Hera.",
-                encyclopedic: "Taurus is a large and prominent constellation in the Northern Hemisphere's winter sky. It contains the bright red giant star Aldebaran, the Hyades star cluster (which forms the bull's head), and the Pleiades (Seven Sisters) star cluster."
+                encyclopedic: "Taurus is a large and prominent constellation in the Northern Hemisphere's winter sky. It contains the bright red giant star Aldebaran, the Hyades star cluster (which forms the bull's head), and the Pleiades (Seven Sisters) star cluster.",
+                prominentStars: [{ name: "Aldebaran (Alpha Tauri)", type: "Red Giant" }, { name: "Alcyone (Eta Tauri)", type: "Blue-white Giant (Pleiades)" }],
+                externalLink: "https://en.wikipedia.org/wiki/Taurus_(constellation)"
             },
             {
                 name: "Gemini", color: 0x90EE90, angleOffset: 60, // 60 degrees
                 stars: [[0, 0, 0], [0, 2, 0], [2, 0, 0], [2, 2, 0]],
                 lines: [[0, 1], [2, 3], [0, 2]],
                 folklore: "In Greek mythology, Gemini represents the twins Castor and Pollux. While Pollux was immortal (son of Zeus), Castor was mortal (son of Tyndareus). When Castor died, Pollux pleaded with Zeus to allow them to share his immortality, and they were placed together in the heavens.",
-                encyclopedic: "Gemini is one of the constellations of the zodiac and is easily recognizable by its two brightest stars, Castor and Pollux, which represent the heads of the twins. It is best seen during the winter months in the Northern Hemisphere."
+                encyclopedic: "Gemini is one of the constellations of the zodiac and is easily recognizable by its two brightest stars, Castor and Pollux, which represent the heads of the twins. It is best seen during the winter months in the Northern Hemisphere.",
+                prominentStars: [{ name: "Pollux (Beta Geminorum)", type: "Orange Giant" }, { name: "Castor (Alpha Geminorum)", type: "Multiple Star System" }],
+                externalLink: "https://en.wikipedia.org/wiki/Gemini_(constellation)"
             },
             {
                 name: "Cancer", color: 0xADD8E6, angleOffset: 90, // 90 degrees
                 stars: [[0, 0, 0], [1, 1, 0], [2, 0, 0], [1, -1, 0], [-1, 0, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
                 folklore: "In Greek mythology, Cancer represents the crab that attacked Heracles during his battle with the Lernaean Hydra. Hera sent the crab to distract him, but Heracles crushed it. As a reward for its service, Hera placed the crab among the stars.",
-                encyclopedic: "Cancer is a relatively faint constellation and is considered one of the smallest constellations in the zodiac. It contains the Beehive Cluster (Messier 44), an open cluster of stars visible to the naked eye under dark skies."
+                encyclopedic: "Cancer is a relatively faint constellation and is considered one of the smallest constellations in the zodiac. It contains the Beehive Cluster (Messier 44), an open cluster of stars visible to the naked eye under dark skies.",
+                prominentStars: [{ name: "Acubens (Alpha Cancri)", type: "Binary Star" }, { name: "Tarf (Beta Cancri)", type: "Orange Giant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Cancer_(constellation)"
             },
             {
                 name: "Leo", color: 0xFF4500, angleOffset: 120, // 120 degrees
                 stars: [[0, 0, 0], [2, 1, 0], [1, 3, 0], [4, 2, 0], [3, -1, 0], [5, -2, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [1, 4]],
                 folklore: "Leo represents the Nemean Lion, a ferocious beast with impenetrable hide that was killed by Heracles as the first of his twelve labors. Zeus placed it in the sky to commemorate Heracles' triumph.",
-                encyclopedic: "Leo is one of the constellations of the zodiac, positioned between Cancer to the west and Virgo to the east. It is easily recognized by the 'Sickle' asterism, which resembles a backwards question mark and forms the lion's head. Its brightest star is Regulus."
+                encyclopedic: "Leo is one of the constellations of the zodiac, positioned between Cancer to the west and Virgo to the east. It is easily recognized by the 'Sickle' asterism, which resembles a backwards question mark and forms the lion's head. Its brightest star is Regulus.",
+                prominentStars: [{ name: "Regulus (Alpha Leonis)", type: "Blue-white Main-sequence" }, { name: "Denebola (Beta Leonis)", type: "White Main-sequence" }],
+                externalLink: "https://en.wikipedia.org/wiki/Leo_(constellation)"
             },
             {
                 name: "Virgo", color: 0xDA70D6, angleOffset: 150, // 150 degrees
                 stars: [[0, 0, 0], [2, 2, 0], [4, 0, 0], [3, -2, 0], [1, -1, 0], [-1, 1, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]],
                 folklore: "Virgo is often associated with Dike, the Greek goddess of justice, or Persephone, the goddess of innocence and spring, who spent part of the year in the underworld. Her appearance in the sky marks the time of harvest.",
-                encyclopedic: "Virgo is the second largest constellation in the sky and the largest of the zodiac constellations. It contains the bright blue-white star Spica and is home to the Virgo Cluster, a large galaxy cluster."
+                encyclopedic: "Virgo is the second largest constellation in the sky and the largest of the zodiac constellations. It contains the bright blue-white star Spica and is home to the Virgo Cluster, a large galaxy cluster.",
+                prominentStars: [{ name: "Spica (Alpha Virginis)", type: "Blue Giant Binary" }, { name: "Porrima (Gamma Virginis)", type: "Binary Star" }],
+                externalLink: "https://en.wikipedia.org/wiki/Virgo_(constellation)"
             },
             {
                 name: "Libra", color: 0x87CEEB, angleOffset: 180, // 180 degrees
                 stars: [[0, 0, 0], [2, 0, 0], [1, 2, 0], [-1, 2, 0], [0, -2, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 0], [0, 4]],
                 folklore: "Libra is the only zodiac constellation representing an inanimate object – the Scales. It is often associated with the scales of justice held by the goddess Themis or Astraea (Virgo), symbolizing balance and fairness, especially during the autumnal equinox when day and night are equal.",
-                encyclopedic: "Libra is a constellation in the Southern Hemisphere, located between Virgo to the west and Scorpius to the east. Its two brightest stars are Zubenelgenubi (Alpha Librae) and Zubeneschamali (Beta Librae)."
+                encyclopedic: "Libra is a constellation in the Southern Hemisphere, located between Virgo to the west and Scorpius to the east. Its two brightest stars are Zubenelgenubi (Alpha Librae) and Zubeneschamali (Beta Librae).",
+                prominentStars: [{ name: "Zubenelgenubi (Alpha Librae)", type: "Multiple Star System" }, { name: "Zubeneschamali (Beta Librae)", type: "Blue-white Subgiant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Libra_(constellation)"
             },
             {
                 name: "Scorpius", color: 0xFF6347, angleOffset: 210, // 210 degrees
                 stars: [[0, 0, 0], [-2, 1, 0], [0, 3, 0], [2, 2, 0], [3, 0, 0], [1, -2, 0], [0, -4, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
                 folklore: "In Greek mythology, Scorpius is the scorpion that stung and killed Orion the hunter. As a result, the two constellations are placed on opposite sides of the sky so that they can never meet.",
-                encyclopedic: "Scorpius is a large constellation located in the Southern Hemisphere near the center of the Milky Way. Its brightest star is Antares, a red supergiant and one of the brightest stars in the night sky. It has a distinctive J-shape or S-shape."
+                encyclopedic: "Scorpius is a large constellation located in the Southern Hemisphere near the center of the Milky Way. Its brightest star is Antares, a red supergiant and one of the brightest stars in the night sky. It has a distinctive J-shape or S-shape.",
+                prominentStars: [{ name: "Antares (Alpha Scorpii)", type: "Red Supergiant" }, { name: "Shaula (Lambda Scorpii)", type: "Blue Subgiant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Scorpius"
             },
             {
                 name: "Ophiuchus", color: 0xCD853F, angleOffset: 240, // 240 degrees (The 13th zodiac sign)
                 stars: [[0,0,0], [1,2,0], [3,1,0], [2,-1,0], [-1,-2,0], [-2,0,0]],
                 lines: [[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]],
                 folklore: "Ophiuchus, the Serpent-Bearer, is often identified with the god Asclepius, the son of Apollo, who was a legendary healer. Zeus placed him in the heavens after killing him with a thunderbolt for bringing a mortal back from the dead, fearing he would make all humans immortal.",
-                encyclopedic: "Ophiuchus is a large constellation located around the celestial equator. Astronomically, the Sun passes through Ophiuchus for about 18 days each year, making it the '13th zodiac sign' in addition to the traditional twelve. It is often depicted as a man grasping a serpent (Serpens constellation)."
+                encyclopedic: "Ophiuchus is a large constellation located around the celestial equator. Astronomically, the Sun passes through Ophiuchus for about 18 days each year, making it the '13th zodiac sign' in addition to the traditional twelve. It is often depicted as a man grasping a serpent (Serpens constellation).",
+                prominentStars: [{ name: "Rasalhague (Alpha Ophiuchi)", type: "White Giant" }, { name: "Sabik (Eta Ophiuchi)", type: "Binary Star" }],
+                externalLink: "https://en.wikipedia.org/wiki/Ophiuchus"
             },
             {
                 name: "Sagittarius", color: 0x8A2BE2, angleOffset: 270, // 270 degrees
                 stars: [[0, 0, 0], [2, 1, 0], [1, -2, 0], [4, 0, 0], [3, -3, 0], [5, -1, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]],
                 folklore: "Sagittarius is typically depicted as a centaur (half-human, half-horse) archer, aiming his bow and arrow towards Scorpius. He is sometimes identified as Chiron, the wise centaur tutor of many Greek heroes.",
-                encyclopedic: "Sagittarius is a prominent constellation in the Southern Hemisphere, known for containing the center of the Milky Way Galaxy. It is often recognized by the 'Teapot' asterism, a smaller pattern within the constellation."
+                encyclopedic: "Sagittarius is a prominent constellation in the Southern Hemisphere, known for containing the center of the Milky Way Galaxy. It is often recognized by the 'Teapot' asterism, a smaller pattern within the constellation.",
+                prominentStars: [{ name: "Kaus Australis (Epsilon Sagittarii)", type: "Blue Giant" }, { name: "Nunki (Sigma Sagittarii)", type: "Blue Giant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Sagittarius_(constellation)"
             },
             {
                 name: "Capricornus", color: 0x4682B4, angleOffset: 300, // 300 degrees
                 stars: [[0, 0, 0], [-1, 2, 0], [1, 3, 0], [3, 1, 0], [2, -1, 0], [0, -3, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]],
                 folklore: "Capricornus is often depicted as a mythical sea-goat, a creature that is half goat and half fish. In Babylonian mythology, it was associated with the god Ea or Enki, who represented water, wisdom, and creation.",
-                encyclopedic: "Capricornus is a constellation in the Southern Hemisphere, part of the zodiac. It is one of the fainter zodiac constellations but can be found by looking for its distinctive triangle or V-shape. Its brightest star is Deneb Algedi."
+                encyclopedic: "Capricornus is a constellation in the Southern Hemisphere, part of the zodiac. It is one of the fainter zodiac constellations but can be found by looking for its distinctive triangle or V-shape. Its brightest star is Deneb Algedi.",
+                prominentStars: [{ name: "Deneb Algedi (Delta Capricorni)", type: "White Giant" }, { name: "Nashira (Gamma Capricorni)", type: "White Giant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Capricornus"
             },
             {
                 name: "Aquarius", color: 0x00BFFF, angleOffset: 330, // 330 degrees
                 stars: [[0, 0, 0], [2, 1, 0], [0, 3, 0], [-2, 1, 0], [-1, -1, 0], [1, -3, 0]],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]],
                 folklore: "Aquarius, the Water-Bearer, is an ancient constellation with roots in Babylonian astronomy, where it was associated with flooding and rain. In Greek mythology, it is sometimes identified with Ganymede, the cup-bearer of the gods.",
-                encyclopedic: "Aquarius is a large constellation in the Southern Hemisphere, one of the oldest recognized constellations. It is often depicted as a figure pouring water from an urn. It is best seen in the autumn evening sky."
+                encyclopedic: "Aquarius is a large constellation in the Southern Hemisphere, one of the oldest recognized constellations. It is often depicted as a figure pouring water from an urn. It is best seen in the autumn evening sky.",
+                prominentStars: [{ name: "Sadalsuud (Beta Aquarii)", type: "Yellow Supergiant" }, { name: "Sadalmelik (Alpha Aquarii)", type: "Yellow Supergiant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Aquarius_(constellation)"
             },
             {
                 name: "Pisces", color: 0x00CED1, angleOffset: 360, // 360 degrees (overlaps 0 degrees / Aries)
                 stars: [[0, 0, 0], [1, 2, 0], [-1, 3, 0], [2, -1, 0], [4, 1, 0], [3, 3, 0]],
                 lines: [[0, 1], [1, 2], [0, 3], [3, 4], [4, 5]],
                 folklore: "Pisces, the Fish, is associated with the myth of Aphrodite and Eros (Venus and Cupid in Roman mythology) who transformed into fish and jumped into the Euphrates River to escape the monster Typhon. They were tied together with a cord to avoid being separated.",
-                encyclopedic: "Pisces is a large constellation of the zodiac. It is depicted as two fish tied together by their tails, swimming in opposite directions. It contains the star Alrescha, which marks the knot holding the two fish together."
+                encyclopedic: "Pisces is a large constellation of the zodiac. It is depicted as two fish tied together by their tails, swimming in opposite directions. It contains the star Alrescha, which marks the knot holding the two fish together.",
+                prominentStars: [{ name: "Alrescha (Alpha Piscium)", type: "Binary Star" }, { name: "Fumalsamakah (Beta Piscium)", type: "Binary Star" }],
+                externalLink: "https://en.wikipedia.org/wiki/Pisces_(constellation)"
             },
             // Added More Constellations (non-zodiac, placed randomly for demonstration)
             {
@@ -729,7 +1103,9 @@
                     [3, 4], [4, 5], [5, 6], [6, 3] // Dipper bowl
                 ],
                 folklore: "Known as the Great Bear, or the Big Dipper in North America, this constellation has many myths. In one Greek myth, it represents Callisto, a nymph turned into a bear by Zeus to protect her from Hera's wrath.",
-                encyclopedic: "Ursa Major is a large constellation and asterism visible primarily in the Northern Hemisphere. It is widely recognized for its 'Big Dipper' shape. Its stars are significant for celestial navigation, as the two pointer stars in the Dipper's bowl point to Polaris, the North Star."
+                encyclopedic: "Ursa Major is a large constellation and asterism visible primarily in the Northern Hemisphere. It is widely recognized for its 'Big Dipper' shape. Its stars are significant for celestial navigation, as the two pointer stars in the Dipper's bowl point to Polaris, the North Star.",
+                prominentStars: [{ name: "Dubhe (Alpha Ursae Majoris)", type: "Orange Giant" }, { name: "Alioth (Epsilon Ursae Majoris)", type: "White Main-sequence" }],
+                externalLink: "https://en.wikipedia.org/wiki/Ursa_Major"
             },
             {
                 name: "Orion", color: 0x00FFFF, angleOffset: 300, // Near Sagittarius/Capricornus, but off-ecliptic
@@ -744,7 +1120,9 @@
                     [7, 3], [3, 8] // Connecting lines for Orion's Belt
                 ],
                 folklore: "In Greek mythology, Orion was a giant hunter whom Zeus placed among the stars as the constellation Orion. He is often depicted pursuing the Pleiades sisters or fighting Taurus the Bull.",
-                encyclopedic: "Orion is one of the most prominent and recognizable constellations in the night sky, visible throughout the world. Its brightest stars are Rigel (a blue supergiant) and Betelgeuse (a red supergiant). It contains the famous Orion Nebula, a stellar nursery."
+                encyclopedic: "Orion is one of the most prominent and recognizable constellations in the night sky, visible throughout the world. Its brightest stars are Rigel (a blue supergiant) and Betelgeuse (a red supergiant). It contains the famous Orion Nebula, a stellar nursery.",
+                prominentStars: [{ name: "Rigel (Beta Orionis)", type: "Blue Supergiant" }, { name: "Betelgeuse (Alpha Orionis)", type: "Red Supergiant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Orion"
             },
             {
                 name: "Cassiopeia", color: 0xFF69B4, angleOffset: 60, // Near Gemini/Cancer, but off-ecliptic
@@ -755,7 +1133,9 @@
                     [0, 1], [1, 2], [2, 3], [3, 4] // W shape
                 ],
                 folklore: "In Greek mythology, Cassiopeia was the vain queen of Aethiopia, who boasted that she was more beautiful than the Nereids (sea nymphs). This angered Poseidon, who sent the sea monster Cetus to ravage her kingdom as punishment.",
-                encyclopedic: "Cassiopeia is a constellation in the northern sky, easily recognizable by its distinct 'W' or 'M' shape, depending on the season and time of night. It is circumpolar for much of the Northern Hemisphere, meaning it never sets below the horizon."
+                encyclopedic: "Cassiopeia is a constellation in the northern sky, easily recognizable by its distinct 'W' or 'M' shape, depending on the season and time of night. It is circumpolar for much of the Northern Hemisphere, meaning it never sets below the horizon.",
+                prominentStars: [{ name: "Schedar (Alpha Cassiopeiae)", type: "Orange Giant" }, { name: "Caph (Beta Cassiopeiae)", type: "White Giant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Cassiopeia_(constellation)"
             },
             {
                 name: "Canis Major", color: 0x87CEFA, angleOffset: 200, // Near Scorpius
@@ -764,7 +1144,9 @@
                 ],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
                 folklore: "Canis Major, the 'Greater Dog,' is often depicted as Orion's hunting dog. It is home to Sirius, the brightest star in the night sky, sometimes called the 'Dog Star.'",
-                encyclopedic: "Canis Major is a constellation in the southern celestial hemisphere. Its most prominent feature is the star Sirius (Alpha Canis Majoris), which is not only the brightest star in the constellation but also the brightest star visible from Earth."
+                encyclopedic: "Canis Major is a constellation in the southern celestial hemisphere. Its most prominent feature is the star Sirius (Alpha Canis Majoris), which is not only the brightest star in the constellation but also the brightest star visible from Earth.",
+                prominentStars: [{ name: "Sirius (Alpha Canis Majoris)", type: "Blue-white Main-sequence Binary" }, { name: "Adhara (Epsilon Canis Majoris)", type: "Blue Giant" }],
+                externalLink: "https://en.wikipedia.org/wiki/Canis_Major"
             },
             {
                 name: "Cygnus", color: 0xFFFFFF, angleOffset: 250, // Near Ophiuchus/Sagittarius
@@ -773,8 +1155,64 @@
                 ],
                 lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 3]], // Cross shape
                 folklore: "Cygnus represents the swan in Greek mythology, often associated with Zeus disguising himself as a swan to seduce Leda, or with Orpheus's transformation into a swan after his death to be reunited with his lyre in the sky.",
-                encyclopedic: "Cygnus, the Swan, is a prominent constellation in the Northern Hemisphere's summer sky. It is easily recognizable by its bright star Deneb and the asterism known as the Northern Cross. It lies on the Milky Way and contains many notable deep-sky objects, including the Cygnus X-1 black hole."
+                encyclopedic: "Cygnus, the Swan, is a prominent constellation in the Northern Hemisphere's summer sky. It is easily recognizable by its bright star Deneb and the asterism known as the Northern Cross. It lies on the Milky Way and contains many notable deep-sky objects, including the Cygnus X-1 black hole.",
+                prominentStars: [{ name: "Deneb (Alpha Cygni)", type: "Blue-white Supergiant" }, { name: "Albireo (Beta Cygni)", type: "Double Star" }],
+                externalLink: "https://en.wikipedia.org/wiki/Cygnus_(constellation)"
             }
+        ];
+
+        // --- Glossary Data ---
+        const GLOSSARY_TERMS = [
+            { term: "Absolute Zero", definition: "The lowest possible temperature, where all molecular motion ceases. It is 0 Kelvin or -273.15 degrees Celsius." },
+            { term: "Accretion Disk", definition: "A disc-shaped flow of gas, dust, or other matter spiraling inward towards a massive central object, such as a star or black hole." },
+            { term: "Asterism", definition: "A prominent pattern of stars, often with a popular name, that is not an official constellation but is part of one or more constellations (e.g., the Big Dipper within Ursa Major)." },
+            { term: "Astronomical Unit (AU)", definition: "The average distance between the Earth and the Sun, approximately 149.6 million kilometers (93 million miles). Used for measuring distances within our solar system." },
+            { term: "Aurora", definition: "A natural light display in the Earth's sky, predominantly seen in the high-latitude regions (around the Arctic and Antarctic). Caused by solar wind particles interacting with the Earth's magnetic field." },
+            { term: "Big Bang", definition: "The prevailing cosmological model for the universe from the earliest known periods through its subsequent large-scale evolution. Describes how the universe expanded from a very high-density and high-temperature state." },
+            { term: "Binary Star", definition: "A star system consisting of two stars orbiting around their common barycenter. They are very common in the universe." },
+            { term: "Celestial Sphere", definition: "An imaginary sphere concentric with the Earth, on which all celestial bodies appear to be located. Used as a practical tool for spherical astronomy." },
+            { term: "Dark Matter", definition: "A hypothetical form of matter that is thought to account for approximately 27% of the mass-energy of the universe. It cannot be seen directly with telescopes; its presence is inferred from its gravitational effects." },
+            { term: "Dark Energy", definition: "A hypothetical form of energy that exerts a negative, repulsive pressure, accounting for approximately 68% of the universe's mass-energy and thought to be responsible for the accelerating expansion of the universe." },
+            { term: "Dwarf Galaxy", definition: "A small galaxy composed of up to several billion stars, a small number compared to our own Milky Way Galaxy, which has 200–400 billion stars." },
+            { term: "Eclipse", definition: "An astronomical event that occurs when an astronomical object is temporarily obscured, either by passing into the shadow of another body or by having another body pass between it and the observer." },
+            { term: "Ecliptic", definition: "The plane of Earth's orbit around the Sun. From Earth, it is the apparent path of the Sun across the celestial sphere over the course of a year." },
+            { term: "Event Horizon", definition: "The boundary around a black hole beyond which no information, not even light, can escape to an outside observer. It's the 'point of no return'." },
+            { term: "Galaxy Cluster", definition: "A structure that consists of anywhere from hundreds to thousands of galaxies that are bound together by gravity." },
+            { term: "Gravitational Lensing", definition: "A phenomenon predicted by Einstein's theory of general relativity, where light from a distant source is bent and magnified by the gravity of an intermediate massive object (like a galaxy or cluster) acting as a lens." },
+            { term: "Light Curve", definition: "A graph showing the variation in the brightness of a celestial object or region over time. Often used to detect exoplanets (transit method) or study variable stars." },
+            { term: "Magnetosphere", definition: "The region around an astronomical object in which charged particles are controlled by that object's magnetic field." },
+            { term: "Milky Way Galaxy", definition: "The galaxy containing our Solar System. It is a barred spiral galaxy with a diameter between 100,000 and 180,000 light-years." },
+            { term: "Neutron Star", definition: "The collapsed core of a massive supergiant star, which had a total initial mass between 10 and 29 solar masses, at the end of its life cycle." },
+            { term: "Orbit", definition: "The gravitationally curved trajectory of an object, such as a planet or moon, around a point in space, for example, the center of a star system." },
+            { term: "Parsec", definition: "A unit of length used to measure large distances to objects outside our Solar System. One parsec is approximately 3.26 light-years." },
+            { term: "Planetary Nebula", definition: "A type of emission nebula consisting of an expanding, glowing shell of ionized gas ejected from a dying red giant star late in its life." },
+            { term: "Pulsar", definition: "A highly magnetized rotating neutron star that emits beams of electromagnetic radiation out of its magnetic poles." },
+            { term: "Quasar", definition: "An extremely luminous active galactic nucleus, powered by a supermassive black hole. They are among the most distant and brightest objects in the known universe." },
+            { term: "Red Dwarf", definition: "A small and cool star, usually with a mass less than half that of the Sun. They are the most common type of star in the Milky Way." },
+            { term: "Red Shift", definition: "The phenomenon where electromagnetic radiation (such as light) from an object undergoes an increase in wavelength. In astronomy, it is primarily used to describe how galaxies appear to be moving away from us due to the expansion of the universe." },
+            { term: "Singularity", definition: "In astrophysics, a point in spacetime where the gravitational field becomes infinite, such as at the center of a black hole." },
+            { term: "Solar Flare", definition: "A sudden flash of increased brightness on the Sun, usually observed near its surface and in close proximity to a sunspot group. They are the most powerful explosive events in the Solar System." },
+            { term: "Spectral Type", definition: "A classification of stars based on their spectral characteristics, which are indicative of the star's surface temperature and chemical composition." },
+            { term: "Stellar Nucleosynthesis", definition: "The process by which elements are created within stars by combining lighter nuclei into heavier nuclei, up to iron. Heavier elements are formed during supernova explosions." },
+            { term: "Terraforming", definition: "The hypothetical process of deliberately modifying the atmosphere, temperature, surface topography, or ecology of a planet, moon, or other body to make it habitable for Earth-like life." },
+            { term: "White Dwarf", definition: "A stellar remnant composed mostly of electron-degenerate matter. It is very dense, with a mass comparable to the Sun's, but a volume comparable to Earth's." },
+            { term: "Wormhole", definition: "A hypothetical topological feature of spacetime that would fundamentally be a 'shortcut' through spacetime. It is often visualized as a tunnel connecting two distant points." },
+            { term: "Zodiac", definition: "A belt of the celestial sphere extending 9 degrees on either side of the ecliptic, containing the paths of the Sun, Moon, and principal planets. It is divided into twelve astrological signs." }
+        ];
+
+        // --- Did You Know Facts Data ---
+        const DID_YOU_KNOW_FACTS = [
+            "A day on Venus is longer than its year.",
+            "There are more stars in the universe than grains of sand on all the beaches on Earth.",
+            "The largest known star, UY Scuti, is about 1,700 times wider than the Sun.",
+            "Footprints on the Moon will stay there for 100 million years.",
+            "The Sun is so big that approximately 1.3 million Earths could fit inside it.",
+            "Neutron stars can spin at a rate of 600 rotations per second.",
+            "If you could fly a plane to Pluto, it would take over 800 years.",
+            "The Milky Way galaxy is estimated to contain 100-400 billion stars.",
+            "The universe is thought to be around 13.8 billion years old.",
+            "There is a planet made of diamonds, 55 Cancri e, twice the size of Earth.",
+            "Jupiter's Great Red Spot is a storm larger than Earth and has been raging for centuries."
         ];
 
 
@@ -923,6 +1361,37 @@
             { date: "1963-06-16", title: "Valentina Tereshkova First Woman in Space", description: "Vostok 6 mission, first woman in space.", category: "Historic Flight" }
         ];
 
+        // --- Space History Timeline Data ---
+        const SPACE_HISTORY_EVENTS = [
+            { date: "October 4, 1957", title: "Sputnik 1 Launched", description: "The Soviet Union launches Sputnik 1, the first artificial Earth satellite, marking the start of the Space Age." },
+            { date: "November 3, 1957", title: "Laika in Space", description: "Sputnik 2 carries the dog Laika into orbit, making her the first living creature to orbit Earth." },
+            { date: "January 31, 1958", title: "Explorer 1 Launched", description: "The United States launches its first satellite, Explorer 1, discovering the Van Allen radiation belts." },
+            { date: "April 12, 1961", title: "Yuri Gagarin First Man in Space", description: "Soviet cosmonaut Yuri Gagarin becomes the first human in space, completing one orbit of Earth aboard Vostok 1." },
+            { date: "May 5, 1961", title: "Alan Shepard First American in Space", description: "Astronaut Alan Shepard becomes the first American in space aboard Freedom 7." },
+            { date: "February 20, 1962", title: "John Glenn Orbits Earth", description: "John Glenn becomes the first American to orbit Earth aboard Friendship 7." },
+            { date: "June 16, 1963", title: "Valentina Tereshkova First Woman in Space", description: "Valentina Tereshkova becomes the first woman in space aboard Vostok 6." },
+            { date: "March 18, 1965", title: "Alexei Leonov First Spacewalk", description: "Soviet cosmonaut Alexei Leonov performs the first spacewalk." },
+            { date: "July 20, 1969", title: "Apollo 11 Moon Landing", description: "Neil Armstrong and Buzz Aldrin become the first humans to walk on the Moon." },
+            { date: "April 19, 1971", title: "Salyut 1 Launched", description: "The Soviet Union launches Salyut 1, the first space station." },
+            { date: "December 2, 1971", title: "Mars 3 Lands on Mars", description: "The Soviet Mars 3 probe becomes the first to achieve a soft landing on Mars, though it transmitted for only 20 seconds." },
+            { date: "December 7, 1972", title: "Apollo 17 Launched", description: "Apollo 17, the last mission of the Apollo program, launches to the Moon." },
+            { date: "August 20, 1977", title: "Voyager 2 Launched", description: "NASA launches Voyager 2, which would later visit all four outer planets (Jupiter, Saturn, Uranus, Neptune)." },
+            { date: "September 5, 1977", title: "Voyager 1 Launched", description: "NASA launches Voyager 1, now the farthest human-made object from Earth." },
+            { date: "April 12, 1981", title: "First Space Shuttle Flight (Columbia)", description: "The Space Shuttle Columbia launches on STS-1, the first flight of NASA's Space Shuttle program." },
+            { date: "January 28, 1986", title: "Challenger Disaster", description: "The Space Shuttle Challenger breaks apart 73 seconds after launch, killing all seven astronauts." },
+            { date: "April 24, 1990", title: "Hubble Space Telescope Launched", description: "The Hubble Space Telescope is launched into orbit, revolutionizing astronomy." },
+            { date: "November 20, 1998", title: "ISS Zarya Module Launched", description: "The first module of the International Space Station (ISS), Zarya, is launched by Russia." },
+            { date: "November 2, 2000", title: "ISS Expedition 1 Arrives", description: "The first resident crew arrives at the International Space Station, beginning continuous human presence in orbit." },
+            { date: "February 1, 2003", title: "Columbia Disaster", description: "The Space Shuttle Columbia disintegrates upon re-entry, killing all seven astronauts." },
+            { date: "January 4, 2004", title: "Spirit Rover Lands on Mars", description: "NASA's Spirit rover lands on Mars, beginning its extended mission to explore the Martian surface." },
+            { date: "August 6, 2012", title: "Curiosity Rover Lands on Mars", description: "NASA's Curiosity rover successfully lands on Mars to investigate its habitability." },
+            { date: "November 12, 2014", title: "Philae Lander on Comet", description: "The Rosetta mission's Philae lander touches down on Comet 67P/Churyumov-Gerasimenko, the first soft landing on a comet." },
+            { date: "July 14, 2015", title: "New Horizons Pluto Flyby", description: "NASA's New Horizons spacecraft performs a close flyby of Pluto, providing the first detailed images." },
+            { date: "December 20, 2020", title: "Hayabusa2 Returns Samples", description: "Japan's Hayabusa2 spacecraft returns samples from asteroid Ryugu to Earth." },
+            { date: "February 18, 2021", title: "Perseverance Rover Lands on Mars", description: "NASA's Perseverance rover successfully lands in Jezero Crater on Mars, carrying the Ingenuity helicopter." },
+            { date: "December 25, 2021", title: "James Webb Space Telescope Launched", description: "The James Webb Space Telescope, the premier observatory of the next decade, is launched." }
+        ];
+
         // --- DOM Elements for Calendar ---
         const currentMonthYearDisplay = document.getElementById('currentMonthYear');
         const calendarDaysContainer = document.getElementById('calendarDays');
@@ -937,6 +1406,38 @@
         const modalEventDescription = document.getElementById('modalEventDescription');
         const modalMoonPhase = document.getElementById('modalMoonPhase'); // New element for moon phase in modal
         const llmStoryLoading = document.getElementById('llmStoryLoading');
+
+        // --- DOM Elements for Planet Info Popup ---
+        const planetMass = document.getElementById('planetMass');
+        const planetDiameter = document.getElementById('planetDiameter');
+        const planetAvgTemp = document.getElementById('planetAvgTemp');
+        const planetOrbitalPeriod = document.getElementById('planetOrbitalPeriod');
+        const planetRotationPeriod = document.getElementById('planetRotationPeriod');
+        const planetMoons = document.getElementById('planetMoons');
+        const planetAtmosphere = document.getElementById('planetAtmosphere');
+
+        // --- DOM Elements for Glossary ---
+        const glossaryContainer = document.getElementById('glossary-container');
+        const glossaryFilterInput = document.getElementById('glossaryFilterInput');
+
+        // --- DOM Elements for Space History Timeline ---
+        const timelineContainer = document.getElementById('timeline-container');
+
+        // --- DOM Elements for Did You Know Facts ---
+        const didYouKnowFactContent = document.getElementById('didYouKnowFactContent');
+        const didYouKnowPopup = document.getElementById('didYouKnowPopup');
+        const nextFactBtn = document.getElementById('nextFactBtn');
+        const closeFactBtn = document.getElementById('closeFactBtn');
+        const headerTooltip = document.getElementById('headerTooltip');
+        const siteTitle = document.getElementById('site-title');
+
+        // --- DOM Elements for Moon Phases Diagram ---
+        const moonPhaseSlider = document.getElementById('moonPhaseSlider');
+        const moonPhaseLabel = document.getElementById('moonPhaseLabel');
+
+        // --- DOM Elements for Eclipses Diagram ---
+        const eclipseSlider = document.getElementById('eclipseSlider');
+        const eclipseLabel = document.getElementById('eclipseLabel');
 
 
         // --- Multi-Page Navigation Logic ---
@@ -970,30 +1471,40 @@
                     document.getElementById('solarSystemCanvas').style.display = 'block';
                     onWindowResize(); // Adjust size if window changed
                 }
-                // Hide constellation canvas if it was active
-                if (constellationsInitialized) {
-                     document.getElementById('constellationsCanvas').style.display = 'none';
-                     // Also clear constellation highlight and popup if active
-                     if (previouslyClickedConstellationStar) {
-                        const previousConstellationName = previouslyClickedConstellationStar.userData.name;
-                        constellationsGroup.children.forEach(group => {
-                            if (group instanceof THREE.Group) {
-                                group.children.forEach(child => {
-                                    if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.userData.name === previousConstellationName) {
-                                        if (child.material && child.material.emissive) {
-                                            child.material.emissive.setHex(child.userData.originalEmissive);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                        previouslyClickedConstellationStar = null;
-                     }
-                     if (constellationInfoPopup) {
-                        constellationInfoPopup.classList.remove('show');
-                        constellationInfoPopup.classList.add('hidden');
-                     }
+                // Hide other canvases if active
+                if (constellationsInitialized) { document.getElementById('constellationsCanvas').style.display = 'none'; }
+                if (moonPhaseInitialized) { document.getElementById('moonPhasesCanvas').style.display = 'none'; }
+                if (eclipsesInitialized) { document.getElementById('eclipsesCanvas').style.display = 'none'; }
+                
+                // Clear highlights/popups from other scenes
+                if (solarSystemPreviouslyClickedObject) {
+                    solarSystemPreviouslyClickedObject.material.emissive.setHex(solarSystemPreviouslyClickedObject.userData.originalEmissive);
+                    solarSystemPreviouslyClickedObject = null;
                 }
+                if (planetInfoPopup) {
+                    planetInfoPopup.classList.remove('show');
+                    planetInfoPopup.classList.add('hidden');
+                }
+                if (previouslyClickedConstellationStar) {
+                    const previousConstellationName = previouslyClickedConstellationStar.userData.name;
+                    constellationsGroup.children.forEach(group => {
+                        if (group instanceof THREE.Group) {
+                            group.children.forEach(child => {
+                                if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.userData.name === previousConstellationName) {
+                                    if (child.material && child.material.emissive) {
+                                        child.material.emissive.setHex(child.userData.originalEmissive);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    previouslyClickedConstellationStar = null;
+                }
+                if (constellationInfoPopup) {
+                    constellationInfoPopup.classList.remove('show');
+                    constellationInfoPopup.classList.add('hidden');
+                }
+
             } else if (targetId === 'constellations-section') {
                 if (!constellationsInitialized) {
                     constellationsLoadingOverlay = document.getElementById('constellationsLoadingOverlay');
@@ -1008,21 +1519,103 @@
                     document.getElementById('constellationsCanvas').style.display = 'block';
                     onWindowResize(); // Adjust size if window changed
                 }
-                // Hide solar system canvas if it was active
-                if (solarSystemInitialized) {
-                    document.getElementById('solarSystemCanvas').style.display = 'none';
-                    // Also clear any previous highlight and popup when switching away
-                    if (solarSystemPreviouslyClickedObject) {
-                        solarSystemPreviouslyClickedObject.material.emissive.setHex(solarSystemPreviouslyClickedObject.userData.originalEmissive);
-                        solarSystemPreviouslyClickedObject = null;
-                    }
-                    if (planetInfoPopup) {
-                        planetInfoPopup.classList.remove('show');
-                        planetInfoPopup.classList.add('hidden');
-                    }
+                // Hide other canvases if active
+                if (solarSystemInitialized) { document.getElementById('solarSystemCanvas').style.display = 'none'; }
+                if (moonPhaseInitialized) { document.getElementById('moonPhasesCanvas').style.display = 'none'; }
+                if (eclipsesInitialized) { document.getElementById('eclipsesCanvas').style.display = 'none'; }
+
+                // Clear highlights/popups from other scenes (similar to above)
+                if (solarSystemPreviouslyClickedObject) {
+                    solarSystemPreviouslyClickedObject.material.emissive.setHex(solarSystemPreviouslyClickedObject.userData.originalEmissive);
+                    solarSystemPreviouslyClickedObject = null;
                 }
+                if (planetInfoPopup) {
+                    planetInfoPopup.classList.remove('show');
+                    planetInfoPopup.classList.add('hidden');
+                }
+                if (previouslyClickedConstellationStar) {
+                    const previousConstellationName = previouslyClickedConstellationStar.userData.name;
+                    constellationsGroup.children.forEach(group => {
+                        if (group instanceof THREE.Group) {
+                            group.children.forEach(child => {
+                                if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.userData.name === previousConstellationName) {
+                                    if (child.material && child.material.emissive) {
+                                        child.material.emissive.setHex(child.userData.originalEmissive);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    previouslyClickedConstellationStar = null;
+                }
+                if (constellationInfoPopup) {
+                    constellationInfoPopup.classList.remove('show');
+                    constellationInfoPopup.classList.add('hidden');
+                }
+
+            } else if (targetId === 'interactive-concepts-section') {
+                // Moon Phases
+                if (!moonPhaseInitialized) {
+                    moonPhaseLoadingOverlay = document.getElementById('moonPhasesLoadingOverlay');
+                    moonPhaseLoadingOverlay.style.display = 'flex';
+                    setTimeout(() => {
+                        initMoonPhases();
+                        animateMoonPhases(); // Start animation loop
+                        moonPhaseInitialized = true;
+                    }, 100);
+                } else {
+                    document.getElementById('moonPhasesCanvas').style.display = 'block';
+                    onWindowResize(); // Adjust size if window changed
+                }
+                // Eclipses
+                if (!eclipsesInitialized) {
+                    eclipsesLoadingOverlay = document.getElementById('eclipsesLoadingOverlay');
+                    eclipsesLoadingOverlay.style.display = 'flex';
+                    setTimeout(() => {
+                        initEclipses();
+                        animateEclipses(); // Start animation loop
+                        eclipsesInitialized = true;
+                    }, 100);
+                } else {
+                    document.getElementById('eclipsesCanvas').style.display = 'block';
+                    onWindowResize(); // Adjust size if window changed
+                }
+
+                // Hide other canvases
+                if (solarSystemInitialized) { document.getElementById('solarSystemCanvas').style.display = 'none'; }
+                if (constellationsInitialized) { document.getElementById('constellationsCanvas').style.display = 'none'; }
+
+                // Clear highlights/popups from other scenes
+                if (solarSystemPreviouslyClickedObject) {
+                    solarSystemPreviouslyClickedObject.material.emissive.setHex(solarSystemPreviouslyClickedObject.userData.originalEmissive);
+                    solarSystemPreviouslyClickedObject = null;
+                }
+                if (planetInfoPopup) {
+                    planetInfoPopup.classList.remove('show');
+                    planetInfoPopup.classList.add('hidden');
+                }
+                if (previouslyClickedConstellationStar) {
+                    const previousConstellationName = previouslyClickedConstellationStar.userData.name;
+                    constellationsGroup.children.forEach(group => {
+                        if (group instanceof THREE.Group) {
+                            group.children.forEach(child => {
+                                if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.userData.name === previousConstellationName) {
+                                    if (child.material && child.material.emissive) {
+                                        child.material.emissive.setHex(child.userData.originalEmissive);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    previouslyClickedConstellationStar = null;
+                }
+                if (constellationInfoPopup) {
+                    constellationInfoPopup.classList.remove('show');
+                    constellationInfoPopup.classList.add('hidden');
+                }
+
             } else {
-                // For other sections, ensure both canvases are hidden
+                // For other sections, ensure all canvases are hidden
                 if (solarSystemInitialized) {
                     document.getElementById('solarSystemCanvas').style.display = 'none';
                     // Clear highlight and popup
@@ -1058,7 +1651,22 @@
                         constellationInfoPopup.classList.add('hidden');
                      }
                 }
+                if (moonPhaseInitialized) {
+                    document.getElementById('moonPhasesCanvas').style.display = 'none';
+                }
+                if (eclipsesInitialized) {
+                    document.getElementById('eclipsesCanvas').style.display = 'none';
+                }
             }
+
+            // Specific rendering for new sections
+            if (targetId === 'glossary-section') {
+                renderGlossary();
+            } else if (targetId === 'space-history-section') {
+                renderSpaceHistoryTimeline();
+            }
+            // Update "Did You Know?" fact on section change
+            displayRandomDidYouKnowFact();
         }
 
         // Event listeners for navigation links
@@ -1089,29 +1697,30 @@
             const container = document.getElementById('solarSystemCanvas-container');
             solarSystemLoadingOverlay = document.getElementById('solarSystemLoadingOverlay');
             const zoomSensitivitySlider = document.getElementById('zoomSensitivity');
+            const timeWarpSlider = document.getElementById('timeWarp'); // New: Time warp slider
+            const toggleAxialTiltCheckbox = document.getElementById('toggleAxialTilt'); // New: Axial tilt toggle
 
             // Initialize DOM elements for planet info pop-up
             planetInfoPopup = document.getElementById('planetInfoPopup');
             popupPlanetName = document.getElementById('popupPlanetName');
             popupPlanetFacts = document.getElementById('popupPlanetFacts');
+            
+            // Assign new DOM elements for detailed info
+            // (These are already declared globally)
 
             // Hide loading overlay once initialization begins
             solarSystemLoadingOverlay.style.display = 'none';
 
             // Scene setup
             solarSystemScene = new THREE.Scene();
-            solarSystemScene.background = new THREE.Color(0x000000); // Pure black space background
-
-            // Add starfield background
-            const starGeometry = new THREE.BufferGeometry();
-            const starCount = 20000; // Increased star count for denser background
-            const positions = new Float32Array(starCount * 3);
-            for (let i = 0; i < starCount * 3; i++) {
-                positions[i] = (Math.random() - 0.5) * 4000; // Stars spread out in a larger cube
-            }
-            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: true }); // White stars, slightly larger
-            solarSystemStarsBackground = new THREE.Points(starGeometry, starMaterial);
+            // Add a higher-density starfield background
+            const solarBackgroundGeometry = new THREE.SphereGeometry(500, 32, 32);
+            const solarBackgroundMaterial = new THREE.MeshBasicMaterial({
+                map: sharedStarfieldTexture,
+                side: THREE.BackSide,
+                color: 0xAAAAAA // Dimmed slightly
+            });
+            solarSystemStarsBackground = new THREE.Mesh(solarBackgroundGeometry, solarBackgroundMaterial);
             solarSystemScene.add(solarSystemStarsBackground);
 
 
@@ -1128,10 +1737,10 @@
             // Sun (now part of PLANET_DATA for consistency in pop-up logic)
             const sunData = PLANET_DATA.find(p => p.name === 'Sun');
             // Store original emissive color from PLANET_DATA for the Sun
-            const sunMaterial = new THREE.MeshBasicMaterial({ color: sunData.color, emissive: sunData.originalEmissive });
+            const sunMaterial = new THREE.MeshBasicMaterial({ color: sunData.color, emissive: sunData.emissiveColor, emissiveIntensity: sunData.emissiveIntensity });
             sun = new THREE.Mesh(new THREE.SphereGeometry(sunData.radius, 32, 32), sunMaterial);
             sun.name = "Sun"; // Assign a name for raycasting
-            sun.userData = { facts: sunData.facts, originalEmissive: sunData.originalEmissive }; // Store facts and original emissive
+            sun.userData = sunData; // Store all data in userData
             solarSystemScene.add(sun);
 
             // Light source (from the sun) - adjusted intensity
@@ -1146,22 +1755,26 @@
             PLANET_DATA.forEach(data => {
                 if (data.name === 'Sun') return; // Sun is handled separately
 
-                const planetGroup = new THREE.Group(); // Group for planet + label + potential rings
+                const planetGroup = new THREE.Group(); // Group for planet + label + potential rings + moons
                 solarSystemScene.add(planetGroup);
 
-                // Store original emissive color from PLANET_DATA for each planet
-                const planetMaterial = new THREE.MeshPhongMaterial({ color: data.color, emissive: data.originalEmissive, emissiveIntensity: 0.8 }); // Added emissive to default
-                const planet = new THREE.Mesh(new THREE.SphereGeometry(data.radius, 32, 32), planetMaterial);
+                // Use MeshPhongMaterial for better lighting interaction (specular, shininess)
+                const planetMaterial = new THREE.MeshPhongMaterial({
+                    color: data.color,
+                    emissive: data.emissiveColor || 0x000000,
+                    emissiveIntensity: data.emissiveIntensity || 0,
+                    specular: 0x333333, // Reflective highlight color
+                    shininess: 10 // How 'shiny' the surface is
+                });
+                const planet = new THREE.Mesh(new THREE.SphereGeometry(data.radius, 64, 64), planetMaterial); // Higher segments for smoother sphere
                 planet.name = data.name; // Assign name for raycasting
-                planet.userData = { facts: data.facts, originalEmissive: data.originalEmissive }; // Store additional data and original emissive
-                // Set axial tilt
-                planet.rotation.z = data.axialTilt || 0; // Apply axial tilt
-
+                planet.userData = { ...data, originalAxialTilt: data.axialTilt }; // Store all data and original axial tilt
+                
                 planetGroup.add(planet); // Add planet mesh to its group
                 planets.push({ mesh: planet, data: data, angle: 0, group: planetGroup }); // Store mesh, data, angle, and group
 
                 // Create orbital path
-                const orbitGeometry = new THREE.RingGeometry(data.distance - 0.02, data.distance + 0.02, 64);
+                const orbitGeometry = new THREE.RingGeometry(data.distance - 0.02, data.distance + 0.02, 128); // More segments
                 const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
                 const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
                 orbit.rotation.x = Math.PI / 2; // Rotate to lie flat on XZ plane
@@ -1172,12 +1785,12 @@
                 const textCanvas = document.createElement('canvas');
                 const context = textCanvas.getContext('2d');
                 const fontSize = 48; // Adjust font size
-                context.font = `Bold ${fontSize}px Arial`;
+                context.font = `Bold ${fontSize}px Inter`; // Use Inter font
                 context.fillStyle = `white`;
                 const textWidth = context.measureText(data.name).width;
                 textCanvas.width = textWidth + 20;
                 textCanvas.height = fontSize + 20;
-                context.font = `Bold ${fontSize}px Arial`;
+                context.font = `Bold ${fontSize}px Inter`;
                 context.fillStyle = `white`;
                 context.fillText(data.name, 10, fontSize + 5);
 
@@ -1188,22 +1801,80 @@
                 sprite.position.set(0, data.radius + 0.3, 0); // Position label above the planet relative to its local origin
                 planet.add(sprite); // Attach label to planet so it rotates with it
 
-                // Add Saturn's rings
+                // Add Saturn's rings (enhanced)
                 if (data.name === 'Saturn') {
-                    const ringGeometry = new THREE.RingGeometry(data.radius * 1.2, data.radius * 2.0, 64);
+                    const ringGeometryOuter = new THREE.RingGeometry(data.radius * 1.2, data.radius * 2.0, 64);
+                    const ringGeometryInner = new THREE.RingGeometry(data.radius * 0.8, data.radius * 1.1, 64); // Inner ring
                     const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x969696, side: THREE.DoubleSide });
-                    const rings = new THREE.Mesh(ringGeometry, ringMaterial);
-                    rings.rotation.x = Math.PI / 2; // Keep rings flat relative to planet's axis
-                    rings.rotation.y = Math.PI / 4; // Tilt rings for visual effect
-                    planet.add(rings); // Add rings to the planet group
+
+                    const ringsOuter = new THREE.Mesh(ringGeometryOuter, ringMaterial);
+                    const ringsInner = new THREE.Mesh(ringGeometryInner, ringMaterial);
+
+                    ringsOuter.rotation.x = Math.PI / 2;
+                    ringsInner.rotation.x = Math.PI / 2;
+                    
+                    // Tilt the rings relative to the planet's own axis
+                    // These rings will be children of the planet mesh, so their rotation is relative.
+                    // The planet's axial tilt is applied to planet.rotation.z
+                    
+                    planet.add(ringsOuter); // Add rings to the planet mesh
+                    planet.add(ringsInner);
+                }
+
+                // Add Earth's atmosphere and clouds
+                if (data.name === 'Earth') {
+                    // Atmosphere (slight glow/transparency)
+                    const atmosphereGeometry = new THREE.SphereGeometry(data.radius * 1.05, 64, 64);
+                    const atmosphereMaterial = new THREE.MeshPhongMaterial({
+                        color: 0x87CEEB, // Sky blue
+                        transparent: true,
+                        opacity: 0.2,
+                        side: THREE.BackSide // Render inside the atmosphere sphere
+                    });
+                    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+                    planet.add(atmosphere);
+
+                    // Clouds (procedural texture)
+                    const cloudsGeometry = new THREE.SphereGeometry(data.radius * 1.02, 64, 64);
+                    const cloudsMaterial = new THREE.MeshStandardMaterial({
+                        map: earthCloudTexture,
+                        transparent: true,
+                        opacity: 0.6,
+                        alphaMap: earthCloudTexture, // Use the same texture for alpha to make transparent parts
+                        side: THREE.DoubleSide // Render both sides
+                    });
+                    const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
+                    clouds.name = "EarthClouds"; // Give a name to rotate it independently
+                    planet.add(clouds);
+                }
+            });
+
+            // Add Moons
+            const moons = []; // New array to store moon meshes for updating
+            MOON_DATA.forEach(moonData => {
+                const parentPlanet = planets.find(p => p.name === moonData.parent);
+                if (parentPlanet) {
+                    const moonMaterial = new THREE.MeshPhongMaterial({
+                        color: moonData.color,
+                        specular: 0x111111,
+                        shininess: 5
+                    });
+                    const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(moonData.radius, 32, 32), moonMaterial);
+                    moonMesh.name = moonData.name; // Assign name for raycasting
+                    moonMesh.userData = moonData; // Store all moon data
+                    moonMesh.userData.originalEmissive = 0x000000; // For highlighting
+
+                    moonMesh.userData.orbitalAngle = Math.random() * Math.PI * 2; // Random starting angle
+                    
+                    parentPlanet.mesh.add(moonMesh); // Add moon as child of its parent planet mesh
+                    moons.push({ mesh: moonMesh, data: moonData });
                 }
             });
 
             // Meteors (simple random spheres)
             const numMeteors = 100;
             const meteorGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-            // Enhanced meteor material: brighter color and emissive property for glow
-            const meteorMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, emissive: 0xFFFFFF, emissiveIntensity: 0.5 }); // Bright white with glow
+            const meteorMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); 
             for (let i = 0; i < numMeteors; i++) {
                 const meteor = new THREE.Mesh(meteorGeometry, meteorMaterial);
                 // Random position within a certain range
@@ -1239,7 +1910,7 @@
                 if (!solarSystemIsDragging) return;
 
                 const deltaX = e.clientX - solarSystemPreviousMouseX;
-                const deltaY = e.clientY - solarSystemPreviousY;
+                const deltaY = e.clientY - solarSystemPreviousMouseY;
 
                 // Rotate camera around the origin
                 const spherical = new THREE.Spherical().setFromVector3(solarSystemCamera.position);
@@ -1252,8 +1923,8 @@
                 solarSystemCamera.position.setFromSpherical(spherical);
                 solarSystemCamera.lookAt(0, 0, 0); // Always look at the center of the solar system
 
-                solarSystemPreviousX = e.clientX;
-                solarSystemPreviousY = e.clientY;
+                solarSystemPreviousMouseX = e.clientX;
+                solarSystemPreviousMouseY = e.clientY;
             });
 
             canvas.addEventListener('wheel', (e) => {
@@ -1284,10 +1955,28 @@
                 solarSystemZoomSensitivity = parseFloat(event.target.value);
             });
 
+            // Time Warp Slider Listener
+            timeWarpSlider.addEventListener('input', (event) => {
+                timeWarpFactor = parseFloat(event.target.value);
+            });
+
+            // Axial Tilt Toggle Listener
+            toggleAxialTiltCheckbox.addEventListener('change', (event) => {
+                showAxialTilt = event.target.checked;
+                planets.forEach(p => {
+                    if (p.mesh.name !== 'Sun') { // Don't apply to sun
+                        p.mesh.rotation.z = showAxialTilt ? p.data.axialTilt : 0;
+                    }
+                });
+                moons.forEach(m => {
+                    m.mesh.rotation.z = showAxialTilt ? m.data.axialTilt : 0;
+                });
+            });
+
             solarSystemLoadingOverlay.style.display = 'none'; // Hide overlay once everything is rendered
         }
 
-        // Raycasting for planet info pop-up and highlighting
+        // Raycasting for planet/moon info pop-up and highlighting
         function onSolarSystemCanvasClick(event) {
             event.preventDefault();
 
@@ -1300,9 +1989,17 @@
             // Update the raycaster with the camera and mouse position
             solarSystemRaycaster.setFromCamera(solarSystemMouse, solarSystemCamera);
 
-            // Collect all identifiable meshes (planets + sun) for raycasting
+            // Collect all identifiable meshes (planets + sun + moons) for raycasting
             const interactableObjects = [sun];
-            planets.forEach(p => interactableObjects.push(p.mesh));
+            planets.forEach(p => {
+                interactableObjects.push(p.mesh);
+                // Also add moons of this planet
+                p.mesh.children.forEach(child => {
+                    if (child.isMesh && MOON_DATA.some(m => m.name === child.name)) {
+                        interactableObjects.push(child);
+                    }
+                });
+            });
 
             // Calculate objects intersecting the ray
             const intersects = solarSystemRaycaster.intersectObjects(interactableObjects);
@@ -1325,15 +2022,22 @@
             if (clickedCelestialBody) {
                 // Highlight the newly clicked object
                 if (clickedCelestialBody.material.emissive) {
-                    clickedCelestialBody.material.emissive.setHex(HIGHLIGHT_COLOR);
+                    clickedCelestialBody.material.emissive.setHex(HIGHLIGHT_COLOR); // HIGHLIGHT_COLOR is now 0x000000
                 }
                 solarSystemPreviouslyClickedObject = clickedCelestialBody; // Store for next click
 
-                // Display planet info popup
-                const bodyData = PLANET_DATA.find(p => p.name === clickedCelestialBody.name);
+                // Display planet/moon info popup
+                const bodyData = clickedCelestialBody.userData; // Get all data from userData
                 if (bodyData) {
                     popupPlanetName.textContent = bodyData.name;
                     popupPlanetFacts.textContent = bodyData.facts;
+                    planetMass.textContent = bodyData.mass || 'N/A';
+                    planetDiameter.textContent = bodyData.diameter || 'N/A';
+                    planetAvgTemp.textContent = bodyData.avgTemp || 'N/A';
+                    planetOrbitalPeriod.textContent = bodyData.orbitalPeriod || 'N/A';
+                    planetRotationPeriod.textContent = bodyData.rotationPeriod || 'N/A';
+                    planetMoons.textContent = bodyData.moons || 'N/A';
+                    planetAtmosphere.textContent = bodyData.atmosphere || 'N/A';
                     
                     // Position the popup near the clicked object
                     const vector = new THREE.Vector3();
@@ -1361,18 +2065,55 @@
 
             // Animate planets (orbital and axial rotation)
             planets.forEach(p => {
-                // Orbital rotation
-                p.angle += p.data.orbitalSpeed;
+                // Orbital rotation (affected by timeWarpFactor)
+                p.angle += p.data.orbitalSpeed * timeWarpFactor;
                 p.group.position.x = p.data.distance * Math.cos(p.angle);
                 p.group.position.z = p.data.distance * Math.sin(p.angle);
 
-                // Axial rotation (rotate the planet mesh itself within its group)
-                p.mesh.rotation.y += p.data.rotationSpeed;
+                // Axial rotation (affected by timeWarpFactor)
+                p.mesh.rotation.y += p.data.rotationSpeed * timeWarpFactor;
+                
+                // Earth's clouds rotation
+                if (p.name === 'Earth') {
+                    const clouds = p.mesh.children.find(c => c.name === 'EarthClouds');
+                    if (clouds) {
+                        clouds.rotation.y += (p.data.rotationSpeed * timeWarpFactor * 0.8); // Clouds rotate slightly slower
+                    }
+                }
+                
+                // Apply axial tilt if toggled
+                if (p.name !== 'Sun') { // Do not tilt the sun
+                    p.mesh.rotation.z = showAxialTilt ? p.data.axialTilt : 0;
+                }
             });
+
+            // Animate Moons (orbital and axial rotation)
+            const allMoons = [];
+            planets.forEach(p => {
+                p.mesh.children.forEach(child => {
+                    if (child.isMesh && MOON_DATA.some(m => m.name === child.name)) {
+                        allMoons.push({ mesh: child, data: child.userData });
+                    }
+                });
+            });
+
+            allMoons.forEach(m => {
+                // Orbital rotation around parent planet
+                m.data.orbitalAngle += m.data.orbitalSpeed * timeWarpFactor;
+                m.mesh.position.x = m.data.distance * Math.cos(m.data.orbitalAngle);
+                m.mesh.position.z = m.data.distance * Math.sin(m.data.orbitalAngle);
+
+                // Axial rotation
+                m.mesh.rotation.y += m.data.rotationSpeed * timeWarpFactor;
+
+                // Apply axial tilt if toggled
+                m.mesh.rotation.z = showAxialTilt ? m.data.axialTilt : 0;
+            });
+
 
             // Animate meteors
             meteors.forEach(meteor => {
-                meteor.position.add(meteor.velocity);
+                meteor.position.add(meteor.velocity.clone().multiplyScalar(timeWarpFactor)); // Meteors also affected by time warp
 
                 // Simple boundary check for meteors to keep them within a reasonable area
                 if (meteor.position.length() > 30) {
@@ -1399,12 +2140,22 @@
             constellationPopupName = document.getElementById('constellationPopupName');
             constellationPopupFolklore = document.getElementById('constellationPopupFolklore');
             constellationPopupEncyclopedic = document.getElementById('constellationPopupEncyclopedic');
+            constellationProminentStars = document.getElementById('constellationProminentStars');
+            constellationExternalLink = document.getElementById('constellationExternalLink');
 
 
             constellationsLoadingOverlay.style.display = 'none';
 
             constellationsScene = new THREE.Scene();
-            constellationsScene.background = new THREE.Color(0x000000);
+            // Add a higher-density starfield background
+            const constellationsBackgroundGeometry = new THREE.SphereGeometry(500, 32, 32);
+            const constellationsBackgroundMaterial = new THREE.MeshBasicMaterial({
+                map: sharedStarfieldTexture,
+                side: THREE.BackSide,
+                color: 0xAAAAAA
+            });
+            constellationsStarsBackground = new THREE.Mesh(constellationsBackgroundGeometry, constellationsBackgroundMaterial);
+            constellationsScene.add(constellationsStarsBackground);
 
             constellationsCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
             constellationsCamera.position.set(0, 20, 50); // Initial camera position for constellations
@@ -1414,25 +2165,13 @@
             constellationsRenderer.setSize(container.clientWidth, 600);
             constellationsRenderer.setPixelRatio(window.devicePixelRatio);
 
-            // Add a dedicated starfield background for constellations
-            const starGeometry = new THREE.BufferGeometry();
-            const starCount = 30000; // Even more stars for the background
-            const positions = new Float32Array(starCount * 3);
-            for (let i = 0; i < starCount * 3; i++) {
-                positions[i] = (Math.random() - 0.5) * 4000; // Larger spread
-            }
-            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, sizeAttenuation: true });
-            constellationsStarsBackground = new THREE.Points(starGeometry, starMaterial);
-            constellationsScene.add(constellationsStarsBackground);
-
-            // Add Sun at the center for constellations view
-            const constellationsSunMaterial = new THREE.MeshBasicMaterial({ color: 0xFDB813, emissive: 0xFDB813, emissiveIntensity: 0.8 });
+            // Add Sun at the center for constellations view (more stylized)
+            const constellationsSunMaterial = new THREE.MeshBasicMaterial({ color: 0xFDB813, emissive: 0xFDB813, emissiveIntensity: 0.5 });
             constellationsSun = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 32), constellationsSunMaterial); // Larger sun for visual emphasis
             constellationsScene.add(constellationsSun);
 
             // Add Earth orbiting the Sun in the constellation view
-            const constellationsEarthMaterial = new THREE.MeshPhongMaterial({ color: 0x10B981 });
+            const constellationsEarthMaterial = new THREE.MeshPhongMaterial({ color: 0x10B981, specular: 0x555555, shininess: 20 });
             constellationsEarth = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), constellationsEarthMaterial); // Earth size relative to sun
             constellationsEarth.position.set(10, 0, 0); // Initial position for Earth
             constellationsScene.add(constellationsEarth);
@@ -1472,19 +2211,22 @@
 
 
                 constellation.stars.forEach(sPos => {
-                    const starGeometry = new THREE.SphereGeometry(0.5, 16, 16); // Larger stars for visibility
-                    const starMaterial = new THREE.MeshBasicMaterial({ color: constellation.color, emissive: constellation.color, emissiveIntensity: 0.2 }); // Reduced emissiveIntensity for default
+                    const starGeometry = new THREE.SphereGeometry(0.5, 32, 32); // Higher segments for stars
+                    const starMaterial = new THREE.MeshPhongMaterial({
+                        color: constellation.color,
+                        emissive: constellation.color, // Stars should emit light
+                        emissiveIntensity: 0.5, // Brighter emissive
+                        specular: 0xFFFFFF,
+                        shininess: 100
+                    }); 
                     const star = new THREE.Mesh(starGeometry, starMaterial);
                     
                     // Position relative to the constellation's group origin, scaled
                     star.position.set(sPos[0] * constellationScale, sPos[1] * constellationScale, sPos[2] * constellationScale);
                     star.name = constellation.name; // Assign constellation name to star for identification
-                    star.userData = { // Store full constellation data for pop-up
-                        name: constellation.name,
-                        folklore: constellation.folklore,
-                        encyclopedic: constellation.encyclopedic,
-                        originalEmissive: constellation.color // Store the original hex value directly
-                    };
+                    star.userData = constellation; // Store all constellation data in userData
+                    // Store original emissive color for highlighting revert
+                    star.userData.originalEmissive = constellation.color;
                     constellationIndividualGroup.add(star); // Add star to its individual constellation group
                     starMeshes.push(star);
                 });
@@ -1514,8 +2256,8 @@
 
             canvasConstellations.addEventListener('mousedown', (e) => {
                 constellationsIsDragging = true;
-                constellationsPreviousX = e.clientX;
-                constellationsPreviousY = e.clientY;
+                constellationsPreviousMouseX = e.clientX;
+                constellationsPreviousMouseY = e.clientY;
             });
 
             canvasConstellations.addEventListener('mouseup', () => {
@@ -1525,8 +2267,8 @@
             canvasConstellations.addEventListener('mousemove', (e) => {
                 if (!constellationsIsDragging) return;
 
-                const deltaX = e.clientX - constellationsPreviousX;
-                const deltaY = e.clientY - constellationsPreviousY;
+                const deltaX = e.clientX - constellationsPreviousMouseX;
+                const deltaY = e.clientY - constellationsPreviousMouseY;
 
                 const spherical = new THREE.Spherical().setFromVector3(constellationsCamera.position);
                 spherical.theta -= deltaX * rotateSpeedConstellations;
@@ -1536,8 +2278,8 @@
                 constellationsCamera.position.setFromSpherical(spherical);
                 constellationsCamera.lookAt(0, 0, 0);
 
-                constellationsPreviousX = e.clientX;
-                constellationsPreviousY = e.clientY;
+                constellationsPreviousMouseX = e.clientX;
+                constellationsPreviousMouseY = e.clientY;
             });
 
             canvasConstellations.addEventListener('wheel', (e) => {
@@ -1620,7 +2362,8 @@
                             if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.userData.name === currentConstellationName) {
                                 // Defensive check added here
                                 if (child.material && child.material.emissive) {
-                                    child.material.emissive.setHex(HIGHLIGHT_COLOR);
+                                    // Set emissive to highlight color (now 0x000000)
+                                    child.material.emissive.setHex(CONSTELLATION_HIGHLIGHT_COLOR);
                                 }
                             }
                         });
@@ -1630,22 +2373,45 @@
                 previouslyClickedConstellationStar = clickedConstellationStar; // Store one of the stars from the current constellation
 
                 // Display constellation info popup
-                constellationPopupName.textContent = clickedConstellationStar.userData.name;
-                constellationPopupFolklore.textContent = clickedConstellationStar.userData.folklore;
-                constellationPopupEncyclopedic.textContent = clickedConstellationStar.userData.encyclopedic;
-                
-                // Position the popup near the clicked star
-                const vector = new THREE.Vector3();
-                clickedConstellationStar.getWorldPosition(vector);
-                vector.project(constellationsCamera);
+                const constellationData = clickedConstellationStar.userData; // Get all data from userData
+                if (constellationData) {
+                    constellationPopupName.textContent = constellationData.name;
+                    constellationPopupFolklore.textContent = constellationData.folklore;
+                    constellationPopupEncyclopedic.textContent = constellationData.encyclopedic;
+                    
+                    constellationProminentStars.innerHTML = ''; // Clear previous list
+                    if (constellationData.prominentStars && constellationData.prominentStars.length > 0) {
+                        constellationData.prominentStars.forEach(star => {
+                            const li = document.createElement('li');
+                            li.textContent = `${star.name} (${star.type})`;
+                            constellationProminentStars.appendChild(li);
+                        });
+                    } else {
+                        const li = document.createElement('li');
+                        li.textContent = 'N/A';
+                        constellationProminentStars.appendChild(li);
+                    }
 
-                const x = (vector.x * .5 + .5) * canvas.offsetWidth;
-                const y = (-vector.y * .5 + .5) * canvas.offsetHeight;
+                    if (constellationData.externalLink) {
+                        constellationExternalLink.href = constellationData.externalLink;
+                        constellationExternalLink.style.display = 'inline-block';
+                    } else {
+                        constellationExternalLink.style.display = 'none';
+                    }
+                    
+                    // Position the popup near the clicked star
+                    const vector = new THREE.Vector3();
+                    clickedConstellationStar.getWorldPosition(vector);
+                    vector.project(constellationsCamera);
 
-                constellationInfoPopup.style.left = `${x}px`;
-                constellationInfoPopup.style.top = `${y}px`;
-                constellationInfoPopup.classList.add('show');
-                constellationInfoPopup.classList.remove('hidden'); // Ensure it's not display: none
+                    const x = (vector.x * .5 + .5) * canvas.offsetWidth;
+                    const y = (-vector.y * .5 + .5) * canvas.offsetHeight;
+
+                    constellationInfoPopup.style.left = `${x}px`;
+                    constellationInfoPopup.style.top = `${y}px`;
+                    constellationInfoPopup.classList.add('show');
+                    constellationInfoPopup.classList.remove('hidden'); // Ensure it's not display: none
+                }
             } else {
                 // No object clicked, hide popup and clear highlight
                 constellationInfoPopup.classList.remove('show');
@@ -1672,6 +2438,355 @@
             constellationsRenderer.render(constellationsScene, constellationsCamera);
         }
 
+        // --- Three.js Initialization Function (Moon Phases) ---
+        function initMoonPhases() {
+            const canvas = document.getElementById('moonPhasesCanvas');
+            const container = document.getElementById('moonPhasesCanvas-container');
+            moonPhaseLoadingOverlay = document.getElementById('moonPhasesLoadingOverlay');
+
+            moonPhaseLoadingOverlay.style.display = 'none';
+
+            moonPhaseScene = new THREE.Scene();
+            moonPhaseScene.background = new THREE.Color(0x000000); // Reverted to black background
+
+            moonPhaseCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+            moonPhaseCamera.position.set(0, 5, 10); // Camera looking at the Earth-Moon system
+            moonPhaseCamera.lookAt(0, 0, 0);
+
+            moonPhaseRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            moonPhaseRenderer.setSize(container.clientWidth, 600);
+            moonPhaseRenderer.setPixelRatio(window.devicePixelRatio);
+
+            // Sun Light (directional, simulating distant sun)
+            sunLightMoonPhase = new THREE.DirectionalLight(0xffffff, 2); // White light, strong intensity
+            sunLightMoonPhase.position.set(10, 0, 0); // Light coming from the right (simulating the sun)
+            moonPhaseScene.add(sunLightMoonPhase);
+
+            // Ambient light to prevent total darkness on shadowed side
+            const ambientLightMoonPhase = new THREE.AmbientLight(0x333333); // Soft ambient light
+            moonPhaseScene.add(ambientLightMoonPhase);
+
+            // Earth
+            const earthGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+            const earthMaterial = new THREE.MeshPhongMaterial({ color: 0x0066FF }); // Blue color for Earth
+            earthMoonPhase = new THREE.Mesh(earthGeometry, earthMaterial);
+            moonPhaseScene.add(earthMoonPhase);
+
+            // Moon
+            const moonGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+            // Use a material that reacts to light
+            const moonMaterial = new THREE.MeshPhongMaterial({ color: 0x888888 }); // Gray color for Moon
+            moon = new THREE.Mesh(moonGeometry, moonMaterial);
+            earthMoonPhase.add(moon); // Moon orbits Earth
+
+            // Orbit Path for the Moon around Earth
+            const moonOrbitRadius = 3;
+            const orbitCurve = new THREE.EllipseCurve(
+                0,  0,            // ax, aY
+                moonOrbitRadius, moonOrbitRadius, // xRadius, yRadius
+                0,  2 * Math.PI,  // aStartAngle, aEndAngle
+                false,            // aClockwise
+                0                 // aRotation
+            );
+            const orbitPoints = orbitCurve.getPoints(100);
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x555555 });
+            const moonOrbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
+            moonOrbitLine.rotation.x = Math.PI / 2; // Rotate to lie flat
+            earthMoonPhase.add(moonOrbitLine); // Add orbit line to Earth group
+
+            // Initial Moon Position based on slider
+            updateMoonPhaseVisual(moonPhaseSlider.value);
+
+            // Add event listener for the slider
+            moonPhaseSlider.addEventListener('input', (event) => {
+                moonPhaseCurrentAngle = parseFloat(event.target.value);
+                updateMoonPhaseVisual(moonPhaseCurrentAngle);
+            });
+        }
+
+        function updateMoonPhaseVisual(angleDegrees) {
+            // Calculate moon's position around Earth
+            const moonOrbitRadius = 3;
+            const angleRadians = THREE.MathUtils.degToRad(angleDegrees);
+            moon.position.x = moonOrbitRadius * Math.cos(angleRadians);
+            moon.position.z = moonOrbitRadius * Math.sin(angleRadians); // Z instead of Y to keep it horizontal
+
+            // Rotate the moon to always face the camera (simplification for phase visualization)
+            // Or rotate based on position to simulate tidal locking (more accurate)
+            // For phases, we need the "Earth-facing" side to show the phase correctly.
+            // A simple approach for showing phases is just adjusting light or material properties,
+            // but with a directional light, the phases naturally appear based on relative positions.
+            // Let's ensure the moon rotates on its own axis to show its surface,
+            // but its *illuminated portion* is determined by the fixed sunLightMoonPhase.
+
+            // To make the visible side of the moon represent the phase from Earth's perspective,
+            // the moon itself doesn't need to rotate on its axis for the phase to show up correctly.
+            // The phase is entirely determined by the relative angles of Sun, Earth, and Moon.
+            // The camera is looking at the Earth-Moon system. The Sun is a fixed light source.
+
+            // Get the phase name
+            let phaseName = "";
+            let minDiff = Infinity;
+            for (let i = 0; i < moonPhaseAngles.length; i++) {
+                const diff = Math.abs(angleDegrees - moonPhaseAngles[i]);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    phaseName = moonPhaseNames[i];
+                }
+            }
+            moonPhaseLabel.textContent = phaseName;
+        }
+
+
+        function animateMoonPhases() {
+            requestAnimationFrame(animateMoonPhases);
+
+            // Optional: slight rotation of the whole system for dynamic viewing
+            if (moonPhaseScene) {
+                moonPhaseScene.rotation.y += 0.001; // Slow overall rotation
+            }
+
+            moonPhaseRenderer.render(moonPhaseScene, moonPhaseCamera);
+        }
+
+        // --- Three.js Initialization Function (Eclipses) ---
+        function initEclipses() {
+            const canvas = document.getElementById('eclipsesCanvas');
+            const container = document.getElementById('eclipsesCanvas-container');
+            eclipsesLoadingOverlay = document.getElementById('eclipsesLoadingOverlay');
+
+            eclipsesLoadingOverlay.style.display = 'none';
+
+            eclipsesScene = new THREE.Scene();
+            eclipsesScene.background = new THREE.Color(0x000000); // Reverted to black background
+
+            eclipsesCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+            eclipsesCamera.position.set(0, 5, 20); // Camera position looking at the Earth-Moon-Sun system
+            eclipsesCamera.lookAt(0, 0, 0);
+
+            eclipsesRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            eclipsesRenderer.setSize(container.clientWidth, 600);
+            eclipsesRenderer.setPixelRatio(window.devicePixelRatio);
+
+            // Sun (light source and visible sphere)
+            const sunLightEclipse = new THREE.PointLight(0xffffff, 2); // Bright white light
+            sunLightEclipse.position.set(15, 0, 0); // Position the light source
+            eclipsesScene.add(sunLightEclipse);
+
+            const sunMaterialEclipse = new THREE.MeshBasicMaterial({ color: 0xFDB813 });
+            eclipseSun = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 32), sunMaterialEclipse); // Visible Sun sphere
+            eclipseSun.position.set(15, 0, 0);
+            eclipsesScene.add(eclipseSun);
+
+            // Earth
+            const earthGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+            const earthMaterial = new THREE.MeshPhongMaterial({ color: 0x0066FF });
+            eclipseEarth = new THREE.Mesh(earthGeometry, earthMaterial);
+            eclipseEarth.position.set(0, 0, 0); // Earth at the center
+            eclipsesScene.add(eclipseEarth);
+
+            // Moon
+            const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const moonMaterial = new THREE.MeshPhongMaterial({ color: 0x888888 });
+            eclipseMoon = new THREE.Mesh(moonGeometry, moonMaterial);
+            eclipseMoon.position.set(-5, 0, 0); // Initial position for the Moon
+            eclipsesScene.add(eclipseMoon);
+
+            // Earth's Orbit Path around the Sun (conceptual, for alignment)
+            const earthOrbitRadius = 15; // Distance of Earth from Sun
+            const earthOrbitCurve = new THREE.EllipseCurve(
+                0, 0,            // ax, aY
+                earthOrbitRadius, earthOrbitRadius, // xRadius, yRadius
+                0, 2 * Math.PI,  // aStartAngle, aEndAngle
+                false,           // aClockwise
+                0                // aRotation
+            );
+            const earthOrbitPoints = earthOrbitCurve.getPoints(100);
+            const earthOrbitGeometry = new THREE.BufferGeometry().setFromPoints(earthOrbitPoints);
+            const earthOrbitMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
+            const earthOrbitLine = new THREE.Line(earthOrbitGeometry, earthOrbitMaterial);
+            earthOrbitLine.rotation.x = Math.PI / 2; // Rotate to lie flat
+            // Offset the orbit to be centered on the sun's actual position (15,0,0)
+            earthOrbitLine.position.x = eclipseSun.position.x;
+            eclipsesScene.add(earthOrbitLine);
+
+            // Moon's Orbit Path around Earth
+            const moonOrbitRadius = 3; // Distance of Moon from Earth
+            const moonOrbitCurve = new THREE.EllipseCurve(
+                0, 0,            // ax, aY
+                moonOrbitRadius, moonOrbitRadius, // xRadius, yRadius
+                0, 2 * Math.PI,  // aStartAngle, aEndAngle
+                false,           // aClockwise
+                0                // aRotation
+            );
+            const moonOrbitPoints = moonOrbitCurve.getPoints(100);
+            const moonOrbitGeometry = new THREE.BufferGeometry().setFromPoints(moonOrbitPoints);
+            const moonOrbitMaterial = new THREE.LineBasicMaterial({ color: 0x555555 });
+            const moonOrbitLine = new THREE.Line(moonOrbitGeometry, moonOrbitMaterial);
+            moonOrbitLine.rotation.x = Math.PI / 2; // Rotate to lie flat
+            eclipseEarth.add(moonOrbitLine); // Add to Earth, so it moves with Earth
+
+            // Create shadows (Umbra and Penumbra)
+            // Umbra (darkest part of shadow) - cone from moon to earth
+            const umbraGeometry = new THREE.ConeGeometry(0.5, 5, 32); // Adjust radius and height
+            const umbraMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+            umbraMesh = new THREE.Mesh(umbraGeometry, umbraMaterial);
+            umbraMesh.rotation.x = Math.PI / 2; // Orient along Z-axis by default
+            eclipsesScene.add(umbraMesh); // Add directly to scene, positions updated in updateEclipsesVisual
+
+            // Penumbra (lighter part of shadow) - wider cone
+            const penumbraGeometry = new THREE.ConeGeometry(1.5, 7, 32); // Larger radius and height
+            const penumbraMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+            penumbraMesh = new THREE.Mesh(penumbraGeometry, penumbraMaterial);
+            penumbraMesh.rotation.x = Math.PI / 2; // Orient along Z-axis by default
+            eclipsesScene.add(penumbraMesh); // Add directly to scene
+
+            // Initial positions and update
+            updateEclipsesVisual(eclipseSlider.value);
+
+            // Event listener for the slider
+            eclipseSlider.addEventListener('input', (event) => {
+                eclipseCurrentAngle = parseFloat(event.target.value);
+                updateEclipsesVisual(eclipseCurrentAngle);
+            });
+        }
+
+        function updateEclipsesVisual(angleDegrees) {
+            const angleRadians = THREE.MathUtils.degToRad(angleDegrees);
+
+            // Earth's position relative to the Sun (Sun is at (15,0,0) in this scene)
+            const earthOrbitRadius = 10; // This is distance from scene origin, not Sun itself for simplicity
+            eclipseEarth.position.x = earthOrbitRadius * Math.cos(angleRadians);
+            eclipseEarth.position.z = earthOrbitRadius * Math.sin(angleRadians);
+
+            // Moon's position relative to Earth
+            const moonOrbitRadius = 3;
+            // The moon needs to be on the same "plane" as the sun and earth for eclipses to align.
+            // For simplicity, we'll keep it on the same XZ plane, aligning it for eclipses.
+            // Solar eclipse: Moon between Sun and Earth (angleDegrees near 0 or 360)
+            // Lunar eclipse: Earth between Sun and Moon (angleDegrees near 180)
+
+            // Adjust moon's position relative to Earth to align for eclipses
+            // When Earth is at angleRadians, Moon should be at the same angle for Solar, or opposite for Lunar relative to Earth-Sun line.
+            // For this diagram, a simpler approach is to make the Moon always directly dependent on the slider to force alignment.
+
+            // The positions for alignment:
+            // Sun (15,0,0) -> Earth (earth.x, 0, earth.z)
+            // Moon: (moonX, 0, moonZ)
+
+            // To make it interactive with one slider:
+            // Slider value 0/360 degrees: Earth is at (earthOrbitRadius, 0, 0).
+            // For Solar Eclipse, Moon needs to be between Sun and Earth.
+            // Eclipse Sun is at (15,0,0)
+            // Eclipse Earth is at (0,0,0) in its own reference frame, but we're moving it in the scene
+            // The Moon is child of Earth. Its position relative to Earth is fixed.
+
+            // Re-think: Sun is at a fixed position far left (or right). Earth orbits the Sun. Moon orbits Earth.
+            // The slider controls the 'phase' of the moon's orbit *relative to the Earth-Sun line*.
+            // Let the Sun be at (-15, 0, 0) for clearer visualization of light path.
+            eclipseSun.position.set(-15, 0, 0); // Sun fixed on the left
+
+            const earthDistance = 10;
+            eclipseEarth.position.x = earthDistance * Math.cos(angleRadians);
+            eclipseEarth.position.z = earthDistance * Math.sin(angleRadians);
+
+            // Moon orbits Earth. Its position relative to Earth is determined by the "eclipse" angle.
+            // For a proper solar/lunar alignment, the Moon needs to be on the line connecting Sun and Earth.
+            // So, Moon.position = Earth.position + vector_from_Earth_to_Moon.
+            // The vector_from_Earth_to_Moon depends on whether it's solar or lunar.
+
+            // Let's make the Moon's orbital angle around Earth correspond to the slider:
+            // If angleRadians = 0, Moon is directly between Sun and Earth (Solar Eclipse)
+            // If angleRadians = PI, Earth is directly between Sun and Moon (Lunar Eclipse)
+            
+            // Moon's position relative to Earth (its parent)
+            const moonXRelative = moonOrbitRadius * Math.cos(angleRadians + Math.PI); // Offset by PI to put it on the sun-earth line
+            const moonZRelative = moonOrbitRadius * Math.sin(angleRadians + Math.PI);
+
+            eclipseMoon.position.set(moonXRelative, 0, moonZRelative); // Set relative to Earth's origin
+
+            // --- Shadow calculations ---
+            // The shadow meshes should originate from the Moon and extend towards the Sun.
+            // They need to be positioned and oriented correctly.
+            // The direction of light is from Sun to Moon.
+            const sunToMoonDirection = new THREE.Vector3().subVectors(eclipseMoon.position, eclipseSun.position).normalize();
+
+            // Set Umbra/Penumbra position to be behind the moon, extending away from the sun.
+            // The cones point away from the sun, through the moon.
+            umbraMesh.position.copy(eclipseMoon.position);
+            penumbraMesh.position.copy(eclipseMoon.position);
+
+            // Orient the cones to point along the sunToMoonDirection
+            // Use LookAt to point away from the sun.
+            const targetForShadows = new THREE.Vector3().copy(eclipseMoon.position).add(sunToMoonDirection.multiplyScalar(10)); // Point 10 units beyond moon
+            umbraMesh.lookAt(targetForShadows);
+            penumbraMesh.lookAt(targetForShadows);
+            
+            // Adjust label based on alignment
+            let currentEclipseType = eclipseLabels.none;
+            const distanceSunMoon = eclipseSun.position.distanceTo(eclipseMoon.position);
+            const distanceSunEarth = eclipseSun.position.distanceTo(eclipseEarth.position);
+            const distanceMoonEarth = eclipseMoon.position.distanceTo(eclipseEarth.position);
+
+            // Simple alignment check for demonstration purposes
+            // Solar: Moon is roughly between Sun and Earth
+            // Lunar: Earth is roughly between Sun and Moon
+
+            const tolerance = 1.5; // Tolerance for alignment check
+
+            if (distanceSunEarth - distanceSunMoon - distanceMoonEarth < tolerance && distanceSunEarth - distanceSunMoon - distanceMoonEarth > -tolerance) {
+                currentEclipseType = eclipseLabels.solar; // Moon-Earth-Sun roughly aligned
+                // If Moon is precisely between Sun and Earth:
+                const vectorSunEarth = new THREE.Vector3().subVectors(eclipseEarth.position, eclipseSun.position).normalize();
+                const vectorMoonEarth = new THREE.Vector3().subVectors(eclipseEarth.position, eclipseMoon.position).normalize();
+                if (vectorSunEarth.dot(vectorMoonEarth) > 0.95) { // Check if directions are similar
+                    // Solar eclipse possible
+                    umbraMesh.visible = true;
+                    penumbraMesh.visible = true;
+                    // Position umbra/penumbra to project onto Earth
+                    // Calculate intersection point of umbra cone with Earth
+                    // For simplification, just show shadows emanating from Moon.
+                    // A proper shadow calculation would involve more complex geometry and physics.
+                    // For a visual demo, having visible cones is enough.
+                } else {
+                    umbraMesh.visible = false;
+                    penumbraMesh.visible = false;
+                }
+            } else if (distanceSunMoon - distanceSunEarth - distanceMoonEarth < tolerance && distanceSunMoon - distanceSunEarth - distanceMoonEarth > -tolerance) {
+                currentEclipseType = eclipseLabels.lunar; // Earth-Moon-Sun roughly aligned
+                 // If Earth is precisely between Sun and Moon:
+                const vectorSunMoon = new THREE.Vector3().subVectors(eclipseMoon.position, eclipseSun.position).normalize();
+                const vectorEarthMoon = new THREE.Vector3().subVectors(eclipseMoon.position, eclipseEarth.position).normalize();
+                if (vectorSunMoon.dot(vectorEarthMoon) > 0.95) { // Check if directions are similar
+                    // Lunar eclipse possible
+                    umbraMesh.visible = true;
+                    penumbraMesh.visible = true;
+                } else {
+                    umbraMesh.visible = false;
+                    penumbraMesh.visible = false;
+                }
+            } else {
+                umbraMesh.visible = false;
+                penumbraMesh.visible = false;
+            }
+
+            eclipseLabel.textContent = currentEclipseType;
+        }
+
+
+        function animateEclipses() {
+            requestAnimationFrame(animateEclipses);
+
+            // Optional: slight rotation of the whole system for dynamic viewing
+            if (eclipsesScene) {
+                eclipsesScene.rotation.y += 0.001; // Slow overall rotation
+            }
+
+            eclipsesRenderer.render(eclipsesScene, eclipsesCamera);
+        }
+
+
         // --- Shared Window Resize ---
         function onWindowResize() {
             // Solar System Canvas Resize
@@ -1694,6 +2809,28 @@
                 constellationsCamera.aspect = newWidth / newHeight;
                 constellationsCamera.updateProjectionMatrix();
                 constellationsRenderer.setSize(newWidth, newHeight);
+            }
+
+            // Moon Phases Canvas Resize
+            const moonPhasesCanvas = document.getElementById('moonPhasesCanvas');
+            const moonPhasesContainer = document.getElementById('moonPhasesCanvas-container');
+            if (moonPhaseInitialized && moonPhasesCanvas.style.display !== 'none') {
+                const newWidth = moonPhasesContainer.clientWidth;
+                const newHeight = 600;
+                moonPhaseCamera.aspect = newWidth / newHeight;
+                moonPhaseCamera.updateProjectionMatrix();
+                moonPhaseRenderer.setSize(newWidth, newHeight);
+            }
+
+            // Eclipses Canvas Resize
+            const eclipsesCanvas = document.getElementById('eclipsesCanvas');
+            const eclipsesContainer = document.getElementById('eclipsesCanvas-container');
+            if (eclipsesInitialized && eclipsesCanvas.style.display !== 'none') {
+                const newWidth = eclipsesContainer.clientWidth;
+                const newHeight = 600;
+                eclipsesCamera.aspect = newWidth / newHeight;
+                eclipsesCamera.updateProjectionMatrix();
+                eclipsesRenderer.setSize(newWidth, newHeight);
             }
         }
 
@@ -1863,12 +3000,14 @@
                 dayDiv.appendChild(moonPhaseEl);
 
 
-                // Filter events based on month and day (ignoring year)
+                // Filter events based on exact year, month, and day
                 const eventsOnThisDay = SPACE_EVENTS.filter(event => {
                     const eventDate = new Date(event.date);
-                    return eventDate.getMonth() === currentCalendarDate.getMonth() && // Month is 0-indexed
+                    return eventDate.getFullYear() === currentCalendarDate.getFullYear() &&
+                           eventDate.getMonth() === currentCalendarDate.getMonth() && // Month is 0-indexed
                            eventDate.getDate() === day;
-                });
+                }).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort to ensure consistent order if multiple events
+
 
                 if (eventsOnThisDay.length > 0) {
                     dayDiv.classList.add('has-event');
@@ -1933,7 +3072,8 @@
                 } else {
                     modalEventDescription.textContent = event.description; // Fallback to original
                 }
-            } catch (error) {
+            }
+            catch (error) {
                 console.error("Error fetching LLM story:", error);
                 modalEventDescription.textContent = `Failed to load cosmic tale. Original event details: ${event.description}`; // Fallback with error
             } finally {
@@ -1944,6 +3084,90 @@
         function closeEventPopup() {
             eventModal.classList.remove('show');
         }
+
+        // --- Glossary Functions ---
+        // Moved declarations to top-level scope to avoid redeclaration errors
+        // const glossaryContainer = document.getElementById('glossary-container');
+        // const glossaryFilterInput = document.getElementById('glossaryFilterInput');
+
+        function renderGlossary(filter = '') {
+            glossaryContainer.innerHTML = ''; // Clear existing terms
+
+            const lowerCaseFilter = filter.toLowerCase();
+
+            GLOSSARY_TERMS.forEach(termData => {
+                // Check if term or definition matches filter
+                if (termData.term.toLowerCase().includes(lowerCaseFilter) ||
+                    termData.definition.toLowerCase().includes(lowerCaseFilter)) {
+
+                    const termDiv = document.createElement('div');
+                    termDiv.classList.add('glossary-term');
+                    termDiv.innerHTML = `
+                        <h3>${termData.term}</h3>
+                        <p>${termData.definition}</p>
+                    `;
+                    glossaryContainer.appendChild(termDiv);
+                }
+            });
+
+            if (glossaryContainer.children.length === 0 && filter !== '') {
+                glossaryContainer.innerHTML = '<p class="text-gray-400 text-center">No terms found matching your search.</p>';
+            }
+        }
+
+        // --- Space History Timeline Functions ---
+        function renderSpaceHistoryTimeline() {
+            timelineContainer.innerHTML = ''; // Clear existing timeline
+
+            SPACE_HISTORY_EVENTS.forEach((event, index) => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('timeline-event');
+                if (index % 2 === 0) {
+                    eventDiv.classList.add('left');
+                } else {
+                    eventDiv.classList.add('right');
+                }
+
+                eventDiv.innerHTML = `
+                    <div class="timeline-content">
+                        <h3>${event.date}</h3>
+                        <p>${event.title}</p>
+                        <p class="text-gray-400 text-sm mt-2">${event.description}</p>
+                    </div>
+                `;
+                timelineContainer.appendChild(eventDiv);
+            });
+        }
+
+        // --- Did You Know? Functions ---
+        function displayRandomDidYouKnowFact() {
+            const randomIndex = Math.floor(Math.random() * DID_YOU_KNOW_FACTS.length);
+            didYouKnowFactContent.textContent = DID_YOU_KNOW_FACTS[randomIndex];
+            // Show fact in the intro section
+            const didYouKnowIntroSection = document.getElementById('did-you-know-fact');
+            if (didYouKnowIntroSection) {
+                didYouKnowIntroSection.textContent = DID_YOU_KNOW_FACTS[randomIndex];
+            }
+        }
+
+        function showDidYouKnowPopup() {
+            displayRandomDidYouKnowFact(); // Display a new random fact
+            didYouKnowPopup.classList.add('show');
+        }
+
+        function hideDidYouKnowPopup() {
+            didYouKnowPopup.classList.remove('show');
+        }
+
+        function showHeaderTooltip(fact) {
+            headerTooltip.textContent = fact;
+            headerTooltip.classList.add('show');
+        }
+
+        function hideHeaderTooltip() {
+            headerTooltip.classList.remove('show');
+        }
+
 
         // --- Event Listeners for Quiz ---
         document.querySelectorAll('.quiz-level-btn').forEach(button => {
@@ -1978,6 +3202,31 @@
         const toggleOrbitsCheckbox = document.getElementById('toggleOrbits');
         const toggleMeteorsCheckbox = document.getElementById('toggleMeteors');
         const zoomSensitivitySlider = document.getElementById('zoomSensitivity');
+        const timeWarpSlider = document.getElementById('timeWarp'); // Get the time warp slider
+        const toggleAxialTiltCheckbox = document.getElementById('toggleAxialTilt'); // Get the axial tilt checkbox
+
+
+        // Event listener for glossary filter input
+        glossaryFilterInput.addEventListener('input', (e) => {
+            renderGlossary(e.target.value);
+        });
+
+        // Event Listeners for Did You Know? Popup
+        nextFactBtn.addEventListener('click', displayRandomDidYouKnowFact);
+        closeFactBtn.addEventListener('click', hideDidYouKnowPopup);
+
+        // Event Listeners for Header Tooltip
+        siteTitle.addEventListener('mouseenter', () => {
+            const randomIndex = Math.floor(Math.random() * DID_YOU_KNOW_FACTS.length);
+            showHeaderTooltip(DID_YOU_KNOW_FACTS[randomIndex]);
+        });
+        siteTitle.addEventListener('mouseleave', hideHeaderTooltip);
+
+        // Event Listener for Eclipses Slider
+        eclipseSlider.addEventListener('input', (event) => {
+            eclipseCurrentAngle = parseFloat(event.target.value);
+            updateEclipsesVisual(eclipseCurrentAngle);
+        });
 
 
         // Event listeners are added inside window.onload to ensure elements exist
@@ -1992,6 +3241,9 @@
 
             // Initialize the calendar (it should render regardless of which section is visible)
             renderCalendar();
+
+            // Render glossary on initial load if it's the active section, or for general readiness
+            renderGlossary();
 
             // Add event listeners for solar system controls after elements are available
             if (toggleOrbitsCheckbox) {
@@ -2013,6 +3265,19 @@
                     solarSystemZoomSensitivity = parseFloat(event.target.value);
                 });
             }
+            // Initialize timeWarpFactor
+            if (timeWarpSlider) {
+                timeWarpFactor = parseFloat(timeWarpSlider.value);
+            }
+            // Initialize showAxialTilt
+            if (toggleAxialTiltCheckbox) {
+                showAxialTilt = toggleAxialTiltCheckbox.checked;
+            }
+
+            // Display initial "Did You Know?" fact in the intro section
+            displayRandomDidYouKnowFact();
+            // Show the floating "Did You Know?" popup after a delay
+            setTimeout(showDidYouKnowPopup, 5000); // Show after 5 seconds
         };
     </script>
 </body>
