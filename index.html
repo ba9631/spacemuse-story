@@ -18,6 +18,11 @@
             background: #0a0a0a; /* Deep space background */
             color: #e0e0e0; /* Light gray text for contrast */
             overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+            cursor: none; /* Hide the default cursor */
+        }
+        /* Ensure interactive elements also hide the default cursor */
+        a, button, input, select, canvas {
+            cursor: none;
         }
         /* Custom scrollbar for a sleek look */
         ::-webkit-scrollbar {
@@ -100,9 +105,67 @@
             transition: opacity 0.3s, transform 0.3s;
             opacity: 0;
         }
+        
+        /* --- Custom Space Cursor Styles --- */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 9999;
+            transition: transform 0.2s ease-out;
+        }
+        #cursor-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #a29bfe;
+            animation: pulse 2s infinite;
+        }
+        .cursor-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #d1d8e0;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #a5b1c2;
+        }
+        /* Hover effect for the cursor */
+        #custom-cursor.hover {
+            transform: scale(1.5);
+        }
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.95);
+                box-shadow: 0 0 0 0 rgba(162, 155, 254, 0.7);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 10px 15px rgba(162, 155, 254, 0);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.95);
+                box-shadow: 0 0 0 0 rgba(162, 155, 254, 0);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Custom Space Cursor HTML -->
+    <div id="custom-cursor">
+        <div id="cursor-glow"></div>
+        <div class="cursor-particle"></div>
+        <div class="cursor-particle"></div>
+        <div class="cursor-particle"></div>
+    </div>
+
     <!-- Header/Navigation Bar -->
     <nav class="bg-gray-900 bg-opacity-80 p-4 sticky top-0 z-50 shadow-lg rounded-b-lg">
         <div class="container mx-auto flex flex-wrap justify-between items-center">
@@ -463,6 +526,54 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- Custom Cursor Logic ---
+        const cursor = document.getElementById('custom-cursor');
+        const particles = document.querySelectorAll('.cursor-particle');
+        const interactiveElements = document.querySelectorAll('a, button, input, select, [data-section]');
+
+        // Particle properties (angle, speed, distance from center)
+        const particleData = [
+            { angle: 0, speed: 0.05, distance: 15 },
+            { angle: 120, speed: 0.06, distance: 20 },
+            { angle: 240, speed: 0.04, distance: 25 }
+        ];
+
+        // Update cursor position on mouse move
+        window.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Animate orbiting particles
+        function animateParticles() {
+            const cursorRect = cursor.getBoundingClientRect();
+            const cursorCenterX = cursorRect.width / 2;
+            const cursorCenterY = cursorRect.height / 2;
+
+            particles.forEach((particle, index) => {
+                const data = particleData[index];
+                data.angle += data.speed; // Update angle for rotation
+
+                // Calculate particle position around the cursor's center
+                const x = cursorCenterX + data.distance * Math.cos(data.angle) - (particle.offsetWidth / 2);
+                const y = cursorCenterY + data.distance * Math.sin(data.angle) - (particle.offsetHeight / 2);
+
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+        
+        // Add hover effects for interactive elements
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+        
+        // Start the particle animation
+        animateParticles();
+
 
         // Helper function to dispose of Three.js objects to prevent memory leaks
         function disposeThreeJsObject(obj) {
@@ -904,9 +1015,6 @@
                     ["betelgeuse", "mintaka"], ["mintaka", "rigel"], ["rigel", "saiph"], ["saiph", "alnitak"], ["alnitak", "betelgeuse"],
                     ["mintaka", "alnilam"], ["alnilam", "alnitak"],
                     ["betelgeuse", "bellatrix"], ["saiph", "bellatrix"]
-                ],
-                mythologyArt: [ // Simple line art for the figure
-                    ["betelgeuse", "bellatrix"], ["bellatrix", "saiph"], ["saiph", "rigel"], ["rigel", "betelgeuse"]
                 ]
             },
             {
@@ -924,9 +1032,78 @@
                 lines: [
                     ["dubhe", "merak"], ["merak", "phecda"], ["phecda", "megrez"], ["megrez", "dubhe"],
                     ["megrez", "alioth"], ["alioth", "mizar"], ["mizar", "alkaid"]
+                ]
+            },
+            {
+                name: "Cassiopeia",
+                description: "The Queen, easily recognizable by its 'W' shape.",
+                stars: [
+                    { id: "schedar", name: "Schedar", x: -60, y: -20, z: 10, info: "An orange giant, the brightest star in Cassiopeia." },
+                    { id: "caph", name: "Caph", x: -30, y: 20, z: 5, info: "A white giant star." },
+                    { id: "gamma_cas", name: "Gamma Cassiopeiae", x: 0, y: -10, z: 0, info: "A blue subgiant that is the central star of the 'W'." },
+                    { id: "ruchbah", name: "Ruchbah", x: 30, y: 20, z: -5, info: "A binary star system." },
+                    { id: "segin", name: "Segin", x: 60, y: -20, z: -10, info: "A blue-white giant star." }
                 ],
-                mythologyArt: [ // Simple representation of the bear's shape
-                    ["alkaid", "phecda"], ["dubhe", "alioth"]
+                lines: [
+                    ["schedar", "caph"], ["caph", "gamma_cas"], ["gamma_cas", "ruchbah"], ["ruchbah", "segin"]
+                ]
+            },
+            {
+                name: "Leo",
+                description: "The Lion, which contains the Sickle asterism, a backward question mark.",
+                stars: [
+                    { id: "regulus", name: "Regulus", x: -50, y: -60, z: 0, info: "The brightest star in Leo, a blue-white main-sequence star." },
+                    { id: "algieba", name: "Algieba", x: 0, y: 40, z: 10, info: "A binary star system, appearing as a single bright star." },
+                    { id: "denebola", name: "Denebola", x: 80, y: -50, z: -10, info: "A rapidly rotating star, marking the lion's tail." },
+                    { id: "zossma", name: "Zosma", x: 40, y: -30, z: 5, info: "A white main-sequence star." },
+                    { id: "chertan", name: "Chertan", x: 60, y: -40, z: -5, info: "A white giant star." },
+                    { id: "rasalas", name: "Rasalas", x: -30, y: 20, z: 15, info: "A star in the lion's head." }
+                ],
+                lines: [
+                    ["regulus", "algieba"], ["algieba", "rasalas"], ["rasalas", "zossma"], ["zossma", "denebola"], ["denebola", "chertan"], ["chertan", "regulus"]
+                ]
+            },
+            {
+                name: "Scorpius",
+                description: "The Scorpion, a large constellation in the southern hemisphere, with the bright red star Antares.",
+                stars: [
+                    { id: "antares", name: "Antares", x: 0, y: 0, z: 0, info: "A red supergiant, the heart of the scorpion." },
+                    { id: "graffias", name: "Graffias", x: -40, y: 50, z: 10, info: "A triple star system, part of the scorpion's claws." },
+                    { id: "dschubba", name: "Dschubba", x: -20, y: 30, z: 5, info: "A multiple star system, also in the claws." },
+                    { id: "sargas", name: "Sargas", x: 40, y: -70, z: -15, info: "A bright giant star in the scorpion's tail." },
+                    { id: "shaula", name: "Shaula", x: 60, y: -90, z: -20, info: "The second-brightest star in Scorpius, marking the stinger." },
+                    { id: "lesath", name: "Lesath", x: 55, y: -85, z: -18, info: "A hot blue-white star, close to Shaula in the stinger." }
+                ],
+                lines: [
+                    ["graffias", "dschubba"], ["dschubba", "antares"], ["antares", "sargas"], ["sargas", "shaula"], ["shaula", "lesath"]
+                ]
+            },
+            {
+                name: "Cygnus",
+                description: "The Swan, which contains the Northern Cross asterism.",
+                stars: [
+                    { id: "deneb", name: "Deneb", x: 0, y: 80, z: 0, info: "A blue-white supergiant, one of the most distant stars visible to the naked eye." },
+                    { id: "albireo", name: "Albireo", x: 0, y: -80, z: 10, info: "A beautiful double star with contrasting colors, often called the 'beak star'." },
+                    { id: "sadr", name: "Sadr", x: 0, y: 0, z: -5, info: "A supergiant star at the center of the Northern Cross." },
+                    { id: "fawaris", name: "Fawaris", x: -50, y: 10, z: 5, info: "A star forming the western arm of the cross." },
+                    { id: "glenah", name: "Gienah", x: 50, y: 10, z: -10, info: "A star forming the eastern arm of the cross." }
+                ],
+                lines: [
+                    ["deneb", "sadr"], ["sadr", "albireo"], ["sadr", "fawaris"], ["sadr", "glenah"]
+                ]
+            },
+            {
+                name: "Taurus",
+                description: "The Bull, known for the bright star Aldebaran and the Pleiades star cluster.",
+                stars: [
+                    { id: "aldebaran", name: "Aldebaran", x: 0, y: 0, z: 0, info: "A red giant, the 'eye' of the bull." },
+                    { id: "elnath", name: "Elnath", x: 60, y: 50, z: 10, info: "A blue-white giant, marking the tip of the bull's northern horn." },
+                    { id: "tianguan", name: "Tianguan", x: -50, y: 40, z: 5, info: "A star marking the tip of the bull's southern horn." },
+                    { id: "hyadum_i", name: "Hyadum I", x: -20, y: -20, z: -5, info: "Part of the Hyades star cluster, which forms the bull's face." },
+                    { id: "hyadum_ii", name: "Hyadum II", x: 20, y: -20, z: -8, info: "Another star in the Hyades cluster." }
+                ],
+                lines: [
+                    ["hyadum_i", "aldebaran"], ["aldebaran", "hyadum_ii"], ["aldebaran", "elnath"], ["aldebaran", "tianguan"]
                 ]
             }
         ];
@@ -956,6 +1133,9 @@
             constellationsRenderer.setClearColor(0x000000, 0);
 
             constellationsCamera.position.z = 200;
+
+            // FIX: Initialize mouse vector here to prevent error on the first animation frame
+            constellationsMouse = new THREE.Vector2();
 
             // Add a more dynamic, twinkling starfield background
             const bgStarsGeometry = new THREE.BufferGeometry();
@@ -988,7 +1168,14 @@
 
             constellationData.forEach((constellation, cIdx) => {
                 const constellationGroup = new THREE.Group();
-                constellationGroup.position.x = (cIdx % 2 === 0 ? 1 : -1) * 120;
+                // Distribute constellations in a grid-like pattern
+                const angle = (cIdx / constellationData.length) * Math.PI * 2;
+                const radius = 250;
+                constellationGroup.position.x = radius * Math.cos(angle);
+                constellationGroup.position.y = radius * Math.sin(angle);
+                constellationGroup.position.z = Math.random() * 100 - 50;
+
+
                 const starMap = new Map();
 
                 // Create stars with sprites for glow effect
@@ -1021,18 +1208,6 @@
                     }
                 });
 
-                // Create mythological art lines (initially invisible)
-                constellation.mythologyArt.forEach(line => {
-                    const startPos = starMap.get(line[0]);
-                    const endPos = starMap.get(line[1]);
-                    if (startPos && endPos) {
-                        const geometry = new THREE.BufferGeometry().setFromPoints([startPos, endPos]);
-                        const lineMesh = new THREE.Line(geometry, mythMaterial.clone());
-                        lineMesh.userData = { type: 'myth' };
-                        constellationGroup.add(lineMesh);
-                    }
-                });
-
                 constellationsScene.add(constellationGroup);
             });
 
@@ -1051,14 +1226,14 @@
                 }
                 // Hover detection
                 const canvasBounds = canvas.getBoundingClientRect();
-                constellationsMouse = new THREE.Vector2();
+                // FIX: Update the existing mouse vector instead of creating a new one
                 constellationsMouse.x = ((e.clientX - canvasBounds.left) / canvasBounds.width) * 2 - 1;
                 constellationsMouse.y = -((e.clientY - canvasBounds.top) / canvasBounds.height) * 2 + 1;
             };
             canvas.onwheel = e => {
                 e.preventDefault();
                 constellationsCamera.position.z += e.deltaY * 0.1;
-                constellationsCamera.position.z = Math.max(80, Math.min(400, constellationsCamera.position.z));
+                constellationsCamera.position.z = Math.max(80, Math.min(600, constellationsCamera.position.z));
             };
             
             // Raycaster for interaction
@@ -1123,7 +1298,7 @@
                     element.style.top = `${y}px`;
                     
                     const distance = star.position.distanceTo(constellationsCamera.position);
-                    const opacity = isVisible ? Math.min(1, 50 / distance) : 0;
+                    const opacity = isVisible ? Math.min(1, 150 / distance) : 0;
                     
                     element.style.opacity = opacity;
                     if(star === hoveredStar) {
@@ -1376,7 +1551,7 @@
 
         // --- Cosmic Calendar Logic (API Integrated) ---
 
-        // Helper function to format date to YYYY-MM-DD
+        // Helper function to format date toemplate-MM-DD
         function formatDateToYYYYMMDD(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -1448,7 +1623,7 @@
                 const data = await response.json();
                 
                 data.results.forEach(launch => {
-                    const date = launch.net.split('T')[0]; // Extract YYYY-MM-DD
+                    const date = launch.net.split('T')[0]; // Extractemplate-MM-DD
                     if (!allEvents[date]) allEvents[date] = [];
                     allEvents[date].push({
                         type: 'Rocket Launch',
