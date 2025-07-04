@@ -73,6 +73,33 @@
             .text-base-mobile { font-size: 1rem; }
             .text-sm-mobile { font-size: 0.875rem; }
         }
+        /* Styles for calendar event dots */
+        .event-dot {
+            position: absolute;
+            bottom: 4px; /* Position dots at the bottom of the cell */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+        }
+        .event-dot span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        /* Star name label styling */
+        .star-label {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none; /* Allows clicks to pass through to the canvas */
+            transform: translate(-50%, -150%); /* Position above the star */
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -135,16 +162,17 @@
             </div>
         </section>
 
-        <!-- Constellations Section: Image viewer with mythology -->
+        <!-- Constellations Section (ENHANCED) -->
         <section id="constellations-section" class="section-container">
-            <h2 class="text-4xl font-bold text-pink-400 mb-6 text-center">Interactive 3D Constellations</h2>
-            <div id="constellations-3d-container" class="relative w-full h-[600px] rounded-lg overflow-hidden glassmorphism">
+            <h2 class="text-4xl font-bold text-pink-400 mb-6 text-center">Interactive Constellation Viewer</h2>
+            <div id="constellations-3d-container" class="relative w-full h-[70vh] rounded-lg overflow-hidden glassmorphism">
                 <canvas id="constellations-canvas" class="w-full h-full"></canvas>
+                <div id="constellation-labels-container" class="absolute inset-0 pointer-events-none"></div>
                 <div class="absolute top-4 right-4 bg-gray-800 bg-opacity-70 p-3 rounded-lg text-sm text-gray-200">
-                    Drag to rotate, Scroll to zoom
+                    Drag to rotate, Scroll to zoom, Hover on stars
                 </div>
             </div>
-            <p class="text-center text-gray-400 mt-8">Click on stars for more information!</p>
+            <p class="text-center text-gray-400 mt-8">Explore the ancient patterns of the night sky. Click on stars for mythology and facts.</p>
         </section>
 
         <!-- Space Stories Section: Poetic narratives -->
@@ -223,31 +251,41 @@
         <!-- Cosmic Calendar Section: Events & Pop-ups -->
         <section id="calendar-section" class="section-container">
             <h2 class="text-4xl font-bold text-orange-400 mb-6 text-center">Cosmic Events Calendar</h2>
-            <div class="glassmorphism p-6 rounded-lg mx-auto max-w-4xl">
-                <div id="calendar-controls" class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                    <div id="calendar-header" class="flex justify-between items-center">
-                        <button id="prev-year" class="btn-gradient text-white p-2 rounded-full"><i class="fas fa-backward"></i></button>
-                        <button id="prev-month" class="btn-gradient text-white p-2 rounded-full mx-2"><i class="fas fa-chevron-left"></i></button>
-                        <h3 id="current-month-year" class="text-2xl font-semibold text-white px-4 text-center"></h3>
-                        <button id="next-month" class="btn-gradient text-white p-2 rounded-full mx-2"><i class="fas fa-chevron-right"></i></button>
-                        <button id="next-year" class="btn-gradient text-white p-2 rounded-full"><i class="fas fa-forward"></i></button>
-                    </div>
+            <div class="glassmorphism p-6 rounded-lg mx-auto max-w-5xl">
+                <!-- Calendar Controls: Navigation and Filtering -->
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
                     <div class="flex items-center gap-2">
-                        <label for="event-filter" class="text-gray-300">Filter by type:</label>
-                        <select id="event-filter" class="bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-500 outline-none">
-                            <option value="">All Events</option>
-                            <!-- Options will be populated by JS -->
+                        <button id="prev-year" class="btn-gradient text-white p-2 rounded-full" title="Previous Year"><i class="fas fa-backward"></i></button>
+                        <button id="prev-month" class="btn-gradient text-white p-2 rounded-full" title="Previous Month"><i class="fas fa-chevron-left"></i></button>
+                    </div>
+                    <h3 id="current-month-year" class="text-2xl font-semibold text-white text-center flex-grow"></h3>
+                    <div class="flex items-center gap-2">
+                        <button id="next-month" class="btn-gradient text-white p-2 rounded-full" title="Next Month"><i class="fas fa-chevron-right"></i></button>
+                        <button id="next-year" class="btn-gradient text-white p-2 rounded-full" title="Next Year"><i class="fas fa-forward"></i></button>
+                    </div>
+                    <!-- Event Filter Dropdown -->
+                    <div class="w-full md:w-auto">
+                        <select id="event-filter" class="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-500 outline-none">
+                            <option value="all">All Events</option>
+                            <option value="Rocket Launch">Rocket Launches</option>
+                            <option value="Meteor Shower">Meteor Showers</option>
+                            <option value="Eclipse">Eclipses</option>
+                            <option value="Historical">Historical</option>
                         </select>
                     </div>
                 </div>
-                <div id="calendar-loading" class="text-center text-gray-400 my-4 hidden">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Fetching events from NASA...
-                </div>
-                <div class="grid grid-cols-7 gap-2 text-center text-gray-400 font-semibold mb-2">
-                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                </div>
-                <div id="calendar-grid" class="grid grid-cols-7 gap-2">
-                    <!-- Calendar days will be rendered here -->
+                <!-- Calendar Grid and Loading Indicator -->
+                <div class="relative">
+                    <div class="grid grid-cols-7 gap-2 text-center text-gray-400 font-semibold mb-2">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-2">
+                        <!-- Calendar days will be rendered here by JavaScript -->
+                    </div>
+                    <!-- Loading Spinner -->
+                    <div id="calendar-loading" class="hidden absolute inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-spinner fa-spin text-purple-400 text-4xl"></i>
+                    </div>
                 </div>
             </div>
         </section>
@@ -423,7 +461,7 @@
     <script type="module">
         // Global variables for Firebase (if persistence were to be added) - provided by the Canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof _firebase_config !== 'undefined' ? JSON.parse(_firebase_config) : {};
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Helper function to dispose of Three.js objects to prevent memory leaks
@@ -477,8 +515,8 @@
 
         // --- Custom Alert Box (re-using the generic modal) ---
         function alertBox(title, message, onConfirm = null) {
-            const actions = <button id="alert-ok-btn" class="btn-gradient text-white py-2 px-5 rounded-full">OK</button>;
-            showModal(title, <p>${message}</p>, actions);
+            const actions = `<button id="alert-ok-btn" class="btn-gradient text-white py-2 px-5 rounded-full">OK</button>`;
+            showModal(title, `<p>${message}</p>`, actions);
 
             document.getElementById('alert-ok-btn').addEventListener('click', () => {
                 hideModal();
@@ -493,7 +531,7 @@
                 <p class="text-gray-300 mb-2"><strong>Average Distance from Sun:</strong> ${planet.distance} units</p>
                 <p class="text-gray-300 mb-4">${planet.description}</p>
             `;
-            showModal(Information about ${planet.name}, content);
+            showModal(`Information about ${planet.name}`, content);
         }
 
         // Function to display star information
@@ -503,7 +541,7 @@
                 <p class="text-gray-300 mb-4">${star.info}</p>
                 <p class="text-gray-400 text-sm italic">${star.constellationDesc}</p>
             `;
-            showModal(Star: ${star.id.charAt(0).toUpperCase() + star.id.slice(1)}, content);
+            showModal(`Star: ${star.id.charAt(0).toUpperCase() + star.id.slice(1)}`, content);
         }
 
         // --- Navigation Logic ---
@@ -594,7 +632,7 @@
                         initMeteorDodgeGame();
                         initSpaceMazeGame();
                     } else if (targetSectionId === 'calendar-section') {
-                        initCalendar();
+                        renderCalendar(); // Now an async function
                     }
                 });
             });
@@ -620,7 +658,6 @@
         function showDidYouKnownFact() {
             const popup = document.getElementById('did-you-know-popup');
             const factText = document.getElementById('did-you-know-fact');
-            // Corrected variable name from didYouKnownFacts to didYouKnowFacts
             const randomIndex = Math.floor(Math.random() * didYouKnowFacts.length);
             factText.textContent = didYouKnowFacts[randomIndex];
             popup.classList.remove('hidden'); // Show the pop-up
@@ -784,9 +821,9 @@
             // Time Warp Slider Event Listener
             timeWarpSlider.addEventListener('input', (e) => {
                 solarSystemSpeedFactor = parseFloat(e.target.value);
-                timeWarpValue.textContent = ${solarSystemSpeedFactor.toFixed(2)}x; // Changed to 2 decimal places
+                timeWarpValue.textContent = `${solarSystemSpeedFactor.toFixed(2)}x`; // Changed to 2 decimal places
             });
-            timeWarpValue.textContent = ${solarSystemSpeedFactor.toFixed(2)}x; // Initialize display value
+            timeWarpValue.textContent = `${solarSystemSpeedFactor.toFixed(2)}x`; // Initialize display value
 
 
             // Animation Loop for Solar System
@@ -843,112 +880,155 @@
             }
         }
 
-        // --- Three.js Constellations ---
+        // --- Three.js Constellations (ENHANCED) ---
         let constellationsScene, constellationsCamera, constellationsRenderer, constellationsRaycaster, constellationsMouse;
         let constellationsStars = []; // Store actual star Mesh objects
         let constellationsAnimationId;
+        let starLabels = {}; // To manage HTML labels for stars
+        let hoveredStar = null; // To track the currently hovered star
 
         const constellationData = [
             {
                 name: "Orion",
                 description: "The Hunter, one of the most recognizable constellations. Famous for its belt and bright stars Betelgeuse and Rigel.",
                 stars: [
-                    { id: "betelgeuse", x: 20, y: 30, z: 0, info: "Betelgeuse: A red supergiant star, one of the largest and brightest stars in the night sky. It forms the shoulder of Orion." },
-                    { id: "bellatrix", x: -20, y: 25, z: 0, info: "Bellatrix: A blue-white giant star, the other shoulder of Orion. It is the 27th brightest star in the night sky." },
-                    { id: "alnilam", x: 0, y: 0, z: 0, info: "Alnilam: The central star in Orion's Belt. A large blue supergiant, one of the most luminous known stars." },
-                    { id: "alnitak", x: -10, y: -5, z: 0, info: "Alnitak: The left-most star in Orion's Belt, a hot blue supergiant." },
-                    { id: "mintaka", x: 10, y: 5, z: 0, info: "Mintaka: The right-most star in Orion's Belt, a multiple star system." },
-                    { id: "saiph", x: -15, y: -30, z: 0, info: "Saiph: A blue supergiant, marking Orion's bottom right knee." },
-                    { id: "rigel", x: 15, y: -35, z: 0, info: "Rigel: A blue supergiant, the brightest star in Orion and the seventh brightest star in the night sky. It marks Orion's left foot." }
+                    { id: "betelgeuse", name: "Betelgeuse", x: 40, y: 50, z: 10, info: "A red supergiant, one of the largest and brightest stars. It forms Orion's right shoulder." },
+                    { id: "bellatrix", name: "Bellatrix", x: -40, y: 45, z: -10, info: "A blue-white giant star, forming Orion's left shoulder." },
+                    { id: "alnilam", name: "Alnilam", x: 0, y: 0, z: 0, info: "The central star in Orion's Belt, a luminous blue supergiant." },
+                    { id: "alnitak", name: "Alnitak", x: -20, y: -5, z: -5, info: "The easternmost star in Orion's Belt." },
+                    { id: "mintaka", name: "Mintaka", x: 20, y: 5, z: 5, info: "The westernmost star in Orion's Belt." },
+                    { id: "saiph", name: "Saiph", x: -35, y: -50, z: -15, info: "A blue supergiant, marking Orion's right knee." },
+                    { id: "rigel", name: "Rigel", x: 35, y: -55, z: 15, info: "A brilliant blue-white supergiant, the brightest star in Orion, marking his left foot." }
                 ],
                 lines: [
-                    ["betelgeuse", "alnilam"], ["bellatrix", "alnilam"],
-                    ["alnilam", "alnitak"], ["alnilam", "mintaka"],
-                    ["alnitak", "saiph"], ["mintaka", "rigel"],
-                    ["betelgeuse", "bellatrix"], ["saiph", "rigel"] // Connecting outer boundaries
+                    ["betelgeuse", "mintaka"], ["mintaka", "rigel"], ["rigel", "saiph"], ["saiph", "alnitak"], ["alnitak", "betelgeuse"],
+                    ["mintaka", "alnilam"], ["alnilam", "alnitak"],
+                    ["betelgeuse", "bellatrix"], ["saiph", "bellatrix"]
+                ],
+                mythologyArt: [ // Simple line art for the figure
+                    ["betelgeuse", "bellatrix"], ["bellatrix", "saiph"], ["saiph", "rigel"], ["rigel", "betelgeuse"]
                 ]
             },
             {
                 name: "Ursa Major",
-                description: "The Great Bear, famous for containing the Big Dipper asterism. A prominent constellation in the Northern Hemisphere.",
+                description: "The Great Bear, famous for containing the Big Dipper asterism.",
                 stars: [
-                    { id: "dubhe", x: -30, y: 20, z: 0, info: "Dubhe: The star at the top right of the Big Dipper's bowl, one of the two pointer stars that lead to Polaris." },
-                    { id: "merak", x: -40, y: -10, z: 0, info: "Merak: The star at the bottom right of the Big Dipper's bowl, also a pointer star to Polaris." },
-                    { id: "phecda", x: -10, y: -15, z: 0, info: "Phecda: The star at the bottom left of the Big Dipper's bowl." },
-                    { id: "megrez", x: 0, y: 10, z: 0, info: "Megrez: The star connecting the Big Dipper's bowl to its handle, the faintest of the main seven stars." },
-                    { id: "alioth", x: 20, y: 15, z: 0, info: "Alioth: The first star in the Big Dipper's handle, closest to the bowl. It is the brightest star in Ursa Major." },
-                    { id: "mizar", x: 40, y: 10, z: 0, info: "Mizar: The middle star in the Big Dipper's handle, famous for its optical double Alcor, which is easily visible to the naked eye." },
-                    { id: "alkaid", x: 50, y: -5, z: 0, info: "Alkaid: The star at the end of the Big Dipper's handle." }
+                    { id: "dubhe", name: "Dubhe", x: -60, y: 40, z: 0, info: "A pointer star in the Big Dipper, helping to locate Polaris." },
+                    { id: "merak", name: "Merak", x: -80, y: -20, z: 0, info: "The other pointer star in the Big Dipper's bowl." },
+                    { id: "phecda", name: "Phecda", x: -20, y: -30, z: 0, info: "The star at the bottom left of the Big Dipper's bowl." },
+                    { id: "megrez", name: "Megrez", x: 0, y: 20, z: 0, info: "The star connecting the bowl to the handle." },
+                    { id: "alioth", name: "Alioth", x: 40, y: 30, z: 0, info: "The brightest star in Ursa Major, located in the handle." },
+                    { id: "mizar", name: "Mizar", x: 80, y: 20, z: 0, info: "A famous double star in the middle of the handle." },
+                    { id: "alkaid", name: "Alkaid", x: 100, y: -10, z: 0, info: "The star at the end of the Big Dipper's handle." }
                 ],
                 lines: [
-                    ["dubhe", "merak"], ["merak", "phecda"], ["phecda", "megrez"], ["megrez", "dubhe"], // Bowl
-                    ["megrez", "alioth"], ["alioth", "mizar"], ["mizar", "alkaid"] // Handle
+                    ["dubhe", "merak"], ["merak", "phecda"], ["phecda", "megrez"], ["megrez", "dubhe"],
+                    ["megrez", "alioth"], ["alioth", "mizar"], ["mizar", "alkaid"]
+                ],
+                mythologyArt: [ // Simple representation of the bear's shape
+                    ["alkaid", "phecda"], ["dubhe", "alioth"]
                 ]
             }
         ];
 
         function initConstellations() {
-            if (constellationsAnimationId) {
-                cancelAnimationFrame(constellationsAnimationId);
-            }
-            if (constellationsScene) {
-                disposeThreeJsObject(constellationsScene);
-            }
+            if (constellationsAnimationId) cancelAnimationFrame(constellationsAnimationId);
+            if (constellationsScene) disposeThreeJsObject(constellationsScene);
 
             const container = document.getElementById('constellations-3d-container');
             const canvas = document.getElementById('constellations-canvas');
+            const labelsContainer = document.getElementById('constellation-labels-container');
 
-            if (!container || !canvas) {
-                console.error("Constellations elements not found. Cannot initialize 3D.");
+            if (!container || !canvas || !labelsContainer) {
+                console.error("Constellations elements not found.");
                 return;
             }
 
             canvas.width = container.clientWidth;
             canvas.height = container.clientHeight;
+            labelsContainer.innerHTML = ''; // Clear old labels
 
             constellationsScene = new THREE.Scene();
-            constellationsCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            constellationsCamera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 2000);
             constellationsRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
             constellationsRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
             constellationsRenderer.setPixelRatio(window.devicePixelRatio);
-            constellationsRenderer.setClearColor(0x000000, 0); // Transparent background
+            constellationsRenderer.setClearColor(0x000000, 0);
 
-            constellationsCamera.position.z = 100;
+            constellationsCamera.position.z = 200;
 
-            const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White stars
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x888888, linewidth: 2 }); // Gray lines
+            // Add a more dynamic, twinkling starfield background
+            const bgStarsGeometry = new THREE.BufferGeometry();
+            const bgStarVertices = [];
+            const bgStarColors = [];
+            const color = new THREE.Color();
+            for (let i = 0; i < 15000; i++) {
+                const x = THREE.MathUtils.randFloatSpread(2000);
+                const y = THREE.MathUtils.randFloatSpread(2000);
+                const z = THREE.MathUtils.randFloatSpread(2000);
+                bgStarVertices.push(x, y, z);
+                color.setHSL(Math.random(), 0.1, 0.5 + Math.random() * 0.2);
+                bgStarColors.push(color.r, color.g, color.b);
+            }
+            bgStarsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(bgStarVertices, 3));
+            bgStarsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(bgStarColors, 3));
+            const bgStarMaterial = new THREE.PointsMaterial({ size: 1, vertexColors: true, transparent: true });
+            const backgroundStars = new THREE.Points(bgStarsGeometry, bgStarMaterial);
+            constellationsScene.add(backgroundStars);
 
-            constellationsStars = []; // Reset stars array
+            const starTexture = new THREE.TextureLoader().load('https://placehold.co/64x64/ffffff/ffffff.png'); // Simple white dot for glow
+            const baseStarMaterial = new THREE.SpriteMaterial({ map: starTexture, color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.8 });
+            const hoverStarMaterial = new THREE.SpriteMaterial({ map: starTexture, color: 0x99ccff, blending: THREE.AdditiveBlending, transparent: true, opacity: 1 });
+
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x4a90e2, transparent: true, opacity: 0.3 });
+            const mythMaterial = new THREE.LineBasicMaterial({ color: 0x8e44ad, transparent: true, opacity: 0, fog: false });
+
+            constellationsStars = [];
+            starLabels = {};
 
             constellationData.forEach((constellation, cIdx) => {
                 const constellationGroup = new THREE.Group();
-                // Offset each constellation group to prevent overlap
-                constellationGroup.position.x = (cIdx % 2 === 0 ? -1 : 1) * 70; // Alternating X
-                constellationGroup.position.y = (cIdx % 2 === 0 ? -1 : 1) * 30; // Alternating Y
-                if (cIdx === 1) constellationGroup.position.x = 0; // For Ursa Major example
+                constellationGroup.position.x = (cIdx % 2 === 0 ? 1 : -1) * 120;
+                const starMap = new Map();
 
-                const starMap = new Map(); // To easily link stars by ID for drawing lines
-
-                // Create stars
+                // Create stars with sprites for glow effect
                 constellation.stars.forEach(starData => {
-                    const starGeometry = new THREE.SphereGeometry(1.5, 16, 16); // Small sphere for stars
-                    const star = new THREE.Mesh(starGeometry, starMaterial);
-                    star.position.set(starData.x, starData.y, starData.z);
-                    star.userData = { ...starData, constellationName: constellation.name, constellationDesc: constellation.description }; // Store star info
-                    constellationGroup.add(star);
-                    constellationsStars.push(star); // Add to global list for raycasting
-                    starMap.set(starData.id, star.position);
+                    const starSprite = new THREE.Sprite(baseStarMaterial.clone());
+                    starSprite.position.set(starData.x, starData.y, starData.z);
+                    starSprite.scale.set(4, 4, 1); // Base size
+                    starSprite.userData = { ...starData, constellationName: constellation.name, constellationDesc: constellation.description, type: 'star' };
+                    constellationGroup.add(starSprite);
+                    constellationsStars.push(starSprite);
+                    starMap.set(starData.id, starSprite.position);
+
+                    // Create HTML labels
+                    const labelDiv = document.createElement('div');
+                    labelDiv.className = 'star-label';
+                    labelDiv.textContent = starData.name;
+                    labelsContainer.appendChild(labelDiv);
+                    starLabels[starData.id] = { element: labelDiv, star: starSprite };
                 });
 
-                // Create lines connecting stars
+                // Create animated constellation lines
                 constellation.lines.forEach(line => {
                     const startPos = starMap.get(line[0]);
                     const endPos = starMap.get(line[1]);
-
                     if (startPos && endPos) {
-                        const points = [startPos, endPos];
-                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                        const lineMesh = new THREE.Line(geometry, lineMaterial);
+                        const geometry = new THREE.BufferGeometry().setFromPoints([startPos, startPos]); // Start with a zero-length line
+                        const lineMesh = new THREE.Line(geometry, lineMaterial.clone());
+                        lineMesh.userData = { type: 'line', start: startPos, end: endPos, progress: 0 };
+                        constellationGroup.add(lineMesh);
+                    }
+                });
+
+                // Create mythological art lines (initially invisible)
+                constellation.mythologyArt.forEach(line => {
+                    const startPos = starMap.get(line[0]);
+                    const endPos = starMap.get(line[1]);
+                    if (startPos && endPos) {
+                        const geometry = new THREE.BufferGeometry().setFromPoints([startPos, endPos]);
+                        const lineMesh = new THREE.Line(geometry, mythMaterial.clone());
+                        lineMesh.userData = { type: 'myth' };
                         constellationGroup.add(lineMesh);
                     }
                 });
@@ -956,47 +1036,115 @@
                 constellationsScene.add(constellationGroup);
             });
 
-            // Camera Controls for Constellations
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-
-            canvas.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-
-            canvas.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-
-                const deltaX = e.clientX - previousMousePosition.x;
-                const deltaY = e.clientY - previousMousePosition.y;
-
-                const rotationSpeed = 0.005;
-                constellationsScene.rotation.y += deltaX * rotationSpeed;
-                constellationsScene.rotation.x += deltaY * rotationSpeed;
-                constellationsScene.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, constellationsScene.rotation.x));
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-
-            canvas.addEventListener('wheel', (e) => {
+            // Camera Controls
+            let isDragging = false, prevMouseX = 0, prevMouseY = 0;
+            canvas.onmousedown = e => { isDragging = true; prevMouseX = e.clientX; prevMouseY = e.clientY; };
+            canvas.onmouseup = () => isDragging = false;
+            canvas.onmouseleave = () => isDragging = false;
+            canvas.onmousemove = e => {
+                if (isDragging) {
+                    const deltaX = e.clientX - prevMouseX;
+                    const deltaY = e.clientY - prevMouseY;
+                    constellationsScene.rotation.y += deltaX * 0.005;
+                    constellationsScene.rotation.x += deltaY * 0.005;
+                    prevMouseX = e.clientX; prevMouseY = e.clientY;
+                }
+                // Hover detection
+                const canvasBounds = canvas.getBoundingClientRect();
+                constellationsMouse = new THREE.Vector2();
+                constellationsMouse.x = ((e.clientX - canvasBounds.left) / canvasBounds.width) * 2 - 1;
+                constellationsMouse.y = -((e.clientY - canvasBounds.top) / canvasBounds.height) * 2 + 1;
+            };
+            canvas.onwheel = e => {
                 e.preventDefault();
-                const zoomSpeed = 0.1;
-                constellationsCamera.position.z += e.deltaY * zoomSpeed;
-                constellationsCamera.position.z = Math.max(50, Math.min(500, constellationsCamera.position.z));
-            });
-
-            // Raycaster for star clicks
+                constellationsCamera.position.z += e.deltaY * 0.1;
+                constellationsCamera.position.z = Math.max(80, Math.min(400, constellationsCamera.position.z));
+            };
+            
+            // Raycaster for interaction
             constellationsRaycaster = new THREE.Raycaster();
-            constellationsMouse = new THREE.Vector2();
             canvas.addEventListener('click', onConstellationsCanvasClick);
 
-
+            const clock = new THREE.Clock();
             function animateConstellations() {
                 constellationsAnimationId = requestAnimationFrame(animateConstellations);
+                const delta = clock.getDelta();
+                const elapsedTime = clock.getElapsedTime();
+
+                // Animate twinkling background stars
+                backgroundStars.material.opacity = 0.5 + Math.sin(elapsedTime * 0.5) * 0.2;
+
+                // Animate drawing of constellation lines
+                constellationsScene.children.forEach(group => {
+                    group.children.forEach(child => {
+                        if (child.userData.type === 'line' && child.userData.progress < 1) {
+                            child.userData.progress += delta * 0.5; // Animation speed
+                            const currentPos = new THREE.Vector3().lerpVectors(child.userData.start, child.userData.end, child.userData.progress);
+                            child.geometry.setFromPoints([child.userData.start, currentPos]);
+                            child.geometry.verticesNeedUpdate = true;
+                        }
+                    });
+                });
+
+                // Hover effect logic
+                constellationsRaycaster.setFromCamera(constellationsMouse, constellationsCamera);
+                const intersects = constellationsRaycaster.intersectObjects(constellationsStars);
+                
+                if (intersects.length > 0) {
+                    const intersectedStar = intersects[0].object;
+                    if (hoveredStar !== intersectedStar) {
+                        if (hoveredStar) { // Reset previous star
+                           hoveredStar.scale.set(4, 4, 1);
+                        }
+                        hoveredStar = intersectedStar;
+                        hoveredStar.scale.set(8, 8, 1); // Enlarge hovered star
+                    }
+                } else {
+                    if (hoveredStar) { // Reset when no star is hovered
+                        hoveredStar.scale.set(4, 4, 1);
+                        hoveredStar = null;
+                    }
+                }
+                
+                // Update HTML labels position
+                Object.values(starLabels).forEach(({ element, star }) => {
+                    const vector = new THREE.Vector3().copy(star.position);
+                    const parentGroup = star.parent;
+                    if(parentGroup) {
+                        vector.applyMatrix4(parentGroup.matrixWorld);
+                    }
+                    vector.project(constellationsCamera);
+
+                    const x = (vector.x * 0.5 + 0.5) * canvas.clientWidth;
+                    const y = (vector.y * -0.5 + 0.5) * canvas.clientHeight;
+                    
+                    const isVisible = vector.z < 1;
+                    element.style.left = `${x}px`;
+                    element.style.top = `${y}px`;
+                    
+                    const distance = star.position.distanceTo(constellationsCamera.position);
+                    const opacity = isVisible ? Math.min(1, 50 / distance) : 0;
+                    
+                    element.style.opacity = opacity;
+                    if(star === hoveredStar) {
+                        element.style.opacity = 1;
+                        element.style.transform = 'translate(-50%, -200%) scale(1.2)';
+                        element.style.color = '#99ccff';
+                    } else {
+                        element.style.transform = 'translate(-50%, -150%) scale(1)';
+                        element.style.color = 'rgba(255, 255, 255, 0.7)';
+                    }
+                });
+
+                // Pulsating effect for all stars
+                constellationsStars.forEach(star => {
+                    if (star !== hoveredStar) {
+                        const scale = 4 + Math.sin(elapsedTime * 2 + star.position.x) * 0.5;
+                        star.scale.set(scale, scale, 1);
+                    }
+                });
+
+
                 constellationsRenderer.render(constellationsScene, constellationsCamera);
             }
             animateConstellations();
@@ -1014,16 +1162,1179 @@
 
         // Function to handle clicks on the Constellations canvas
         function onConstellationsCanvasClick(event) {
-            const canvasBounds = constellationsRenderer.domElement.getBoundingClientRect();
-            constellationsMouse.x = ((event.clientX - canvasBounds.left) / canvasBounds.width) * 2 - 1;
-            constellationsMouse.y = - ((event.clientY - canvasBounds.top) / canvasBounds.height) * 2 + 1;
+            if (hoveredStar && hoveredStar.userData.info) {
+                showStarInfo(hoveredStar.userData);
+            }
+        }
 
-            constellationsRaycaster.setFromCamera(constellationsMouse, constellationsCamera);
+        // --- AI Chatbot Logic ---
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat-btn');
+        const chatOutput = document.getElementById('chat-output');
+        const chatLoading = document.getElementById('chat-loading');
 
-            const intersects = constellationsRaycaster.intersectObjects(constellationsStars);
+        // Stores conversation history to maintain context for the AI
+        let chatHistory = [];
 
-            if (intersects.length > 0) {
-                const clickedStar = intersects[0].object;
-                if (clickedStar.userData && clickedStar.userData.info) {
-                    showStarInfo(clickedStar.userData);
+        // Function to send a message to the AI chatbot
+        async function sendMessage() {
+            const prompt = chatInput.value.trim();
+            if (prompt === "") return; // Don't send empty messages
+
+            // Display user's message in the chat output
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('flex', 'justify-end'); // Align to the right for user messages
+            userMessageDiv.innerHTML = `<div class="bg-purple-600 text-white p-3 rounded-lg max-w-xs md:max-w-md">${prompt}</div>`;
+            chatOutput.appendChild(userMessageDiv);
+            chatOutput.scrollTop = chatOutput.scrollHeight; // Scroll to the newest message
+
+            chatInput.value = ''; // Clear input field
+            chatLoading.classList.remove('hidden'); // Show loading indicator
+            sendChatBtn.disabled = true; // Disable send button to prevent multiple submissions
+
+            try {
+                // Add user's message to chat history for context
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // API key will be provided by the Canvas runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                // Make the API call to Gemini
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json(); // Parse the JSON response
+
+                // Check if the AI response is valid and contains text
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+
+                    // Display AI's response in the chat output
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.classList.add('flex', 'justify-start'); // Align to the left for AI messages
+                    aiMessageDiv.innerHTML = `<div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs md:max-w-md">${text}</div>`;
+                    chatOutput.appendChild(aiMessageDiv);
+                    chatOutput.scrollTop = chatOutput.scrollHeight; // Scroll to the newest message
+
+                    // Add AI's response to chat history
+                    chatHistory.push({ role: "model", parts: [{ text: text }] });
+
+                } else {
+                    console.error("AI response structure unexpected:", result);
+                    const errorMessageDiv = document.createElement('div');
+                    errorMessageDiv.classList.add('flex', 'justify-start');
+                    errorMessageDiv.innerHTML = `<div class="bg-red-600 text-white p-3 rounded-lg max-w-xs md:max-w-md">Error: Could not get a response. Please try again.</div>`;
+                    chatOutput.appendChild(errorMessageDiv);
                 }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.classList.add('flex', 'justify-start');
+                errorMessageDiv.innerHTML = `<div class="bg-red-600 text-white p-3 rounded-lg max-w-xs md:max-w-md">Network Error: Could not connect to the AI.</div>`;
+                chatOutput.appendChild(errorMessageDiv);
+            } finally {
+                chatLoading.classList.add('hidden'); // Hide loading indicator
+                sendChatBtn.disabled = false; // Re-enable send button
+            }
+        }
+
+        // Event listeners for sending messages (click and Enter key)
+        sendChatBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // --- Space Quiz Logic ---
+        // Quiz data organized by difficulty
+        const quizData = {
+            easy: [
+                { question: "Which planet is known as the 'Red Planet'?", options: ["Jupiter", "Mars", "Venus", "Saturn"], answer: "Mars" },
+                { question: "What is the largest planet in our solar system?", options: ["Earth", "Mars", "Jupiter", "Neptune"], answer: "Jupiter" },
+                { question: "What galaxy do we live in?", options: ["Andromeda", "Triangulum", "Pinwheel", "Milky Way"], answer: "Milky Way" }
+            ],
+            medium: [
+                { question: "What is the name of the first artificial satellite launched into space?", options: ["Explorer 1", "Sputnik 1", "Vanguard 1", "Telstar 1"], answer: "Sputnik 1" },
+                { question: "Which moon of Saturn is known for its thick atmosphere and lakes of liquid methane?", options: ["Titan", "Enceladus", "Rhea", "Iapetus"], answer: "Titan" },
+                { question: "What astronomical unit is defined as the average distance between the Earth and the Sun?", options: ["Light-year", "Parsec", "Astronomical Unit (AU)", "Kilometer"], answer: "Astronomical Unit (AU)" }
+            ],
+            hard: [
+                { question: "What is the theoretical boundary around a black hole beyond which no light or information can escape?", options: ["Singularity", "Accretion Disk", "Event Horizon", "Photon Sphere"], answer: "Event Horizon" },
+                { question: "Which space telescope was launched in 1990 and has provided incredible images of the universe?", options: ["James Webb", "Chandra", "Hubble", "Kepler"], answer: "Hubble" },
+                { question: "What is the process by which a star generates energy by fusing lighter elements into heavier ones?", options: ["Nuclear Fission", "Chemical Reaction", "Nuclear Fusion", "Gravitational Collapse"], answer: "Nuclear Fusion" }
+            ]
+        };
+
+        let currentQuizQuestions = []; // Stores questions for the current quiz difficulty
+        let currentQuestionIndex = 0; // Tracks the current question
+        let score = 0; // Tracks the user's score
+
+        // Get references to quiz UI elements
+        const quizIntro = document.getElementById('quiz-intro');
+        const quizQuestionsDiv = document.getElementById('quiz-questions');
+        const quizResultDiv = document.getElementById('quiz-result');
+        const questionText = document.getElementById('question-text');
+        const answerOptions = document.getElementById('answer-options');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const scoreText = document.getElementById('score-text');
+        const quizDifficulty = document.getElementById('quiz-difficulty');
+
+        // Get references to quiz difficulty buttons and reset button
+        const startEasyQuizBtn = document.getElementById('start-easy-quiz');
+        const startMediumQuizBtn = document.getElementById('start-medium-quiz');
+        const startHardQuizBtn = document.getElementById('start-hard-quiz');
+        const resetQuizBtn = document.getElementById('reset-quiz-btn');
+
+        // Function to start the quiz based on selected difficulty
+        function startQuiz(difficulty) {
+            currentQuizQuestions = quizData[difficulty]; // Load questions for selected difficulty
+            currentQuestionIndex = 0;
+            score = 0;
+            quizDifficulty.textContent = `Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`; // Display difficulty
+
+            quizIntro.classList.add('hidden'); // Hide intro screen
+            quizQuestionsDiv.classList.remove('hidden'); // Show questions screen
+            quizResultDiv.classList.add('hidden'); // Ensure result screen is hidden
+            loadQuestion(); // Load the first question
+        }
+
+        // Function to load and display the current question
+        function loadQuestion() {
+            if (currentQuestionIndex < currentQuizQuestions.length) {
+                const q = currentQuizQuestions[currentQuestionIndex];
+                questionText.textContent = q.question;
+                answerOptions.innerHTML = ''; // Clear previous answer options
+
+                // Create buttons for each answer option
+                q.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('btn-gradient', 'text-white', 'py-2', 'px-5', 'rounded-full', 'hover:bg-opacity-80', 'transition', 'duration-200', 'text-base-mobile');
+                    // Attach click listener to check answer
+                    button.addEventListener('click', () => selectAnswer(option, q.answer, button)); // Use addEventListener
+                    answerOptions.appendChild(button);
+                });
+                nextQuestionBtn.style.display = 'none'; // Hide "Next Question" button until an answer is selected
+            } else {
+                showResult(); // If all questions answered, show results
+            }
+        }
+
+        // Function to handle answer selection and check correctness
+        function selectAnswer(selectedOption, correctAnswer, clickedButton) {
+            // Disable all answer options after one is selected
+            Array.from(answerOptions.children).forEach(btn => btn.disabled = true);
+
+            if (selectedOption === correctAnswer) {
+                score++;
+                clickedButton.classList.remove('btn-gradient'); // Remove gradient style
+                clickedButton.classList.add('bg-green-600', 'hover:bg-green-700'); // Style as correct
+            } else {
+                clickedButton.classList.remove('btn-gradient'); // Remove gradient style
+                clickedButton.classList.add('bg-red-600', 'hover:bg-red-700'); // Style as incorrect
+                // Highlight the correct answer
+                Array.from(answerOptions.children).forEach(btn => {
+                    if (btn.textContent === correctAnswer) {
+                        btn.classList.remove('btn-gradient');
+                        btn.classList.add('bg-green-600', 'border-2', 'border-white'); // Highlight correct answer
+                    }
+                });
+            }
+            nextQuestionBtn.style.display = 'block'; // Show "Next Question" button
+        }
+
+        // Event listener for "Next Question" button
+        nextQuestionBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion(); // Load the next question
+        });
+
+        // Function to display the quiz result
+        function showResult() {
+            quizQuestionsDiv.classList.add('hidden'); // Hide questions
+            quizResultDiv.classList.remove('hidden'); // Show results
+            scoreText.textContent = `You scored ${score} out of ${currentQuizQuestions.length}!`; // Display final score
+        }
+
+        // Function to reset the quiz and go back to the intro screen
+        function resetQuiz() {
+            quizIntro.classList.remove('hidden');
+            quizResultDiv.classList.add('hidden');
+        }
+
+        // Event listeners for quiz difficulty and reset buttons
+        startEasyQuizBtn.addEventListener('click', () => startQuiz('easy'));
+        startMediumQuizBtn.addEventListener('click', () => startQuiz('medium'));
+        startHardQuizBtn.addEventListener('click', () => startQuiz('hard'));
+        resetQuizBtn.addEventListener('click', resetQuiz);
+
+        // --- Cosmic Calendar Logic (API Integrated) ---
+
+        // Helper function to format date to YYYY-MM-DD
+        function formatDateToYYYYMMDD(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Expanded static events database
+        const staticEvents = {
+            "Historical": {
+                "01-04": "Sputnik 1, first artificial satellite, burns up in atmosphere (1958).",
+                "07-20": "Apollo 11 lands on the Moon (1969).",
+                "10-04": "Sputnik 1 launched by the Soviet Union (1957)."
+            },
+            "Meteor Shower": {
+                "01-03": "Quadrantids Meteor Shower peak.",
+                "04-22": "Lyrids Meteor Shower peak.",
+                "05-05": "Eta Aquariids Meteor Shower peak.",
+                "07-28": "Delta Aquariids Meteor Shower peak.",
+                "08-12": "Perseids Meteor Shower peak.",
+                "10-21": "Orionids Meteor Shower peak.",
+                "11-17": "Leonids Meteor Shower peak.",
+                "12-14": "Geminids Meteor Shower peak."
+            },
+            "Eclipse": {
+                "2024-04-08": "Total Solar Eclipse over North America.",
+                "2024-10-02": "Annular Solar Eclipse over South America.",
+                "2026-08-12": "Total Solar Eclipse over Greenland, Iceland, Spain."
+            }
+        };
+
+        // State variables for the calendar
+        let currentCalendarDate = new Date();
+        let eventCache = {}; // Cache for fetched API data, e.g., {"2024-07": [events]}
+        let currentFilter = 'all';
+
+        // UI Element references
+        const calendarGrid = document.getElementById('calendar-grid');
+        const currentMonthYear = document.getElementById('current-month-year');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const prevYearBtn = document.getElementById('prev-year');
+        const nextYearBtn = document.getElementById('next-year');
+        const eventFilterSelect = document.getElementById('event-filter');
+        const calendarLoading = document.getElementById('calendar-loading');
+
+        // Fetches events for a given month and year, combining API and static data
+        async function fetchEventsForMonth(year, month) {
+            const cacheKey = `${year}-${month}`;
+            if (eventCache[cacheKey]) {
+                return eventCache[cacheKey]; // Return cached data if available
+            }
+
+            calendarLoading.classList.remove('hidden'); // Show loading spinner
+
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay = new Date(year, month, 0);
+            const startDate = formatDateToYYYYMMDD(firstDay);
+            const endDate = formatDateToYYYYMMDD(lastDay);
+
+            const launchApiUrl = `https://ll.thespacedevs.com/2.2.0/launch/?net__gte=${startDate}T00:00:00Z&net__lte=${endDate}T23:59:59Z&limit=100`;
+            
+            let allEvents = {};
+
+            try {
+                // Fetch launch data from Launch Library 2 API
+                const response = await fetch(launchApiUrl);
+                if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                const data = await response.json();
+                
+                data.results.forEach(launch => {
+                    const date = launch.net.split('T')[0]; // Extract YYYY-MM-DD
+                    if (!allEvents[date]) allEvents[date] = [];
+                    allEvents[date].push({
+                        type: 'Rocket Launch',
+                        title: launch.name,
+                        description: launch.mission ? launch.mission.description : 'No description available.',
+                        url: launch.url // URL for more details
+                    });
+                });
+            } catch (error) {
+                console.error("Failed to fetch launch data:", error);
+                // Optionally show an error message to the user
+            }
+
+            // Merge with static events
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const date = new Date(year, month - 1, day);
+                const dateString = formatDateToYYYYMMDD(date);
+                const monthDayString = dateString.substring(5); // "MM-DD" format
+
+                Object.keys(staticEvents).forEach(type => {
+                    let eventDescription = null;
+                    if (type === "Eclipse") {
+                        eventDescription = staticEvents[type][dateString];
+                    } else {
+                        eventDescription = staticEvents[type][monthDayString];
+                    }
+                    
+                    if (eventDescription) {
+                        if (!allEvents[dateString]) allEvents[dateString] = [];
+                        allEvents[dateString].push({
+                            type: type,
+                            title: eventDescription,
+                            description: `A recurring ${type.toLowerCase()} event.`,
+                            url: null
+                        });
+                    }
+                });
+            }
+
+            eventCache[cacheKey] = allEvents; // Cache the combined results
+            calendarLoading.classList.add('hidden'); // Hide loading spinner
+            return allEvents;
+        }
+
+        // Renders the calendar grid with events
+        async function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth() + 1;
+            
+            const eventsForMonth = await fetchEventsForMonth(year, month);
+
+            calendarGrid.innerHTML = ''; // Clear previous days
+            currentMonthYear.textContent = currentCalendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const firstDayOfMonth = new Date(year, month - 1, 1);
+            const lastDayOfMonth = new Date(year, month, 0);
+            const numDaysInMonth = lastDayOfMonth.getDate();
+            const firstDayOfWeek = firstDayOfMonth.getDay();
+
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                calendarGrid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= numDaysInMonth; day++) {
+                const date = new Date(year, month - 1, day);
+                const dateString = formatDateToYYYYMMDD(date);
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('p-2', 'text-center', 'rounded-md', 'cursor-pointer', 'transition', 'duration-200', 'relative', 'min-h-[60px]');
+                dayCell.textContent = day;
+
+                const today = new Date();
+                if (date.toDateString() === today.toDateString()) {
+                    dayCell.classList.add('bg-purple-600', 'text-white', 'font-bold');
+                } else {
+                    dayCell.classList.add('bg-gray-800', 'hover:bg-gray-700');
+                }
+
+                const eventsOnDay = eventsForMonth[dateString] || [];
+                const filteredEvents = eventsOnDay.filter(event => currentFilter === 'all' || event.type === currentFilter);
+
+                if (filteredEvents.length > 0) {
+                    dayCell.dataset.events = JSON.stringify(filteredEvents); // Store events in the cell
+                    dayCell.addEventListener('click', () => showEventsForDate(dateString, filteredEvents));
+
+                    // Add color-coded dots
+                    const eventDotContainer = document.createElement('div');
+                    eventDotContainer.className = 'event-dot';
+                    
+                    const eventTypes = [...new Set(filteredEvents.map(e => e.type))]; // Get unique event types
+                    eventTypes.slice(0, 4).forEach(type => { // Show max 4 dots
+                        const dot = document.createElement('span');
+                        dot.style.backgroundColor = getEventColor(type);
+                        dot.title = type; // Tooltip for the dot
+                        eventDotContainer.appendChild(dot);
+                    });
+                    dayCell.appendChild(eventDotContainer);
+                }
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
+        // Gets a color based on the event type
+        function getEventColor(type) {
+            switch (type) {
+                case 'Rocket Launch': return '#3498db'; // Blue
+                case 'Meteor Shower': return '#f1c40f'; // Yellow
+                case 'Eclipse': return '#e74c3c'; // Red
+                case 'Historical': return '#9b59b6'; // Purple
+                default: return '#95a5a6'; // Gray
+            }
+        }
+
+        // Displays events for a selected date in the modal
+        function showEventsForDate(dateString, events) {
+            const formattedDate = new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            let content = '';
+
+            if (events && events.length > 0) {
+                content = '<div class="space-y-4">';
+                events.forEach(event => {
+                    content += `
+                        <div class="border-l-4 p-3 rounded-r-lg bg-gray-800" style="border-color: ${getEventColor(event.type)};">
+                            <h5 class="font-bold text-white">${event.title}</h5>
+                            <p class="text-sm text-gray-400 font-semibold">${event.type}</p>
+                            <p class="text-gray-300 mt-2 text-sm">${event.description}</p>
+                            ${event.url ? `<a href="${event.url}" target="_blank" class="text-blue-400 hover:underline mt-2 inline-block">More Info &rarr;</a>` : ''}
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            } else {
+                content = `<p class="text-center text-gray-400">No major event recorded for this date.</p>`;
+            }
+            showModal(`Events on ${formattedDate}`, content);
+        }
+
+        // Event listeners for calendar navigation and filtering
+        prevMonthBtn.addEventListener('click', () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+        nextMonthBtn.addEventListener('click', () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+        prevYearBtn.addEventListener('click', () => {
+            currentCalendarDate.setFullYear(currentCalendarDate.getFullYear() - 1);
+            renderCalendar();
+        });
+        nextYearBtn.addEventListener('click', () => {
+            currentCalendarDate.setFullYear(currentCalendarDate.getFullYear() + 1);
+            renderCalendar();
+        });
+        eventFilterSelect.addEventListener('change', (e) => {
+            currentFilter = e.target.value;
+            renderCalendar(); // Re-render with the new filter
+        });
+
+        // --- Interactive Visuals: Moon Phases Simulation ---
+        let moonPhaseCanvas, moonPhaseCtx, moonPhaseSlider, moonPhaseText;
+
+        // Initializes the Moon Phases canvas and interactivity
+        function initMoonPhases() {
+            moonPhaseCanvas = document.getElementById('moon-phases-canvas');
+            moonPhaseCtx = moonPhaseCanvas.getContext('2d');
+            moonPhaseSlider = document.getElementById('moon-phase-slider');
+            moonPhaseText = document.getElementById('moon-phase-text');
+
+            if (!moonPhaseCanvas || !moonPhaseCtx || !moonPhaseSlider || !moonPhaseText) {
+                console.error("Moon phases simulation elements not found.");
+                return;
+            }
+
+            // Function to draw the moon phase based on an angle (0-360 degrees)
+            function drawMoonPhase(angle) {
+                moonPhaseCtx.clearRect(0, 0, moonPhaseCanvas.width, moonPhaseCanvas.height);
+
+                const centerX = moonPhaseCanvas.width / 2;
+                const centerY = moonPhaseCanvas.height / 2;
+                const radius = Math.min(centerX, centerY) * 0.8;
+
+                // Draw the full circle of the moon (dark side)
+                moonPhaseCtx.beginPath();
+                moonPhaseCtx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+                moonPhaseCtx.fillStyle = '#444444'; // Dark gray for the moon's body
+                moonPhaseCtx.fill();
+                moonPhaseCtx.strokeStyle = '#666666'; // Border color
+                moonPhaseCtx.lineWidth = 2;
+                moonPhaseCtx.stroke();
+
+                // Calculate the illuminated portion based on the angle
+                // Cosine wave ranges from -1 (new moon) to 1 (full moon)
+                let illuminatedPortion = Math.cos(angle * Math.PI / 180);
+                let phaseText = "";
+
+                // Determine the phase name based on the illuminated portion
+                if (illuminatedPortion > 0.95) phaseText = "Full Moon";
+                else if (illuminatedPortion < -0.95) phaseText = "New Moon";
+                else if (illuminatedPortion > 0.05) phaseText = "Waxing Gibbous"; // More than half lit and growing
+                else if (illuminatedPortion < -0.05) phaseText = "Waning Gibbous"; // More than half lit and shrinking
+                else if (angle > 0 && angle <= 90) phaseText = "Waxing Crescent";
+                else if (angle > 90 && angle <= 180) phaseText = "First Quarter";
+                else if (angle > 180 && angle <= 270) phaseText = "Waning Crescent";
+                else if (angle > 270 && angle <= 360) phaseText = "Last Quarter";
+
+                moonPhaseText.textContent = phaseText; // Update text display
+
+                // Draw the illuminated part of the moon
+                moonPhaseCtx.save(); // Save current canvas state
+                moonPhaseCtx.beginPath();
+                moonPhaseCtx.arc(centerX, centerY, radius, 0, Math.PI * 2, false); // Draw full moon circle
+                moonPhaseCtx.clip(); // Clip everything outside this circle
+
+                moonPhaseCtx.beginPath();
+                moonPhaseCtx.arc(centerX, centerY, radius, 0, Math.PI * 2, false); // Full circle again (background for illuminated part)
+                moonPhaseCtx.fillStyle = '#dddddd'; // Brighter color for illuminated part
+                moonPhaseCtx.fill();
+
+                // Draw the "shadow" to create the crescent/gibbous shapes
+                if (Math.abs(illuminatedPortion) < 0.99) { // Only draw shadow if not full or new moon
+                    moonPhaseCtx.beginPath();
+                    // Create an ellipse for the terminator (line between lit and dark)
+                    // The width of the ellipse varies with illuminatedPortion
+                    moonPhaseCtx.ellipse(centerX - (radius * illuminatedPortion), centerY, radius * Math.abs(illuminatedPortion), radius, 0, Math.PI / 2, Math.PI * 3 / 2, illuminatedPortion < 0);
+                    moonPhaseCtx.fillStyle = '#444444'; // Dark side color
+                    if (illuminatedPortion > 0) { // Waxing phases: shadow from right
+                        moonPhaseCtx.rect(centerX - radius, 0, radius - (radius * illuminatedPortion), moonPhaseCanvas.height);
+                    } else { // Waning phases: shadow from left
+                        moonPhaseCtx.rect(centerX + (radius * illuminatedPortion), 0, radius - (radius * Math.abs(illuminatedPortion)), moonPhaseCanvas.height);
+                    }
+                    moonPhaseCtx.fill();
+                }
+                moonPhaseCtx.restore(); // Restore canvas state to remove clipping path
+            }
+
+            // Update moon phase when slider value changes
+            moonPhaseSlider.addEventListener('input', (e) => {
+                drawMoonPhase(parseFloat(e.target.value));
+            });
+
+            // Initial draw on load
+            drawMoonPhase(parseFloat(moonPhaseSlider.value));
+        }
+
+
+        // --- Interactive Visuals: Eclipse Simulation ---
+        let eclipseCanvas, eclipseCtx, eclipseAnimationId;
+
+        // Initializes the Eclipse simulation canvas
+        function initEclipse() {
+            eclipseCanvas = document.getElementById('eclipse-canvas');
+            eclipseCtx = eclipseCanvas.getContext('2d');
+            const startEclipseBtn = document.getElementById('start-eclipse-sim');
+
+            if (!eclipseCanvas || !eclipseCtx || !startEclipseBtn) {
+                console.error("Eclipse simulation elements not found.");
+                return;
+            }
+
+            // Set canvas dimensions
+            eclipseCanvas.width = eclipseCanvas.offsetWidth;
+            eclipseCanvas.height = eclipseCanvas.offsetHeight;
+
+            // Parameters for celestial bodies and their movement
+            let sunRadius = 50;
+            let earthRadius = 20;
+            let moonRadius = 10;
+            let earthOrbitRadius = 120;
+            let moonOrbitRadius = 40;
+            let angle = 0; // Starting angle for animation
+            let animationSpeed = 0.005; // Speed of the orbital animation
+
+            // Function to draw the eclipse simulation
+            function drawEclipse() {
+                eclipseCtx.clearRect(0, 0, eclipseCanvas.width, eclipseCanvas.height); // Clear canvas
+                eclipseCtx.fillStyle = '#0a0a0a'; // Background color
+                eclipseCtx.fillRect(0, 0, eclipseCanvas.width, eclipseCanvas.height); // Fill background
+
+                const centerX = eclipseCanvas.width / 2;
+                const centerY = eclipseCanvas.height / 2;
+
+                // Draw Sun (fixed position)
+                eclipseCtx.beginPath();
+                eclipseCtx.arc(centerX - 100, centerY, sunRadius, 0, Math.PI * 2);
+                eclipseCtx.fillStyle = 'yellow';
+                eclipseCtx.fill();
+                eclipseCtx.closePath();
+
+                // Calculate Earth's position based on its orbit angle
+                const earthX = centerX + earthOrbitRadius * Math.cos(angle);
+                const earthY = centerY + earthOrbitRadius * Math.sin(angle);
+
+                // Calculate Moon's position (orbiting Earth, faster than Earth orbits Sun)
+                const moonX = earthX + moonOrbitRadius * Math.cos(angle * 5);
+                const moonY = earthY + moonOrbitRadius * Math.sin(angle * 5);
+
+                // Draw Earth's orbit (dashed line)
+                eclipseCtx.beginPath();
+                eclipseCtx.arc(centerX, centerY, earthOrbitRadius, 0, Math.PI * 2);
+                eclipseCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+                eclipseCtx.setLineDash([5, 5]); // Set dashed line style
+                eclipseCtx.stroke();
+                eclipseCtx.setLineDash([]); // Reset to solid line for other drawings
+
+                // Draw Earth
+                eclipseCtx.beginPath();
+                eclipseCtx.arc(earthX, earthY, earthRadius, 0, Math.PI * 2);
+                eclipseCtx.fillStyle = 'blue';
+                eclipseCtx.fill();
+                eclipseCtx.closePath();
+
+                // Draw Moon
+                eclipseCtx.beginPath();
+                eclipseCtx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+                eclipseCtx.fillStyle = 'gray';
+                eclipseCtx.fill();
+                eclipseCtx.closePath();
+
+                // Simple collision/alignment detection for "Eclipse!" message
+                const sunX = centerX - 100;
+                const tolerance = 10; // Pixels for alignment check
+                // Check if Moon is between Sun and Earth, and roughly aligned vertically
+                if (Math.abs(moonY - centerY) < tolerance && Math.abs(earthY - centerY) < tolerance &&
+                    (moonX > sunX && moonX < earthX) || (moonX < sunX && moonX > earthX) // Moon is between Sun and Earth
+                ) {
+                    eclipseCtx.font = '20px Inter';
+                    eclipseCtx.fillStyle = 'red';
+                    eclipseCtx.textAlign = 'center';
+                    eclipseCtx.fillText('ECLIPSE!', centerX, 30);
+                }
+
+                angle += animationSpeed; // Increment angle for animation
+                eclipseAnimationId = requestAnimationFrame(drawEclipse); // Request next animation frame
+            }
+
+            // Event listener to start/restart the simulation
+            startEclipseBtn.addEventListener('click', () => {
+                if (eclipseAnimationId) {
+                    cancelAnimationFrame(eclipseAnimationId); // Stop any existing animation
+                }
+                angle = 0; // Reset animation angle
+                drawEclipse(); // Start drawing
+            });
+
+            drawEclipse(); // Initial draw (static)
+        }
+
+        // --- Interactive Visuals: Rocket Launch Simulation ---
+        let rocketLaunchCanvas, rocketLaunchCtx, rocketAnimationId;
+
+        // Initializes the Rocket Launch simulation canvas
+        function initRocketLaunch() {
+            rocketLaunchCanvas = document.getElementById('rocket-launch-canvas');
+            rocketLaunchCtx = rocketLaunchCanvas.getContext('2d');
+            const startRocketBtn = document.getElementById('start-rocket-sim');
+
+            if (!rocketLaunchCanvas || !rocketLaunchCtx || !startRocketBtn) {
+                console.error("Rocket launch simulation elements not found.");
+                return;
+            }
+
+            // Set canvas dimensions
+            rocketLaunchCanvas.width = rocketLaunchCanvas.offsetWidth;
+            rocketLaunchCanvas.height = rocketLaunchCanvas.offsetHeight;
+
+            // Rocket properties and simulation state
+            let rocketX = rocketLaunchCanvas.width / 2;
+            let rocketY = rocketLaunchCanvas.height; // Starts at the bottom
+            let velocityY = 0; // Vertical velocity
+            let launchPhase = 'pre-launch'; // 'pre-launch', 'launch', 'orbit'
+            let orbitAngle = 0; // Angle for orbital phase
+            const orbitRadius = 150; // Radius of the orbit
+            const earthRadius = 50; // Visual radius for Earth's representation
+
+            // Function to draw the rocket simulation
+            function drawRocketSimulation() {
+                rocketLaunchCtx.clearRect(0, 0, rocketLaunchCanvas.width, rocketLaunchCanvas.height); // Clear canvas
+                rocketLaunchCtx.fillStyle = '#0a0a0a'; // Background color
+                rocketLaunchCtx.fillRect(0, 0, rocketLaunchCanvas.width, rocketLaunchCanvas.height); // Fill background
+
+                // Draw Earth (bottom part of the canvas)
+                rocketLaunchCtx.beginPath();
+                rocketLaunchCtx.arc(rocketLaunchCanvas.width / 2, rocketLaunchCanvas.height + earthRadius, earthRadius, 0, Math.PI * 2);
+                rocketLaunchCtx.fillStyle = 'darkgreen';
+                rocketLaunchCtx.fill();
+                rocketLaunchCtx.closePath();
+
+                // Draw atmosphere line and fill
+                rocketLaunchCtx.beginPath();
+                rocketLaunchCtx.moveTo(0, rocketLaunchCanvas.height - earthRadius);
+                rocketLaunchCtx.lineTo(rocketLaunchCanvas.width, rocketLaunchCanvas.height - earthRadius);
+                rocketLaunchCtx.strokeStyle = 'rgba(0, 191, 255, 0.5)'; // Light blue for atmosphere
+                rocketLaunchCtx.lineWidth = 2;
+                rocketLaunchCtx.stroke();
+                rocketLaunchCtx.closePath();
+                rocketLaunchCtx.fillStyle = 'rgba(0, 191, 255, 0.1)';
+                rocketLaunchCtx.fillRect(0, rocketLaunchCanvas.height - earthRadius, rocketLaunchCanvas.width, earthRadius);
+
+
+                // Draw rocket body
+                rocketLaunchCtx.beginPath();
+                rocketLaunchCtx.fillStyle = 'silver';
+                rocketLaunchCtx.fillRect(rocketX - 10, rocketY - 40, 20, 40); // Main body
+                // Draw rocket nose cone
+                rocketLaunchCtx.beginPath();
+                rocketLaunchCtx.moveTo(rocketX - 10, rocketY - 40);
+                rocketLaunchCtx.lineTo(rocketX, rocketY - 60);
+                rocketLaunchCtx.lineTo(rocketX + 10, rocketY - 40);
+                rocketLaunchCtx.fill();
+
+                // Draw rocket flame during launch phase
+                if (launchPhase === 'launch') {
+                    rocketLaunchCtx.beginPath();
+                    rocketLaunchCtx.moveTo(rocketX - 10, rocketY);
+                    rocketLaunchCtx.lineTo(rocketX, rocketY + 20);
+                    rocketLaunchCtx.lineTo(rocketX + 10, rocketY);
+                    rocketLaunchCtx.fillStyle = 'orange';
+                    rocketLaunchCtx.fill();
+                }
+
+                // Update rocket position based on current phase
+                if (launchPhase === 'launch') {
+                    velocityY -= 0.1; // Accelerate upwards (negative Y direction)
+                    rocketY += velocityY;
+
+                    // Transition to orbit phase when reaching altitude
+                    if (rocketY < rocketLaunchCanvas.height - orbitRadius - 50) {
+                        launchPhase = 'orbit';
+                    }
+                } else if (launchPhase === 'orbit') {
+                    orbitAngle += 0.02; // Increment orbit angle for rotation
+                    // Calculate orbital position around the canvas center
+                    rocketX = rocketLaunchCanvas.width / 2 + orbitRadius * Math.cos(orbitAngle);
+                    rocketY = rocketLaunchCanvas.height / 2 + orbitRadius * Math.sin(orbitAngle);
+
+                    // Draw orbital path (dashed circle)
+                    rocketLaunchCtx.beginPath();
+                    rocketLaunchCtx.arc(rocketLaunchCanvas.width / 2, rocketLaunchCanvas.height / 2, orbitRadius, 0, Math.PI * 2);
+                    rocketLaunchCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    rocketLaunchCtx.setLineDash([5, 5]);
+                    rocketLaunchCtx.stroke();
+                    rocketLaunchCtx.setLineDash([]); // Reset line style
+                }
+
+                rocketAnimationId = requestAnimationFrame(drawRocketSimulation); // Request next animation frame
+            }
+
+            // Event listener to start/restart the simulation
+            startRocketBtn.addEventListener('click', () => {
+                if (rocketAnimationId) {
+                    cancelAnimationFrame(rocketAnimationId); // Stop any previous animation
+                }
+                // Reset rocket state for a new launch
+                rocketX = rocketLaunchCanvas.width / 2;
+                rocketY = rocketLaunchCanvas.height;
+                velocityY = 0;
+                launchPhase = 'launch'; // Start in launch phase
+                orbitAngle = 0;
+                drawRocketSimulation(); // Start the simulation
+            });
+
+            drawRocketSimulation(); // Initial draw (static view before launch)
+        }
+
+        // --- Mini Games: Gravity Slingshot Simulator ---
+        let slingshotCanvas, slingshotCtx, slingshotAnimationId;
+
+        // Initializes the Gravity Slingshot game
+        function initSlingshotGame() {
+            slingshotCanvas = document.getElementById('slingshot-canvas');
+            slingshotCtx = slingshotCanvas.getContext('2d');
+            const startSlingshotBtn = document.getElementById('start-slingshot');
+
+            if (!slingshotCanvas || !slingshotCtx || !startSlingshotBtn) {
+                console.error("Slingshot game elements not found.");
+                return;
+            }
+
+            slingshotCanvas.width = slingshotCanvas.offsetWidth;
+            slingshotCanvas.height = slingshotCanvas.offsetHeight;
+
+            // Player ship properties
+            let player = { x: 50, y: slingshotCanvas.height / 2, radius: 5, vx: 2, vy: 0, color: 'white' };
+            // Planet (gravity source) properties
+            let planet = { x: slingshotCanvas.width - 100, y: slingshotCanvas.height / 2, radius: 30, color: 'blue' };
+            let gameActive = false; // Game state
+
+            // Function to draw the game elements
+            function drawSlingshot() {
+                slingshotCtx.clearRect(0, 0, slingshotCanvas.width, slingshotCanvas.height); // Clear canvas
+                slingshotCtx.fillStyle = '#0a0a0a'; // Background color
+                slingshotCtx.fillRect(0, 0, slingshotCanvas.width, slingshotCanvas.height); // Fill background
+
+                // Draw planet
+                slingshotCtx.beginPath();
+                slingshotCtx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2);
+                slingshotCtx.fillStyle = planet.color;
+                slingshotCtx.fill();
+
+                // Draw player ship
+                slingshotCtx.beginPath();
+                slingshotCtx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+                slingshotCtx.fillStyle = player.color;
+                slingshotCtx.fill();
+
+                if (gameActive) {
+                    // Update player position based on velocity
+                    player.x += player.vx;
+                    player.y += player.vy;
+
+                    // Calculate gravity effect from the planet
+                    const dx = planet.x - player.x;
+                    const dy = planet.y - player.y;
+                    const distSq = dx * dx + dy * dy; // Distance squared
+                    const dist = Math.sqrt(distSq); // Actual distance
+
+                    if (dist > planet.radius + player.radius / 2) { // Apply gravity only if not colliding
+                        const G = 50; // Simplified Gravitational constant
+                        const force = G / distSq; // Inverse square law for force
+                        player.vx += force * (dx / dist); // Update x velocity component
+                        player.vy += force * (dy / dist); // Update y velocity component
+                    } else {
+                        // Collision with planet detected
+                        gameActive = false;
+                        player.color = 'red'; // Indicate collision visually
+                        alertBox("Collision!", "Your ship hit the planet!", () => resetSlingshotGame());
+                    }
+
+                    // Boundary check: if player goes off-screen
+                    if (player.x < 0 || player.x > slingshotCanvas.width || player.y < 0 || player.y > slingshotCanvas.height) {
+                        gameActive = false;
+                        player.color = 'gray'; // Indicate lost visually
+                        alertBox("Lost in Space!", "Your ship drifted too far!", () => resetSlingshotGame());
+                    }
+                }
+
+                slingshotAnimationId = requestAnimationFrame(drawSlingshot); // Request next animation frame
+            }
+
+            // Function to reset the game state
+            function resetSlingshotGame() {
+                player = { x: 50, y: slingshotCanvas.height / 2, radius: 5, vx: 2, vy: 0, color: 'white' };
+                gameActive = false;
+                if (slingshotAnimationId) cancelAnimationFrame(slingshotAnimationId); // Stop animation
+                drawSlingshot(); // Draw initial state
+            }
+
+            // Event listener to start/restart the game
+            startSlingshotBtn.addEventListener('click', () => {
+                resetSlingshotGame(); // Ensure game is reset before starting
+                gameActive = true;
+                drawSlingshot(); // Start drawing loop
+            });
+
+            drawSlingshot(); // Initial draw of the game
+        }
+
+        // --- Mini Games: Meteor Dodge (2D) ---
+        let meteorDodgeCanvas, meteorDodgeCtx, meteorDodgeAnimationId;
+
+        // Initializes the Meteor Dodge game
+        function initMeteorDodgeGame() {
+            meteorDodgeCanvas = document.getElementById('meteor-dodge-canvas');
+            meteorDodgeCtx = meteorDodgeCanvas.getContext('2d');
+            const startMeteorDodgeBtn = document.getElementById('start-meteor-dodge');
+
+            if (!meteorDodgeCanvas || !meteorDodgeCtx || !startMeteorDodgeBtn) {
+                console.error("Meteor Dodge game elements not found.");
+                return;
+            }
+
+            meteorDodgeCanvas.width = meteorDodgeCanvas.offsetWidth;
+            meteorDodgeCanvas.height = meteorDodgeCanvas.offsetHeight;
+
+            // Player ship properties
+            let player = { x: meteorDodgeCanvas.width / 2, y: meteorDodgeCanvas.height - 30, size: 20, color: 'blue' };
+            let meteors = []; // Array to store active meteors
+            let score = 0;
+            let gameActive = false;
+            let meteorSpeed = 2; // Initial meteor speed
+            let lastMeteorTime = 0; // Timestamp of last meteor spawn
+            const meteorSpawnInterval = 1000; // Interval for spawning new meteors (milliseconds)
+
+            // Function to create and add a new meteor to the game
+            function createMeteor() {
+                const x = Math.random() * (meteorDodgeCanvas.width - 20) + 10; // Random X position
+                const size = 10 + Math.random() * 20; // Random size
+                meteors.push({ x: x, y: -size, size: size, color: 'gray' }); // Add meteor above canvas
+            }
+
+            // Main game drawing and update loop
+            function drawMeteorDodge() {
+                meteorDodgeCtx.clearRect(0, 0, meteorDodgeCanvas.width, meteorDodgeCanvas.height); // Clear canvas
+                meteorDodgeCtx.fillStyle = '#0a0a0a'; // Background
+                meteorDodgeCtx.fillRect(0, 0, meteorDodgeCanvas.width, meteorDodgeCanvas.height);
+
+                // Draw player ship
+                meteorDodgeCtx.fillStyle = player.color;
+                meteorDodgeCtx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size);
+
+                // Iterate through meteors (backwards to handle removal during iteration)
+                for (let i = meteors.length - 1; i >= 0; i--) {
+                    const meteor = meteors[i];
+                    meteorDodgeCtx.fillStyle = meteor.color;
+                    meteorDodgeCtx.beginPath();
+                    meteorDodgeCtx.arc(meteor.x, meteor.y, meteor.size / 2, 0, Math.PI * 2); // Draw meteor as a circle
+                    meteorDodgeCtx.fill();
+
+                    if (gameActive) {
+                        meteor.y += meteorSpeed; // Move meteor downwards
+
+                        // Simple AABB (Axis-Aligned Bounding Box) collision detection
+                        if (player.x - player.size / 2 < meteor.x + meteor.size / 2 &&
+                            player.x + player.size / 2 > meteor.x - meteor.size / 2 &&
+                            player.y - player.size / 2 < meteor.y + meteor.size / 2 &&
+                            player.y + player.size / 2 > meteor.y - meteor.size / 2) {
+                            endMeteorDodgeGame(); // End game on collision
+                            return; // Stop animation loop immediately
+                        }
+
+                        // Remove meteors that go off-screen and increment score
+                        if (meteor.y > meteorDodgeCanvas.height + meteor.size) {
+                            meteors.splice(i, 1);
+                            score++;
+                        }
+                    }
+                }
+
+                // Spawn new meteors if game is active and interval has passed
+                if (gameActive && Date.now() - lastMeteorTime > meteorSpawnInterval) {
+                    createMeteor();
+                    lastMeteorTime = Date.now();
+                }
+
+                // Display current score
+                meteorDodgeCtx.fillStyle = 'white';
+                meteorDodgeCtx.font = '16px Inter';
+                meteorDodgeCtx.fillText('Score: ' + score, 10, 25);
+
+                if (gameActive) {
+                    meteorDodgeAnimationId = requestAnimationFrame(drawMeteorDodge); // Continue animation
+                }
+            }
+
+            // Keyboard input handler for player movement
+            function handleKeyDown(e) {
+                if (!gameActive) return; // Only move if game is active
+                const playerSpeed = 10;
+                if (e.key === 'ArrowLeft' && player.x > player.size / 2) {
+                    player.x -= playerSpeed;
+                } else if (e.key === 'ArrowRight' && player.x < meteorDodgeCanvas.width - player.size / 2) {
+                    player.x += playerSpeed;
+                }
+            }
+
+            // Touch event handlers for mobile control
+            let touchStartX = 0;
+            meteorDodgeCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent scrolling
+                touchStartX = e.touches[0].clientX;
+            });
+
+            meteorDodgeCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault(); // Prevent scrolling
+                if (!gameActive) return;
+                const touchCurrentX = e.touches[0].clientX;
+                const deltaX = touchCurrentX - touchStartX;
+                player.x += deltaX * 0.5; // Move player based on swipe, adjust sensitivity
+                // Keep player within bounds
+                if (player.x < player.size / 2) player.x = player.size / 2;
+                if (player.x > meteorDodgeCanvas.width - player.size / 2) player.x = meteorDodgeCanvas.width - player.size / 2;
+                touchStartX = touchCurrentX; // Update touch start position for continuous movement
+            });
+
+            // Function to start the game
+            function startMeteorDodgeGame() {
+                if (meteorDodgeAnimationId) cancelAnimationFrame(meteorDodgeAnimationId); // Stop any previous animation
+                // Reset game state
+                player = { x: meteorDodgeCanvas.width / 2, y: meteorDodgeCanvas.height - 30, size: 20, color: 'blue' };
+                meteors = [];
+                score = 0;
+                gameActive = true;
+                meteorSpeed = 2;
+                lastMeteorTime = Date.now();
+                drawMeteorDodge(); // Start the game loop
+            }
+
+            // Function to end the game
+            function endMeteorDodgeGame() {
+                gameActive = false;
+                if (meteorDodgeAnimationId) cancelAnimationFrame(meteorDodgeAnimationId); // Stop animation
+                alertBox("Game Over!", `You dodged ${score} meteors!`, () => startMeteorDodgeBtn.click()); // Custom alert
+            }
+
+            // Event listeners
+            startMeteorDodgeBtn.addEventListener('click', startMeteorDodgeGame);
+            document.addEventListener('keydown', handleKeyDown);
+
+            drawMeteorDodge(); // Initial draw for static display
+        }
+
+        // --- Mini Games: Space Maze (2D) ---
+        let spaceMazeCanvas, spaceMazeCtx, spaceMazeAnimationId;
+
+        // Initializes the Space Maze game
+        function initSpaceMazeGame() {
+            spaceMazeCanvas = document.getElementById('space-maze-canvas');
+            spaceMazeCtx = spaceMazeCanvas.getContext('2d');
+            const startSpaceMazeBtn = document.getElementById('start-space-maze');
+
+            if (!spaceMazeCanvas || !spaceMazeCtx || !startSpaceMazeBtn) {
+                console.error("Space Maze game elements not found.");
+                return;
+            }
+
+            spaceMazeCanvas.width = spaceMazeCanvas.offsetWidth;
+            spaceMazeCanvas.height = spaceMazeCanvas.offsetHeight;
+
+            // Maze grid (1s are walls, 0s are paths)
+            const maze = [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+                [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+                [1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
+                [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+                [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+            const cellSize = spaceMazeCanvas.width / maze[0].length; // Calculate cell size based on canvas width
+            // Player properties (initial position is grid coordinates)
+            let player = { x: 1, y: 1, color: 'lime', size: cellSize * 0.6 };
+            // End point coordinates
+            const end = { x: maze[0].length - 2, y: maze.length - 2 };
+
+            let gameActive = false;
+
+            // Function to draw the maze and player
+            function drawMaze() {
+                spaceMazeCtx.clearRect(0, 0, spaceMazeCanvas.width, spaceMazeCanvas.height); // Clear canvas
+                spaceMazeCtx.fillStyle = '#0a0a0a'; // Background
+                spaceMazeCtx.fillRect(0, 0, spaceMazeCanvas.width, spaceMazeCanvas.height);
+
+                // Draw maze walls
+                for (let row = 0; row < maze.length; row++) {
+                    for (let col = 0; col < maze[row].length; col++) {
+                        if (maze[row][col] === 1) { // If it's a wall
+                            spaceMazeCtx.fillStyle = '#333333'; // Wall color
+                            spaceMazeCtx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                        }
+                    }
+                }
+
+                // Draw end point (target for the player)
+                spaceMazeCtx.fillStyle = 'gold';
+                spaceMazeCtx.beginPath();
+                spaceMazeCtx.arc((end.x + 0.5) * cellSize, (end.y + 0.5) * cellSize, player.size / 2, 0, Math.PI * 2);
+                spaceMazeCtx.fill();
+
+                // Draw player
+                spaceMazeCtx.fillStyle = player.color;
+                spaceMazeCtx.beginPath();
+                spaceMazeCtx.arc((player.x + 0.5) * cellSize, (player.y + 0.5) * cellSize, player.size / 2, 0, Math.PI * 2);
+                spaceMazeCtx.fill();
+
+                if (gameActive) {
+                    spaceMazeAnimationId = requestAnimationFrame(drawMaze); // Continue animation
+                }
+            }
+
+            // Function to move the player
+            function movePlayer(dx, dy) {
+                if (!gameActive) return;
+
+                const newX = player.x + dx;
+                const newY = player.y + dy;
+
+                // Check if new position is within bounds and is not a wall
+                if (newX >= 0 && newX < maze[0].length && newY >= 0 && newY < maze.length && maze[newY][newX] === 0) {
+                    player.x = newX;
+                    player.y = newY;
+                }
+
+                // Check for win condition
+                if (player.x === end.x && player.y === end.y) {
+                    endSpaceMazeGame(true); // Player won
+                }
+            }
+
+            // Keyboard input handler for player movement
+            function handleMazeKeyDown(e) {
+                switch (e.key) {
+                    case 'ArrowUp': movePlayer(0, -1); break;
+                    case 'ArrowDown': movePlayer(0, 1); break;
+                    case 'ArrowLeft': movePlayer(-1, 0); break;
+                    case 'ArrowRight': movePlayer(1, 0); break;
+                }
+            }
+
+            // Touch event handlers for mobile control (swipe)
+            let touchStartXMaze = 0;
+            let touchStartYMaze = 0;
+
+            spaceMazeCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touchStartXMaze = e.touches[0].clientX;
+                touchStartYMaze = e.touches[0].clientY;
+            });
+
+            spaceMazeCanvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (!gameActive) return;
+
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+
+                const dx = touchEndX - touchStartXMaze;
+                const dy = touchEndY - touchStartYMaze;
+
+                // Determine direction based on the larger displacement
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > 10) movePlayer(1, 0); // Swipe right
+                    else if (dx < -10) movePlayer(-1, 0); // Swipe left
+                } else {
+                    if (dy > 10) movePlayer(0, 1); // Swipe down
+                    else if (dy < -10) movePlayer(0, -1); // Swipe up
+                }
+            });
+
+            // Function to start the game
+            function startSpaceMazeGame() {
+                if (spaceMazeAnimationId) cancelAnimationFrame(spaceMazeAnimationId); // Stop previous animation
+                player = { x: 1, y: 1, color: 'lime', size: cellSize * 0.6 }; // Reset player position
+                gameActive = true;
+                drawMaze(); // Start game loop
+            }
+
+            // Function to end the game
+            function endSpaceMazeGame(won) {
+                gameActive = false;
+                if (spaceMazeAnimationId) cancelAnimationFrame(spaceMazeAnimationId); // Stop animation
+                if (won) {
+                    alertBox("Congratulations!", "You found your way through the cosmic labyrinth!", () => startSpaceMazeBtn.click());
+                } else {
+                    alertBox("Game Over!", "You gave up.", () => startSpaceMazeBtn.click());
+                }
+            }
+
+            // Event listeners
+            startSpaceMazeBtn.addEventListener('click', startSpaceMazeGame);
+            document.addEventListener('keydown', handleMazeKeyDown);
+
+            drawMaze(); // Initial draw for static display
+        }
+
+        // --- Glossary Search Logic ---
+        const glossarySearchInput = document.getElementById('glossary-search');
+        const glossaryListDiv = document.getElementById('glossary-list');
+        // Store all glossary items initially to filter them
+        const allGlossaryItems = Array.from(glossaryListDiv.children);
+
+        glossarySearchInput.addEventListener('input', () => {
+            const searchTerm = glossarySearchInput.value.toLowerCase().trim();
+
+            allGlossaryItems.forEach(item => {
+                const termText = item.querySelector('h3').textContent.toLowerCase();
+                const definitionText = item.querySelector('p').textContent.toLowerCase();
+
+                // Show item if term or definition includes the search term, otherwise hide
+                if (termText.includes(searchTerm) || definitionText.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Global window.onload ensures all DOM elements are fully loaded and available
+        // before any initializations that depend on them.
+        window.onload = function() {
+            // No direct calls here. Functions are called when sections become active via navigation.
+        };
+
+    </script>
+</body>
+</html>
