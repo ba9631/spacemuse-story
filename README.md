@@ -40,11 +40,9 @@ start index.html
 # 💡 Unique Aspects
 1. Creative blend of storytelling and science.
 
-2. Voice assistant and narration support via Web Speech API.
+2. Fully responsive and mobile-friendly.
 
-3. Fully responsive and mobile-friendly.
-
-4. Deployed using GitHub Pages with zero backen.
+3. Deployed using GitHub Pages with zero backen.
 ---
 # 📦 Dependencies
 ### The project uses the following external libraries and tools:
