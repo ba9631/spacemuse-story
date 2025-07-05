@@ -33,9 +33,9 @@ start index.html
 ###  Key Features
 1. 3D Constellation Viewer – View constellations with interactive visuals and explore their mythological stories.
 2. Space Storytelling – Read poetic or narrative content inspired by real cosmic events.
-3. Glossary Section – Learn astronomy terms with contextual explanations and a searchable interface (planned).
-4. Cosmic Calendar – Displays major space events from history and upcoming events (in progress).
-5. Interactive Visuals & Mini-Games – Engaging learning experiences (coming soon).
+3. Glossary Section – Learn astronomy terms with contextual explanations and a searchable interface.
+4. Cosmic Calendar – Displays major space events from history and upcoming events.
+5. Interactive Visuals & Mini-Games – Engaging learning experiences.
 ---
 # 💡 Unique Aspects
 1. Creative blend of storytelling and science.
