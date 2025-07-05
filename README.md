@@ -48,8 +48,7 @@ start index.html
 ### The project uses the following external libraries and tools:
 | Library / Tool                   | Purpose                                                     |
 | -------------------------------- | ----------------------------------------------------------- |
-| [Three.js](https://threejs.org/) | For rendering 3D visualizations of space and constellations |
-| Web Speech API                   | For speech-based narration and interaction (optional)       |
+| [Three.js](https://threejs.org/) | For rendering 3D visualizations of space and constellations |      
 | Font Awesome                     | Icons and visual elements                                   |
 | Google Fonts                     | Custom fonts for styling                                    |
 | Vanilla JavaScript               | For core functionality and interactivity                    |
