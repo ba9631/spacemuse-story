@@ -1408,7 +1408,7 @@
                 // Add user's message to chat history for context
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-                const apiKey = ""; // API key will be provided by the Canvas runtime
+                const apiKey = "AIzaSyAI2QHPwvtSWbJtvbsCe06PFUzMEP4qPX0"; // API key will be provided by the Canvas runtime
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 // Make the API call to Gemini
